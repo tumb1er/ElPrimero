@@ -53,7 +53,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         Rez.Fonts.minute_sides1,
         Rez.Fonts.minute_sides2,
         Rez.Fonts.minute_sides3,
-        Rez.Fonts.minute_sides4
+        Rez.Fonts.minute_sides4,
+        Rez.Fonts.minute_sides5
     ];
 
     var mMinuteTiles;
