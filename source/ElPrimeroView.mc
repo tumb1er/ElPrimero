@@ -3,8 +3,14 @@ using Toybox.Graphics;
 using Toybox.System;
 using Toybox.Lang;
 
+// buffered background screen offset;
+const bgX = 9;
+const bgY = 20;
+
 class ElPrimeroView extends WatchUi.WatchFace {
     var mSmallyFont;
+    var mBackground;
+    var mBuffer;
 
     function initialize() {
         WatchFace.initialize();
@@ -13,6 +19,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // Load your resources here
     function onLayout(dc) {
         mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
+        mBackground = WatchUi.loadResource(Rez.Drawables.Background);
+        mBuffer = new Graphics.BufferedBitmap({
+            :width=>mBackground.getWidth(),
+            :height=>mBackground.getHeight()
+        });
+
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -23,8 +35,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     // Update the view
     function onUpdate(dc) {
-        dc.setColor(0xFFFFFF, 0x000000);
+        dc.setColor(0xFFFFFF, 0x000055);
         dc.clear();
+        dc.drawBitmap(9, 20, mBackground);
         dc.drawText(120, 120, mSmallyFont, "12345:68790", Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER);
     }
 

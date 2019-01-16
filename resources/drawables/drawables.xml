@@ -1,3 +1,11 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="launcher_icon.png" />
+    <bitmap id="Background" filename="background.png" dithering="none">
+        <palette disableTransparency="true">
+            <color>000055</color>
+            <color>5555aa</color>
+            <color>aaaaaa</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
 </drawables>
