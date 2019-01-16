@@ -12,16 +12,13 @@
         <palette disableTransparency="false">
             <color>000000</color>
             <color>000055</color>
-            <color>0000aa</color>
             <color>550000</color>
             <color>550055</color>
             <color>5500aa</color>
-            <color>5500ff</color>
             <color>aa0000</color>
-            <color>ff0000</color>
-            <color>ff0055</color>
+            <color>aa0055</color>
+            <color>555555</color>
             <color>5555aa</color>
-            <color>5555ff</color>
             <color>aaaaaa</color>
             <color>aaaaff</color>
             <color>ffffff</color>
