@@ -5,9 +5,12 @@
     <font id="minute_sides1" filename="minute_sides1.fnt" antialias="true"/>
     <font id="minute_sides2" filename="minute_sides2.fnt" antialias="true"/>
     <font id="minute_sides3" filename="minute_sides3.fnt" antialias="true"/>
+    <font id="minute_sides4" filename="minute_sides4.fnt" antialias="true"/>
 
     <font id="hour_sides0" filename="hour_sides0.fnt" antialias="true"/>
     <font id="hour_sides1" filename="hour_sides1.fnt" antialias="true"/>
     <font id="hour_sides2" filename="hour_sides2.fnt" antialias="true"/>
+    <font id="hour_sides3" filename="hour_sides3.fnt" antialias="true"/>
+    <font id="hour_sides4" filename="hour_sides4.fnt" antialias="true"/>
 
 </fonts>
