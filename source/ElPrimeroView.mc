@@ -30,6 +30,7 @@ const hrY = 110 - bgY;
 
 const cAlign = Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER;
 
+
 class ElPrimeroView extends WatchUi.WatchFace {
     var mSmallyFont;
 
@@ -38,6 +39,24 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mGauge6;
     var mGauge9;
     var mBuffer;
+
+    var mMinuteFonts = [
+        Rez.Fonts.minute_sides0,
+        Rez.Fonts.minute_sides1,
+        Rez.Fonts.minute_sides2,
+        Rez.Fonts.minute_sides3
+    ];
+
+    var mMinuteTiles;
+
+    var mHourFonts = [
+        Rez.Fonts.hour_sides0,
+        Rez.Fonts.hour_sides1,
+        Rez.Fonts.hour_sides2
+    ];
+
+    var mHourTiles;
+
 
     function initialize() {
         WatchFace.initialize();
@@ -55,6 +74,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
             :height=>mBackground.getHeight()
         });
 
+        mMinuteTiles = WatchUi.loadResource(Rez.JsonData.minute_sides_json);
+        mHourTiles = WatchUi.loadResource(Rez.JsonData.hour_sides_json);
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -63,9 +84,32 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function onShow() {
     }
 
+
+    function drawHand(dc, glyph, fonts) {
+        var prev_font = null;
+        var font = null;
+        for (var j = 0; j < glyph.size(); j++) {
+            var tile = glyph[j];
+            var f = (tile % 64).toNumber();
+            tile /= 64;
+            var c = (tile % 4).toNumber();
+            tile /= 4;
+            var char = (tile % 256).toNumber();
+            tile /= 256;
+            var x = (tile / 256).toNumber() - bgX;
+            var y = (tile % 256).toNumber() - bgY;
+
+            if (prev_font != f) {
+            font = WatchUi.loadResource(fonts[f]);
+                prev_font = f;
+            }
+            dc.drawText(x, y, font, char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
+        }
+    }
+
     // Update the view
     function onUpdate(dc) {
-
+        var time = System.getClockTime();
         var stats = System.getSystemStats();
         dc.setColor(0xFFFFFF, 0x000055);
         dc.clear();
@@ -77,7 +121,51 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
         bc.drawText(batX, batY, mSmallyFont, stats.battery.toNumber(), cAlign);
         bc.drawText(hrX, hrY, mSmallyFont, "42", cAlign);
+
+        var t = (time.hour % 12) * 5 + time.min / 12;
+
+        var angle = Math.toRadians(-t * 360/60);
+
+
+        bc.setPenWidth(8);
+
+        bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
+        bc.drawLine(120 - bgX + 15 * Math.sin(angle),
+                    120 - bgY + 15 * Math.cos(angle),
+                    120 - bgX - 20 * Math.sin(angle),
+                    120 - bgY - 20 * Math.cos(angle));
+
+        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+        bc.drawLine(120 - bgX - 20 * Math.sin(angle),
+                    120 - bgY - 20 * Math.cos(angle),
+                    120 - bgX - 70 * Math.sin(angle),
+                    120 - bgY - 70 * Math.cos(angle));
+
+        bc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
+
+        drawHand(bc, mHourTiles[t], mHourFonts);
+
+        angle = Math.toRadians(-time.min * 360/60);
+
+        bc.setPenWidth(5);
+        bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
+        bc.drawLine(120 - bgX + 15 * Math.sin(angle),
+                    120 - bgY + 15 * Math.cos(angle),
+                    120 - bgX - 45 * Math.sin(angle),
+                    120 - bgY - 45 * Math.cos(angle));
+
+        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+        bc.drawLine(120 - bgX - 45 * Math.sin(angle),
+                    120 - bgY - 45 * Math.cos(angle),
+                    120 - bgX - 95 * Math.sin(angle),
+                    120 - bgY - 95 * Math.cos(angle));
+
+        bc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
+
+        drawHand(bc, mMinuteTiles[time.min], mMinuteFonts);
+
         dc.drawBitmap(bgX, bgY, mBuffer);
+
     }
 
     // Called when this View is removed from the screen. Save the
