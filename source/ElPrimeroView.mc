@@ -4,6 +4,7 @@ using Toybox.System;
 using Toybox.Lang;
 
 class ElPrimeroView extends WatchUi.WatchFace {
+    var mSmallyFont;
 
     function initialize() {
         WatchFace.initialize();
@@ -11,7 +12,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     // Load your resources here
     function onLayout(dc) {
-        setLayout(Rez.Layouts.WatchFace(dc));
+        mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -22,14 +23,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     // Update the view
     function onUpdate(dc) {
-        // Get and show the current time
-        var clockTime = System.getClockTime();
-        var timeString = Lang.format("$1$:$2$", [clockTime.hour, clockTime.min.format("%02d")]);
-        var view = View.findDrawableById("TimeLabel");
-        view.setText(timeString);
-
-        // Call the parent onUpdate function to redraw the layout
-        View.onUpdate(dc);
+        dc.setColor(0xFFFFFF, 0x000000);
+        dc.clear();
+        dc.drawText(120, 120, mSmallyFont, "12345:68790", Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
     // Called when this View is removed from the screen. Save the
