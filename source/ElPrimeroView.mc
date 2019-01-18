@@ -3,6 +3,7 @@ using Toybox.Graphics;
 using Toybox.System;
 using Toybox.Lang;
 using Toybox.Math;
+using Toybox.SensorHistory;
 
 // buffered background screen offset;
 const bgX = 9;
@@ -169,6 +170,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function onUpdate(dc) {
         var time = System.getClockTime();
         var stats = System.getSystemStats();
+        var heartBeatIter = SensorHistory.getHeartRateHistory({});
+        var heartBeatSample = heartBeatIter.next();
+        var heartBeat = null;
         dc.setColor(0xFFFFFF, 0x000055);
         dc.clear();
         var bc = mBuffer.getDc();
@@ -184,7 +188,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.drawBitmap(g9X, g9Y, mGauge9);
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
         bc.drawText(batX, batY, mSmallyFont, stats.battery.toNumber(), cAlign);
-        bc.drawText(hrX, hrY, mSmallyFont, "42", cAlign);
+        if (heartBeatSample != null) {
+            heartBeat = heartBeatSample.data;
+            if (heartBeat != null) {
+                bc.drawText(hrX, hrY, mSmallyFont, heartBeat.toString(), cAlign);
+            }
+        }
 
         var t = (time.hour % 12) * 5 + time.min / 12;
 
@@ -234,6 +243,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         drawHand(bc, t, mGaugeTiles, mGaugeIndex, mGaugeFonts, 2, g3centerX, g3centerY);
 
+        if (heartBeat != null) {
+            t = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
+            drawHand(bc, t, mGaugeTiles, mGaugeIndex, mGaugeFonts, 2, g9centerX, g9centerY);
+        }
         dc.drawBitmap(bgX, bgY, mBuffer);
 
     }

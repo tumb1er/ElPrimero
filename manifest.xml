@@ -8,6 +8,7 @@
         </iq:products>
 
         <iq:permissions>
+            <iq:uses-permission id="SensorHistory"/>
         </iq:permissions>
 
         <iq:languages>
