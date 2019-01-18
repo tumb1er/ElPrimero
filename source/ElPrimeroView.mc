@@ -117,15 +117,15 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function drawHand(dc, glyph, fonts, n) {
         for (var j = 0; j < glyph.size(); j++) {
             var tile = glyph[j];
-            var f = (tile % 64).toNumber();
-            tile /= 64;
-            var c = (tile % 4).toNumber();
-            tile /= 4;
-            var char = (tile % 256).toNumber();
-            tile /= 256;
-            var x = (tile / 256).toNumber() - bgX;
-            var y = (tile % 256).toNumber() - bgY;
-
+            System.println(tile);
+            var b = (tile & 0x000000FF);
+            var f = b % 64;
+            var c = b / 64;
+            var char = (tile & 0x0000FF00) >> 8;
+            var x = (tile & 0x00FF0000) >> 16 - bgX;
+            b = (tile & 0xFF000000) >> 24;
+            var y = b & 0xFF - bgY;
+            System.println([f, c, char, x, y]);
             if (mPrevFonts[n] != f || mTileFonts[n] == null) {
                 mTileFonts[n] = null;
                 mTileFonts[1-n] = null;
