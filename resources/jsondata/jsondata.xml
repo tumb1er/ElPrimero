@@ -1,4 +1,5 @@
 <resources>
     <jsonData id="minute_sides_json" filename="minute_sides.json"/>
     <jsonData id="hour_sides_json" filename="hour_sides.json"/>
+    <jsonData id="gauge_sides_json" filename="gauge_sides.json"/>
 </resources>

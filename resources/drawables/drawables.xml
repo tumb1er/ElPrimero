@@ -1,14 +1,6 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="launcher_icon.png" />
-    <!--<bitmap id="Background" filename="background.png" dithering="none">-->
-        <!--<palette disableTransparency="true">-->
-            <!--<color>000055</color>-->
-            <!--<color>5555aa</color>-->
-            <!--<color>aaaaaa</color>-->
-            <!--<color>ffffff</color>-->
-        <!--</palette>-->
-    <!--</bitmap>-->
-    <bitmap id="BGTop" filename="bg_top.png" dithering="none">
+    <bitmap id="BGTop" filename="background/bg_top.png" dithering="none">
         <palette disableTransparency="true">
             <color>000055</color>
             <color>5555aa</color>
@@ -16,7 +8,7 @@
             <color>ffffff</color>
         </palette>
     </bitmap>
-    <bitmap id="BGLeft" filename="bg_left.png" dithering="none">
+    <bitmap id="BGLeft" filename="background/bg_left.png" dithering="none">
         <palette disableTransparency="true">
             <color>000055</color>
             <color>5555aa</color>
@@ -24,7 +16,7 @@
             <color>ffffff</color>
         </palette>
     </bitmap>
-    <bitmap id="BGRight" filename="bg_right.png" dithering="none">
+    <bitmap id="BGRight" filename="background/bg_right.png" dithering="none">
         <palette disableTransparency="true">
             <color>000055</color>
             <color>5555aa</color>
@@ -32,7 +24,7 @@
             <color>ffffff</color>
         </palette>
     </bitmap>
-    <bitmap id="BGLeftBottom" filename="bg_left_bottom.png" dithering="none">
+    <bitmap id="BGLeftBottom" filename="background/bg_left_bottom.png" dithering="none">
         <palette disableTransparency="true">
             <color>000055</color>
             <color>5555aa</color>
@@ -40,7 +32,7 @@
             <color>ffffff</color>
         </palette>
     </bitmap>
-    <bitmap id="BGRightBottom" filename="bg_right_bottom.png" dithering="none">
+    <bitmap id="BGRightBottom" filename="background/bg_right_bottom.png" dithering="none">
         <palette disableTransparency="true">
             <color>000055</color>
             <color>5555aa</color>
@@ -48,7 +40,7 @@
             <color>ffffff</color>
         </palette>
     </bitmap>
-    <bitmap id="BGBottom" filename="bg_bottom.png" dithering="none">
+    <bitmap id="BGBottom" filename="background/bg_bottom.png" dithering="none">
         <palette disableTransparency="true">
             <color>000055</color>
             <color>5555aa</color>

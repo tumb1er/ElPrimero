@@ -72,6 +72,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mTileFonts;
     var mPrevFonts;
 
+    var mGaugeFont;
+    var mGaugeTiles;
+
     function initialize() {
         WatchFace.initialize();
         mTileFonts = [-1, -1];
@@ -99,6 +102,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         mMinuteTiles = WatchUi.loadResource(Rez.JsonData.minute_sides_json);
         mHourTiles = WatchUi.loadResource(Rez.JsonData.hour_sides_json);
+        mGaugeTiles = WatchUi.loadResource(Rez.JsonData.gauge_sides_json);
+
+        mGaugeFont = WatchUi.loadResource(Rez.Fonts.gauge_sides0);
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -122,6 +128,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
             if (mPrevFonts[n] != f || mTileFonts[n] == null) {
                 mTileFonts[n] = null;
+                mTileFonts[1-n] = null;
                 mTileFonts[n] = WatchUi.loadResource(fonts[f]);
                 mPrevFonts[n] = f;
             }
