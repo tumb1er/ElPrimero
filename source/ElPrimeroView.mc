@@ -58,6 +58,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     ];
 
     var mMinuteTiles;
+    var mMinuteIndex;
 
     var mHourFonts = [
         Rez.Fonts.hour_sides0,
@@ -68,12 +69,14 @@ class ElPrimeroView extends WatchUi.WatchFace {
     ];
 
     var mHourTiles;
+    var mHourIndex;
 
     var mTileFonts;
     var mPrevFonts;
 
     var mGaugeFont;
     var mGaugeTiles;
+    var mGaugeIndex;
 
     function initialize() {
         WatchFace.initialize();
@@ -100,10 +103,16 @@ class ElPrimeroView extends WatchUi.WatchFace {
             :height=>200
         });
 
-        mMinuteTiles = WatchUi.loadResource(Rez.JsonData.minute_sides_json);
-        mHourTiles = WatchUi.loadResource(Rez.JsonData.hour_sides_json);
-        mGaugeTiles = WatchUi.loadResource(Rez.JsonData.gauge_sides_json);
-
+        var json;
+        json = WatchUi.loadResource(Rez.JsonData.minute_sides_json);
+        mMinuteTiles = json[0];
+        mMinuteIndex = json[1];
+        json = WatchUi.loadResource(Rez.JsonData.hour_sides_json);
+        mHourTiles = json[0];
+        mHourIndex = json[1];
+        json = WatchUi.loadResource(Rez.JsonData.gauge_sides_json);
+        mGaugeTiles = json[0];
+        mGaugeIndex = json[1];
         mGaugeFont = WatchUi.loadResource(Rez.Fonts.gauge_sides0);
     }
 
@@ -113,10 +122,19 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function onShow() {
     }
 
+    function unpackValue(i, index) {
+        if (i == -1) {
+            return 0;
+        }
+        var shift = (i % 2)? 0: 16;
+        return (index[i / 2] >> shift) && 0x0000FFFF;
+    }
 
-    function drawHand(dc, glyph, fonts, n) {
-        for (var j = 0; j < glyph.size(); j++) {
-            var tile = glyph[j];
+    function drawHand(dc, glyph, tiles, index, fonts, n) {
+        var start = unpackValue(glyph - 1, index);
+        var end = unpackValue(glyph, index);
+        for (var j = start; j < end; j++) {
+            var tile = tiles[j];
             var b = (tile & 0x000000FF);
             var f = b % 64;
             var c = b / 64;
@@ -176,7 +194,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         bc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
 
-        drawHand(bc, mHourTiles[t], mHourFonts, 0);
+        drawHand(bc, t, mHourTiles, mHourIndex, mHourFonts, 0);
 
         angle = Math.toRadians(-time.min * 360/60);
 
@@ -195,7 +213,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         bc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
 
-        drawHand(bc, mMinuteTiles[time.min], mMinuteFonts, 1);
+        drawHand(bc, time.min, mMinuteTiles, mMinuteIndex, mMinuteFonts, 1);
 
         dc.drawBitmap(bgX, bgY, mBuffer);
 
