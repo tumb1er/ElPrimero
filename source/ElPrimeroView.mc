@@ -12,13 +12,25 @@ const bgY = 20;
 const g3X = 136 - bgX;
 const g3Y = 92 - bgY;
 
+// screen Gauge3 position;
+const g3centerX = g3X + bgX;
+const g3centerY = g3Y + bgY;
+
 // position of Gauge6 within buffer;
 const g6X = 90 - bgX;
 const g6Y = 135 - bgY;
 
+// screen Gauge6 position;
+const g6centerX = g6X + bgX;
+const g6centerY = g6Y + bgY;
+
 // position of Gauge9 within buffer;
 const g9X = 47 - bgX;
 const g9Y = 92 - bgY;
+
+// screen Gauge9 position;
+const g9centerX = g9X + bgX;
+const g9centerY = g9Y + bgY;
 
 // position of battery text within buffer;
 const batX = 164 - bgX;
@@ -71,17 +83,20 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mHourTiles;
     var mHourIndex;
 
-    var mTileFonts;
-    var mPrevFonts;
+    var mGaugeFonts = [
+        Rez.Fonts.gauge_sides0
+    ];
 
-    var mGaugeFont;
     var mGaugeTiles;
     var mGaugeIndex;
 
+    var mFontCacheIdx;
+    var mFontCache;
+
     function initialize() {
         WatchFace.initialize();
-        mTileFonts = [-1, -1];
-        mPrevFonts = [null, null];
+        mFontCacheIdx = [-1, -1, -1];
+        mFontCache = [null, null, null];
     }
 
     // Load your resources here
@@ -113,7 +128,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
         json = WatchUi.loadResource(Rez.JsonData.gauge_sides_json);
         mGaugeTiles = json[0];
         mGaugeIndex = json[1];
-        mGaugeFont = WatchUi.loadResource(Rez.Fonts.gauge_sides0);
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -130,7 +144,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         return (index[i / 2] >> shift) && 0x0000FFFF;
     }
 
-    function drawHand(dc, glyph, tiles, index, fonts, n) {
+    function drawHand(dc, glyph, tiles, index, fonts, n, dx, dy) {
         var start = unpackValue(glyph - 1, index);
         var end = unpackValue(glyph, index);
         for (var j = start; j < end; j++) {
@@ -139,16 +153,15 @@ class ElPrimeroView extends WatchUi.WatchFace {
             var f = b % 64;
             var c = b / 64;
             var char = (tile & 0x0000FF00) >> 8;
-            var x = (tile & 0x00FF0000) >> 16 - bgX;
+            var x = (tile & 0x00FF0000) >> 16 - bgX + dx;
             b = (tile & 0xFF000000) >> 24;
-            var y = b & 0xFF - bgY;
-            if (mPrevFonts[n] != f || mTileFonts[n] == null) {
-                mTileFonts[n] = null;
-                mTileFonts[1-n] = null;
-                mTileFonts[n] = WatchUi.loadResource(fonts[f]);
-                mPrevFonts[n] = f;
+            var y = b & 0xFF - bgY + dy;
+            if (mFontCache[n] != f || mFontCacheIdx[n] == null) {
+                mFontCacheIdx[n] = null;
+                mFontCacheIdx[n] = WatchUi.loadResource(fonts[f]);
+                mFontCache[n] = f;
             }
-            dc.drawText(x, y, mTileFonts[n], char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
+            dc.drawText(x, y, mFontCacheIdx[n], char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
         }
     }
 
@@ -194,7 +207,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         bc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
 
-        drawHand(bc, t, mHourTiles, mHourIndex, mHourFonts, 0);
+        drawHand(bc, t, mHourTiles, mHourIndex, mHourFonts, 0, 0, 0);
 
         angle = Math.toRadians(-time.min * 360/60);
 
@@ -213,7 +226,13 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         bc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
 
-        drawHand(bc, time.min, mMinuteTiles, mMinuteIndex, mMinuteFonts, 1);
+        drawHand(bc, time.min, mMinuteTiles, mMinuteIndex, mMinuteFonts, 1, 0, 0);
+
+        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+
+        t = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
+
+        drawHand(bc, t, mGaugeTiles, mGaugeIndex, mGaugeFonts, 2, g3centerX, g3centerY);
 
         dc.drawBitmap(bgX, bgY, mBuffer);
 
