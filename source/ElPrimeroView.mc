@@ -123,6 +123,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mStepsX;
     var mStepsY;
 
+    var mActivityScaleFont;
+    var mActivityX;
+    var mActivityY;
+
+
+
     function initialize() {
         WatchFace.initialize();
         mFontCacheIdx = [-1, -1, -1];
@@ -165,6 +171,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mStepsScaleFont = WatchUi.loadResource(Rez.Fonts.steps_scale);
         mStepsX = [8,   0,   0,  2,  11];
         mStepsY = [136, 111, 83, 56, 31];
+
+        mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
+        mActivityX = [205, 200, 193, 185];
+        mActivityY = [62,  48,  36,  25 ];
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -304,6 +314,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
         for (var i = 0; i < 5; i++) {
             bc.drawText(mStepsX[i], mStepsY[i], mStepsScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
+        }
+        for (var i = 0; i < 4; i++) {
+            bc.drawText(mActivityX[i], mActivityY[i], mActivityScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
         }
 
         dc.drawBitmap(bgX, bgY, mBuffer);

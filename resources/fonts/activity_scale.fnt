@@ -1,0 +1,8 @@
+info face="ActivityScale" size=17 bold=0 italic=0 charset=ascii unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=0,0 outline=0
+common lineHeight=17 base=0 scaleW=51 scaleH=17 pages=1 packed=0 alphaChnl=0 redChnl=0 greenChnl=0 blueChnl=0
+page id=0 file="activity_scale.png"
+chars count=4
+char id=48 x=0  y=0 width=13 height=17 xoffset=0 yoffset=0 xadvance=13 page=0 chnl=15
+char id=49 x=13 y=0 width=12 height=17 xoffset=0 yoffset=0 xadvance=12 page=0 chnl=15
+char id=50 x=25 y=0 width=13 height=17 xoffset=0 yoffset=0 xadvance=13 page=0 chnl=15
+char id=51 x=38 y=0 width=13 height=17 xoffset=0 yoffset=0 xadvance=13 page=0 chnl=15
