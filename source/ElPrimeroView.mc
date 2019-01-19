@@ -4,6 +4,7 @@ using Toybox.System;
 using Toybox.Lang;
 using Toybox.Math;
 using Toybox.SensorHistory;
+using Toybox.Time.Gregorian;
 
 // buffered background screen offset;
 const bgX = 9;
@@ -40,6 +41,14 @@ const batY = 110 - bgY;
 // position of hear rate text within buffer;
 const hrX = 75 - bgX;
 const hrY = 110 - bgY;
+
+// position of week text;
+const weekX = 69 - bgX;
+const weekY = 82 - bgY;
+
+// position of month text;
+const monthX = 169 - bgX;
+const monthY = 82 - bgY;
 
 const cAlign = Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER;
 
@@ -251,6 +260,13 @@ class ElPrimeroView extends WatchUi.WatchFace {
             t = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
             drawHand(bc, t, mGaugeTiles, mGaugeIndex, mGaugeFonts, 2, g9centerX, g9centerY);
         }
+
+        time = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
+
+        bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
+        bc.drawText(weekX, weekY, mDatesFont, time.day_of_week.toUpper(), cAlign);
+        bc.drawText(monthX, monthY, mDatesFont, time.month.toUpper(), cAlign);
+
         dc.drawBitmap(bgX, bgY, mBuffer);
 
     }
