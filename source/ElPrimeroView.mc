@@ -84,7 +84,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         Rez.Fonts.minute_sides2,
         Rez.Fonts.minute_sides3,
         Rez.Fonts.minute_sides4,
-        Rez.Fonts.minute_sides5
+        Rez.Fonts.minute_sides5,
+        Rez.Fonts.minute_sides6,
+        Rez.Fonts.minute_sides7
     ];
 
     var mMinuteTiles;
@@ -95,7 +97,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         Rez.Fonts.hour_sides1,
         Rez.Fonts.hour_sides2,
         Rez.Fonts.hour_sides3,
-        Rez.Fonts.hour_sides4
+        Rez.Fonts.hour_sides4,
+        Rez.Fonts.hour_sides5,
+        Rez.Fonts.hour_sides6
     ];
 
     var mHourTiles;
@@ -183,12 +187,14 @@ class ElPrimeroView extends WatchUi.WatchFace {
             var y = b & 0xFF - bgY + dy;
             if (mFontCache[n] != f || mFontCacheIdx[n] == null) {
                 mFontCacheIdx[n] = null;
+                System.println(Lang.format("Loading font $1$ for $2$", [f, n]));
+                var used = System.getSystemStats().usedMemory;
                 mFontCacheIdx[n] = WatchUi.loadResource(fonts[f]);
+                var stats = System.getSystemStats();
+                System.println(Lang.format("Loaded $1$ bytes, free $2$", [stats.usedMemory - used, stats.freeMemory]));
                 mFontCache[n] = f;
             }
             dc.drawText(x, y, mFontCacheIdx[n], char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
-            mFontCache[n] = null;
-            mFontCacheIdx[n] = null;
         }
     }
 
