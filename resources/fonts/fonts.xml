@@ -24,6 +24,6 @@
 
     <font id="steps_scale" filename="steps_scale.fnt" antialias="true"/>
     <font id="activity_scale" filename="activity_scale.fnt" antialias="true"/>
-    <!--<font id="move_scale" filename="move_scale.fnt" antialias="true"/>-->
+    <font id="movement_scale" filename="movement_scale.fnt" antialias="true"/>
 
 </fonts>

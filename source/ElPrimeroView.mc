@@ -127,6 +127,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mActivityX;
     var mActivityY;
 
+    var mMovementScaleFont;
+    var mMovementX;
+    var mMovementY;
+
 
 
     function initialize() {
@@ -175,6 +179,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
         mActivityX = [205, 200, 193, 185];
         mActivityY = [62,  48,  36,  25 ];
+
+        mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
+        mMovementX = [176, 196, 200, 204, 207];
+        mMovementY = [155, 147, 138, 130, 121];
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -214,6 +222,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             }
             dc.drawText(x, y, mFontCacheIdx[n], char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
         }
+        mFontCacheIdx[n] = null;
     }
 
     function onPartialUpdate(dc) {
@@ -311,12 +320,16 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.drawText(172 - bgX, 178 - bgY, mDayFont, time.day / 10, cAlign);
         bc.drawText(177 - bgX, 173 - bgY, mDayFont, time.day % 10, cAlign);
 
-        bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
+        bc.setColor(0x55AAFF, Graphics.COLOR_TRANSPARENT);
         for (var i = 0; i < 5; i++) {
             bc.drawText(mStepsX[i], mStepsY[i], mStepsScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
         }
         for (var i = 0; i < 4; i++) {
             bc.drawText(mActivityX[i], mActivityY[i], mActivityScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
+        }
+        bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
+        for (var i = 0; i < 5; i++) {
+            bc.drawText(mMovementX[i], mMovementY[i], mMovementScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
         }
 
         dc.drawBitmap(bgX, bgY, mBuffer);
