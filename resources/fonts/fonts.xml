@@ -21,4 +21,9 @@
     <font id="hour_sides6" filename="hours_sides/hour_sides6.fnt" antialias="true"/>
 
     <font id="gauge_sides0" filename="gauge_sides0.fnt" antialias="true"/>
+
+    <font id="steps_scale" filename="steps_scale.fnt" antialias="true"/>
+    <!--<font id="activity_scale" filename="activity_scale.fnt" antialias="true"/>-->
+    <!--<font id="move_scale" filename="move_scale.fnt" antialias="true"/>-->
+
 </fonts>

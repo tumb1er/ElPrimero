@@ -119,6 +119,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     var mDayFont;
 
+    var mStepsScaleFont;
+    var mStepsX;
+    var mStepsY;
+
     function initialize() {
         WatchFace.initialize();
         mFontCacheIdx = [-1, -1, -1];
@@ -157,6 +161,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
         mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
+
+        mStepsScaleFont = WatchUi.loadResource(Rez.Fonts.steps_scale);
+        mStepsX = [8,   0,   0,  2,  11];
+        mStepsY = [136, 111, 83, 56, 31];
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -292,6 +300,11 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         bc.drawText(172 - bgX, 178 - bgY, mDayFont, time.day / 10, cAlign);
         bc.drawText(177 - bgX, 173 - bgY, mDayFont, time.day % 10, cAlign);
+
+        bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
+        for (var i = 0; i < 5; i++) {
+            bc.drawText(mStepsX[i], mStepsY[i], mStepsScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
+        }
 
         dc.drawBitmap(bgX, bgY, mBuffer);
 
