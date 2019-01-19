@@ -94,6 +94,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mFontCacheIdx;
     var mFontCache;
 
+    var mDatesFont;
+
     function initialize() {
         WatchFace.initialize();
         mFontCacheIdx = [-1, -1, -1];
@@ -129,6 +131,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         json = WatchUi.loadResource(Rez.JsonData.gauge_sides_json);
         mGaugeTiles = json[0];
         mGaugeIndex = json[1];
+
+        mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
     }
 
     // Called when this View is brought to the foreground. Restore
