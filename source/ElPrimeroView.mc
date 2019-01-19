@@ -50,6 +50,14 @@ const weekY = 82 - bgY;
 const monthX = 169 - bgX;
 const monthY = 82 - bgY;
 
+// position of day first digit;
+//const day1X = 172 - bxX;
+//const day1Y = 180 - bgY;
+//
+//// position of day second digit;
+//const day2X = 180 - bxX;
+//const day2Y = 173 - bgY;
+
 const cAlign = Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER;
 
 
@@ -105,6 +113,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     var mDatesFont;
 
+    var mDayFont;
+
     function initialize() {
         WatchFace.initialize();
         mFontCacheIdx = [-1, -1, -1];
@@ -142,6 +152,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mGaugeIndex = json[1];
 
         mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
+        mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -176,7 +187,13 @@ class ElPrimeroView extends WatchUi.WatchFace {
                 mFontCache[n] = f;
             }
             dc.drawText(x, y, mFontCacheIdx[n], char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
+            mFontCache[n] = null;
+            mFontCacheIdx[n] = null;
         }
+    }
+
+    function onPartialUpdate(dc) {
+        onUpdate(dc);
     }
 
     // Update the view
@@ -266,6 +283,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
         bc.drawText(weekX, weekY, mDatesFont, time.day_of_week.toUpper(), cAlign);
         bc.drawText(monthX, monthY, mDatesFont, time.month.toUpper(), cAlign);
+
+        bc.drawText(172 - bgX, 178 - bgY, mDayFont, time.day / 10, cAlign);
+        bc.drawText(177 - bgX, 173 - bgY, mDayFont, time.day % 10, cAlign);
 
         dc.drawBitmap(bgX, bgY, mBuffer);
 
