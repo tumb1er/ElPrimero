@@ -68,7 +68,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mBGPositions = [
         [0,0],
         [0,68],
-        [186,68],
+        [184,68],
         [0,134],
         [154,134],
         [47,163]
