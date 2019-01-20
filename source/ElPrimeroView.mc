@@ -61,7 +61,16 @@ const monthY = 82 - bgY;
 const cAlign = Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER;
 
 
+/**
+Watch view.
+ */
 class ElPrimeroView extends WatchUi.WatchFace {
+
+    var mHourHand;
+    var mMinuteHand;
+    var mGaugeHand;
+
+
     var mSmallyFont;
     var mIconsFont;
 
@@ -78,43 +87,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mGauge6;
     var mGauge9;
     var mBuffer;
-
-    var mMinuteFonts = [
-        Rez.Fonts.minute_sides0,
-        Rez.Fonts.minute_sides1,
-        Rez.Fonts.minute_sides2,
-        Rez.Fonts.minute_sides3,
-        Rez.Fonts.minute_sides4,
-        Rez.Fonts.minute_sides5,
-        Rez.Fonts.minute_sides6,
-        Rez.Fonts.minute_sides7
-    ];
-
-    var mMinuteTiles;
-    var mMinuteIndex;
-
-    var mHourFonts = [
-        Rez.Fonts.hour_sides0,
-        Rez.Fonts.hour_sides1,
-        Rez.Fonts.hour_sides2,
-        Rez.Fonts.hour_sides3,
-        Rez.Fonts.hour_sides4,
-        Rez.Fonts.hour_sides5,
-        Rez.Fonts.hour_sides6
-    ];
-
-    var mHourTiles;
-    var mHourIndex;
-
-    var mGaugeFonts = [
-        Rez.Fonts.gauge_sides0
-    ];
-
-    var mGaugeTiles;
-    var mGaugeIndex;
-
-    var mFontCacheIdx;
-    var mFontCache;
 
     var mDatesFont;
 
@@ -136,12 +108,44 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     function initialize() {
         WatchFace.initialize();
-        mFontCacheIdx = [-1, -1, -1];
-        mFontCache = [null, null, null];
     }
 
     // Load your resources here
     function onLayout(dc) {
+        mHourHand = new Hand(
+            Rez.JsonData.hour_sides_json,
+            [
+                    Rez.Fonts.hour_sides0,
+                    Rez.Fonts.hour_sides1,
+                    Rez.Fonts.hour_sides2,
+                    Rez.Fonts.hour_sides3,
+                    Rez.Fonts.hour_sides4,
+                    Rez.Fonts.hour_sides5,
+                    Rez.Fonts.hour_sides6
+            ]
+        );
+
+        mMinuteHand = new Hand(
+            Rez.JsonData.minute_sides_json,
+            [
+                Rez.Fonts.minute_sides0,
+                Rez.Fonts.minute_sides1,
+                Rez.Fonts.minute_sides2,
+                Rez.Fonts.minute_sides3,
+                Rez.Fonts.minute_sides4,
+                Rez.Fonts.minute_sides5,
+                Rez.Fonts.minute_sides6,
+                Rez.Fonts.minute_sides7
+            ]
+            );
+
+        mGaugeHand = new Hand(
+            Rez.JsonData.gauge_sides_json,
+            [
+                Rez.Fonts.gauge_sides0
+            ]
+         );
+
         mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
         mIconsFont = WatchUi.loadResource(Rez.Fonts.Icons);
         mBackgrounds = [
@@ -159,17 +163,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
             :width=>218,
             :height=>200
         });
-
-        var json;
-        json = WatchUi.loadResource(Rez.JsonData.minute_sides_json);
-        mMinuteTiles = json[0];
-        mMinuteIndex = json[1];
-        json = WatchUi.loadResource(Rez.JsonData.hour_sides_json);
-        mHourTiles = json[0];
-        mHourIndex = json[1];
-        json = WatchUi.loadResource(Rez.JsonData.gauge_sides_json);
-        mGaugeTiles = json[0];
-        mGaugeIndex = json[1];
 
         mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
         mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
@@ -193,40 +186,32 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function onShow() {
     }
 
-    function unpackValue(i, index) {
-        if (i == -1) {
-            return 0;
-        }
-        var shift = (i % 2)? 0: 16;
-        return (index[i / 2] >> shift) && 0x0000FFFF;
-    }
+    /**
+    Draws hand with and it decorations
 
-    function drawHand(dc, glyph, tiles, index, fonts, n, dx, dy) {
-        var start = unpackValue(glyph - 1, index);
-        var end = unpackValue(glyph, index);
-        for (var j = start; j < end; j++) {
-            var tile = tiles[j];
-            var b = (tile & 0x000000FF);
-            var f = b % 64;
-            var c = b / 64;
-            var char = (tile & 0x0000FF00) >> 8;
-            var x = (tile & 0x00FF0000) >> 16 - bgX + dx;
-            b = (tile & 0xFF000000) >> 24;
-            var y = b & 0xFF - bgY + dy;
-            if (mFontCache[n] != f || mFontCacheIdx[n] == null) {
-                mFontCacheIdx[n] = null;
-                System.println(Lang.format("Loading font $1$ for $2$", [f, n]));
-                var used = System.getSystemStats().usedMemory;
-                mFontCacheIdx[n] = WatchUi.loadResource(fonts[f]);
-                var stats = System.getSystemStats();
-                System.println(Lang.format("Loaded $1$ bytes, free $2$", [stats.usedMemory - used, stats.freeMemory]));
-                mFontCache[n] = f;
-            }
-            dc.drawText(x, y, mFontCacheIdx[n], char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
+    dc - device context
+    hand - HandView instance
+    color - color for hand
+    paths - array of RadialPath instances
+    colors - corresponding colors
+    pos - hand position (0-59)
+    offset - int32-encoded offsets for hand and rects position
+    hx, hy - correction for hand tiles position
+    cx, cy - rotation center
+     */
+    function drawHand(dc, hand, color, width, coords, colors, pos, offset) {
+        var hx = (offset >> 24) & 0xFF;
+        var hy = (offset >> 16) & 0xFF;
+        var cx = (offset >> 8) & 0xFF;
+        var cy = offset & 0xFF;
+        var r = Math.toRadians(pos * 6);
+        for (var i = 0; i < colors.size(); i++) {
+            dc.setColor(colors[i], Graphics.COLOR_TRANSPARENT);
+            drawRadialRect(dc, r, width, coords[i], coords[i + 1], cx - bgX, cy - bgY);
         }
-        mFontCacheIdx[n] = null;
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
+        hand.draw(dc, pos, hx, hy);
     }
-
 
     // Update the view
     function onUpdate(dc) {
@@ -259,67 +244,34 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         var t = (time.hour % 12) * 5 + time.min / 12;
 
-        var angle = Math.toRadians(-t * 360/60);
+        drawHand(bc, mHourHand, 0xAAAAAA, 3, [-15, 20, 69], [0x000000, 0xFFFFFF], t, 30841); // 0 0 0 1
 
+        t = time.min;
 
-        bc.setPenWidth(8);
+        drawHand(bc, mMinuteHand, 0xAAAAAA, 2, [-15, 45, 93], [0x000000, 0xFFFFFF], t, 30841); // 0 0 0 1
 
-        bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
-        bc.drawLine(120 - bgX + 15 * Math.sin(angle),
-                    120 - bgY + 15 * Math.cos(angle),
-                    120 - bgX - 20 * Math.sin(angle),
-                    120 - bgY - 20 * Math.cos(angle));
-
-        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
-        bc.drawLine(120 - bgX - 20 * Math.sin(angle),
-                    120 - bgY - 20 * Math.cos(angle),
-                    120 - bgX - 70 * Math.sin(angle),
-                    120 - bgY - 70 * Math.cos(angle));
-
-        bc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
-
-        drawHand(bc, t, mHourTiles, mHourIndex, mHourFonts, 0, 0, 0);
-
-        angle = Math.toRadians(-time.min * 360/60);
-
-        bc.setPenWidth(5);
-        bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
-        bc.drawLine(120 - bgX + 15 * Math.sin(angle),
-                    120 - bgY + 15 * Math.cos(angle),
-                    120 - bgX - 45 * Math.sin(angle),
-                    120 - bgY - 45 * Math.cos(angle));
-
-        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
-        bc.drawLine(120 - bgX - 45 * Math.sin(angle),
-                    120 - bgY - 45 * Math.cos(angle),
-                    120 - bgX - 95 * Math.sin(angle),
-                    120 - bgY - 95 * Math.cos(angle));
-
-        bc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
-
-        drawHand(bc, time.min, mMinuteTiles, mMinuteIndex, mMinuteFonts, 1, 0, 0);
-
-        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
-
+        // Draw battery gauge;
         t = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
+        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0x00FF00], t, -2007194504); // 136 92 44 0
 
-        drawHand(bc, t, mGaugeTiles, mGaugeIndex, mGaugeFonts, 2, g3centerX, g3centerY);
-
+        // Draw heartBeat gauge;
         if (heartBeat != null) {
             t = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
-            drawHand(bc, t, mGaugeTiles, mGaugeIndex, mGaugeFonts, 2, g9centerX, g9centerY);
+            drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], t, 794577784); // 47 92 -45 0
         }
 
+        // Draw UTC time gauge;
         var now = Time.now();
+        var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
         time = Gregorian.info(now, Time.FORMAT_MEDIUM);
+        var utcHour = (utc.hour % 12) * 5 + utc.min / 12;
+        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0x000000], utcHour, 1518827684); // 90 135 0 44
+
         bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
         bc.drawText(weekX, weekY, mDatesFont, time.day_of_week.toUpper(), cAlign);
         bc.drawText(monthX, monthY, mDatesFont, time.month.toUpper(), cAlign);
 
-        var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
-        var utcHour = (utc.hour % 12) * 5 + utc.min / 12;
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
-        drawHand(bc, utcHour, mGaugeTiles, mGaugeIndex, mGaugeFonts, 2, g6centerX, g6centerY);
 
         bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
         bc.drawText(172 - bgX, 178 - bgY, mDayFont, time.day / 10, cAlign);
