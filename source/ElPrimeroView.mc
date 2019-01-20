@@ -227,9 +227,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mFontCacheIdx[n] = null;
     }
 
-    function onPartialUpdate(dc) {
-        onUpdate(dc);
-    }
 
     // Update the view
     function onUpdate(dc) {
@@ -313,12 +310,18 @@ class ElPrimeroView extends WatchUi.WatchFace {
             drawHand(bc, t, mGaugeTiles, mGaugeIndex, mGaugeFonts, 2, g9centerX, g9centerY);
         }
 
-        time = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
-
+        var now = Time.now();
+        time = Gregorian.info(now, Time.FORMAT_MEDIUM);
         bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
         bc.drawText(weekX, weekY, mDatesFont, time.day_of_week.toUpper(), cAlign);
         bc.drawText(monthX, monthY, mDatesFont, time.month.toUpper(), cAlign);
 
+        var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
+        var utcHour = (utc.hour % 12) * 5 + utc.min / 12;
+        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+        drawHand(bc, utcHour, mGaugeTiles, mGaugeIndex, mGaugeFonts, 2, g6centerX, g6centerY);
+
+        bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
         bc.drawText(172 - bgX, 178 - bgY, mDayFont, time.day / 10, cAlign);
         bc.drawText(177 - bgX, 173 - bgY, mDayFont, time.day % 10, cAlign);
 
@@ -337,9 +340,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         var s = "ZABSN";
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
         for (var i = 0; i < 5; i++) {
-            var a = Math.toRadians(i * 360 / 5);
-            var x = 120 - bgX + 11 * Math.sin(-a);
-            var y = 165 - bgY + 11 * Math.cos(-a);
+            var a = Math.toRadians(utcHour * 6 - 120 + i * 360 / 6);
+            var x = 120 - bgX + 12 * Math.sin(-a);
+            var y = 165 - bgY + 12 * Math.cos(-a);
             bc.drawText(x, y, mIconsFont, s.substring(i, i + 1), cAlign);
 
         }
