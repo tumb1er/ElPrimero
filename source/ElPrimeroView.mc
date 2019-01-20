@@ -63,6 +63,7 @@ const cAlign = Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER;
 
 class ElPrimeroView extends WatchUi.WatchFace {
     var mSmallyFont;
+    var mIconsFont;
 
     var mBackgrounds;
     var mBGPositions = [
@@ -142,6 +143,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // Load your resources here
     function onLayout(dc) {
         mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
+        mIconsFont = WatchUi.loadResource(Rez.Fonts.Icons);
         mBackgrounds = [
             WatchUi.loadResource(Rez.Drawables.BGTop),
             WatchUi.loadResource(Rez.Drawables.BGLeft),
@@ -330,6 +332,16 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
         for (var i = 0; i < 5; i++) {
             bc.drawText(mMovementX[i], mMovementY[i], mMovementScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
+        }
+
+        var s = "ZABSN";
+        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+        for (var i = 0; i < 5; i++) {
+            var a = Math.toRadians(i * 360 / 5);
+            var x = 120 - bgX + 11 * Math.sin(-a);
+            var y = 165 - bgY + 11 * Math.cos(-a);
+            bc.drawText(x, y, mIconsFont, s.substring(i, i + 1), cAlign);
+
         }
 
         dc.drawBitmap(bgX, bgY, mBuffer);

@@ -1,5 +1,6 @@
 <fonts>
     <font id="Smally" filename="smally_8.fnt" antialias="true"/>
+    <font id="Icons" filename="notifications.fnt" antialias="true"/>
     <font id="Date" filename="date_5.fnt" antialias="true"/>
     <font id="Day" filename="day_12.fnt" antialias="true"/>
 
