@@ -206,86 +206,101 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     // Update the view
     function onUpdate(dc) {
+        // Prepare all data
         var time = System.getClockTime();
         var stats = System.getSystemStats();
         var heartBeatIter = SensorHistory.getHeartRateHistory({});
         var heartBeatSample = heartBeatIter.next();
         var heartBeat = null;
-        dc.setColor(0xFFFFFF, 0x000055);
-        dc.clear();
+        if (heartBeatSample != null) {
+            heartBeat = heartBeatSample.data;
+        }
+        var pos;
+        var now = Time.now();
+        time = Gregorian.info(now, Time.FORMAT_MEDIUM);
+
+        var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
+        utc = (utc.hour % 12) * 5 + utc.min / 12;
+
         var bc = mBuffer.getDc();
+        // Drawing clock backgrounds
         bc.setColor(0xFFFFFF, 0x000055);
         bc.clear();
         for (var i=0; i< cBackgrounds.size(); i++) {
             bc.drawBitmap(cBackgroundsX[i], cBackgroundsY[i], cBackgrounds[i]);
         }
 
+        // Drawing texts
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+        // Battery
         bc.drawText(batX, batY, mSmallyFont, stats.battery.toNumber(), cAlign);
-        if (heartBeatSample != null) {
-            heartBeat = heartBeatSample.data;
-            if (heartBeat != null) {
-                bc.drawText(hrX, hrY, mSmallyFont, heartBeat.toString(), cAlign);
-            }
-        }
-
-        var t = (time.hour % 12) * 5 + time.min / 12;
-
-        drawHand(bc, mHourHand, 0xAAAAAA, 3, [-15, 20, 69], [0x000000, 0xFFFFFF], t, 30841); // 0 0 0 1
-
-        t = time.min;
-
-        drawHand(bc, mMinuteHand, 0xAAAAAA, 2, [-15, 45, 93], [0x000000, 0xFFFFFF], t, 30841); // 0 0 0 1
-
-        // Draw battery gauge;
-        t = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
-        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0x00FF00], t, -2007194504); // 136 92 44 0
-
-        // Draw heartBeat gauge;
+        // Heartbeat
         if (heartBeat != null) {
-            t = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
-            drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], t, 794577784); // 47 92 -45 0
+            bc.drawText(hrX, hrY, mSmallyFont, heartBeat.toString(), cAlign);
+        }
+        // Icons
+        var s = "ZABSN";
+        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+        for (var i = 0; i < 5; i++) {
+            var a = Math.toRadians(utc * 6 - 120 + i * 360 / 6);
+            var x = 120 - bgX + 12 * Math.sin(-a);
+            var y = 165 - bgY + 12 * Math.cos(-a);
+            bc.drawText(x, y, mIconsFont, s.substring(i, i + 1), cAlign);
         }
 
-        // Draw UTC time gauge;
-        var now = Time.now();
-        var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
-        time = Gregorian.info(now, Time.FORMAT_MEDIUM);
-        var utcHour = (utc.hour % 12) * 5 + utc.min / 12;
-        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0x000000], utcHour, 1518827684); // 90 135 0 44
-
-        bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
-        bc.drawText(weekX, weekY, mDatesFont, time.day_of_week.toUpper(), cAlign);
-        bc.drawText(monthX, monthY, mDatesFont, time.month.toUpper(), cAlign);
-
-        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
-
+        // Day of month
         bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
         bc.drawText(172 - bgX, 178 - bgY, mDayFont, time.day / 10, cAlign);
         bc.drawText(177 - bgX, 173 - bgY, mDayFont, time.day % 10, cAlign);
+        // Day of weeek
+        bc.drawText(weekX, weekY, mDatesFont, time.day_of_week.toUpper(), cAlign);
+        // Month
+        bc.drawText(monthX, monthY, mDatesFont, time.month.toUpper(), cAlign);
 
+        // Drawing scales
+
+        // Steps
         bc.setColor(0x55AAFF, Graphics.COLOR_TRANSPARENT);
         for (var i = 0; i < 5; i++) {
             bc.drawText(mStepsX[i], mStepsY[i], mStepsScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
         }
+        // Activity
         for (var i = 0; i < 4; i++) {
             bc.drawText(mActivityX[i], mActivityY[i], mActivityScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
         }
+        // Movement
         bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
         for (var i = 0; i < 5; i++) {
             bc.drawText(mMovementX[i], mMovementY[i], mMovementScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
         }
 
-        var s = "ZABSN";
-        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
-        for (var i = 0; i < 5; i++) {
-            var a = Math.toRadians(utcHour * 6 - 120 + i * 360 / 6);
-            var x = 120 - bgX + 12 * Math.sin(-a);
-            var y = 165 - bgY + 12 * Math.cos(-a);
-            bc.drawText(x, y, mIconsFont, s.substring(i, i + 1), cAlign);
+        // Drawing gauge hands
 
+        // Battery;
+        pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
+        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], pos, -2007194504); // 136 92 44 0
+
+        // Heartbeat;
+        if (heartBeat != null) {
+            pos = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
+            drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], pos, 794577784); // 47 92 -45 0
         }
 
+        // UTC time gauge;
+        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0x000000], utc, 1518827684); // 90 135 0 44
+
+        // Drawing clock hands
+
+        // Hour hand
+        pos = (time.hour % 12) * 5 + time.min / 12;
+        drawHand(bc, mHourHand, 0xAAAAAA, 3, [-15, 20, 69], [0x000000, 0xFFFFFF], pos, 30841); // 0 0 0 1
+        // Minute hand
+        pos = time.min;
+        drawHand(bc, mMinuteHand, 0xAAAAAA, 2, [-15, 45, 93], [0x000000, 0xFFFFFF], pos, 30841); // 0 0 0 1
+
+        // Drawing image to device context
+        dc.setColor(0xFFFFFF, 0x000055);
+        dc.clear();
         dc.drawBitmap(bgX, bgY, mBuffer);
 
     }
