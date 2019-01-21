@@ -26,7 +26,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mIconsFont;
 
     var cBackgrounds;
-    var cBackgroundsX = [0, 0,  184, 0,   154, 47,  127, 81,  38];
+    var cBackgroundsX = [0, 0,  186, 0,   154, 47,  127, 81,  38];
     var cBackgroundsY = [0, 68, 68,  134, 134, 163, 72,  115, 72];
     var mBuffer;
 
