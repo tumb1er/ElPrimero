@@ -43,7 +43,7 @@ const hrX = 75 - bgX;
 const hrY = 110 - bgY;
 
 // position of week text;
-const weekX = 69 - bgX;
+const weekX = 70 - bgX;
 const weekY = 82 - bgY;
 
 // position of month text;

@@ -11,6 +11,7 @@ class Hand {
     var mIndex;          // tiles index (16bit end positions in tiles data for each glyph)
     var mFont;           // cached font resource
     var mCurrentFontIdx; // current cached font number
+    var max;
 
     /**
     jsonId - Rez.jsonData identifier for tile data
@@ -25,6 +26,7 @@ class Hand {
 
         mFont = null;
         mCurrentFontIdx = -1;
+        max = 0;
     }
 
     /**
@@ -75,7 +77,11 @@ class Hand {
             var used = System.getSystemStats().usedMemory;
             mFont = WatchUi.loadResource(mFontList[f]);
             var stats = System.getSystemStats();
-            System.println(Lang.format("Loaded $1$ bytes, free $2$", [stats.usedMemory - used, stats.freeMemory]));
+            var fontSize = stats.usedMemory - used;
+            if (max < fontSize) {
+                max = fontSize;
+            }
+            System.println(Lang.format("Loaded $1$ bytes, free $2$ (max $3$)", [fontSize, stats.freeMemory, max]));
             mCurrentFontIdx = f;
         }
         return mFont;
