@@ -9,57 +9,9 @@ using Toybox.Time.Gregorian;
 // buffered background screen offset;
 const bgX = 9;
 const bgY = 20;
-//
-//// position of Gauge3 within buffer;
-//const g3X = 136 - bgX;
-//const g3Y = 92 - bgY;
-//
-//// screen Gauge3 position;
-//const g3centerX = g3X + bgX;
-//const g3centerY = g3Y + bgY;
-//
-//// position of Gauge6 within buffer;
-//const g6X = 90 - bgX;
-//const g6Y = 135 - bgY;
-//
-//// screen Gauge6 position;
-//const g6centerX = g6X + bgX;
-//const g6centerY = g6Y + bgY;
-//
-//// position of Gauge9 within buffer;
-//const g9X = 47 - bgX;
-//const g9Y = 92 - bgY;
-//
-//// screen Gauge9 position;
-//const g9centerX = g9X + bgX;
-//const g9centerY = g9Y + bgY;
 
-// position of battery text within buffer;
-const batX = 164 - bgX;
-const batY = 110 - bgY;
-
-// position of hear rate text within buffer;
-const hrX = 75 - bgX;
-const hrY = 110 - bgY;
-
-// position of week text;
-const weekX = 70 - bgX;
-const weekY = 82 - bgY;
-
-// position of month text;
-const monthX = 169 - bgX;
-const monthY = 82 - bgY;
-
-// position of day first digit;
-//const day1X = 172 - bxX;
-//const day1Y = 180 - bgY;
-//
-//// position of day second digit;
-//const day2X = 180 - bxX;
-//const day2Y = 173 - bgY;
-
+// text align - center vertical and horizontal
 const cAlign = Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER;
-
 
 /**
 Watch view.
@@ -69,7 +21,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mHourHand;
     var mMinuteHand;
     var mGaugeHand;
-
 
     var mSmallyFont;
     var mIconsFont;
@@ -84,18 +35,16 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mDayFont;
 
     var mStepsScaleFont;
-    var mStepsX;
-    var mStepsY;
+    var mStepsX = [8,   0,   0,  2,  11];
+    var mStepsY = [136, 111, 83, 56, 31];
 
     var mActivityScaleFont;
-    var mActivityX;
-    var mActivityY;
+    var mActivityX = [205, 200, 193, 185];
+    var mActivityY = [62,  48,  36,  25 ];
 
     var mMovementScaleFont;
-    var mMovementX;
-    var mMovementY;
-
-
+    var mMovementX = [176, 196, 200, 204, 207];
+    var mMovementY = [155, 147, 138, 130, 121];
 
     function initialize() {
         WatchFace.initialize();
@@ -159,16 +108,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
 
         mStepsScaleFont = WatchUi.loadResource(Rez.Fonts.steps_scale);
-        mStepsX = [8,   0,   0,  2,  11];
-        mStepsY = [136, 111, 83, 56, 31];
 
         mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
-        mActivityX = [205, 200, 193, 185];
-        mActivityY = [62,  48,  36,  25 ];
 
         mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
-        mMovementX = [176, 196, 200, 204, 207];
-        mMovementY = [155, 147, 138, 130, 121];
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -233,10 +176,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Drawing texts
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
         // Battery
-        bc.drawText(batX, batY, mSmallyFont, stats.battery.toNumber(), cAlign);
+        bc.drawText(155, 90, mSmallyFont, stats.battery.toNumber(), cAlign);
         // Heartbeat
         if (heartBeat != null) {
-            bc.drawText(hrX, hrY, mSmallyFont, heartBeat.toString(), cAlign);
+            bc.drawText(66, 90, mSmallyFont, heartBeat.toString(), cAlign);
         }
         // Icons
         var s = "ZABSN";
@@ -253,9 +196,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.drawText(172 - bgX, 178 - bgY, mDayFont, time.day / 10, cAlign);
         bc.drawText(177 - bgX, 173 - bgY, mDayFont, time.day % 10, cAlign);
         // Day of weeek
-        bc.drawText(weekX, weekY, mDatesFont, time.day_of_week.toUpper(), cAlign);
+        bc.drawText(61, 62, mDatesFont, time.day_of_week.toUpper(), cAlign);
         // Month
-        bc.drawText(monthX, monthY, mDatesFont, time.month.toUpper(), cAlign);
+        bc.drawText(160, 62, mDatesFont, time.month.toUpper(), cAlign);
 
         // Drawing scales
 
