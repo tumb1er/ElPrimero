@@ -120,7 +120,64 @@
         </palette>
     </bitmap>
 
-    <bitmap id="Gauge9" filename="gauge_9.png" dithering="none">
+    <bitmap id="G9Top" filename="gauge9/g9_top.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>000055</color>
+            <color>550055</color>
+            <color>aa0000</color>
+            <color>5500aa</color>
+            <color>ff0000</color>
+            <color>5555aa</color>
+            <color>5555ff</color>
+            <color>ff4444</color>
+            <color>55aaff</color>
+            <color>aaaaaa</color>
+            <color>aaaaff</color>
+            <color>55ffff</color>
+            <color>aaffff</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
+    <bitmap id="G9Left" filename="gauge9/g9_left.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>000055</color>
+            <color>550055</color>
+            <color>aa0000</color>
+            <color>5500aa</color>
+            <color>ff0000</color>
+            <color>5555aa</color>
+            <color>5555ff</color>
+            <color>ff4444</color>
+            <color>55aaff</color>
+            <color>aaaaaa</color>
+            <color>aaaaff</color>
+            <color>55ffff</color>
+            <color>aaffff</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
+    <bitmap id="G9Right" filename="gauge9/g9_right.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>000055</color>
+            <color>550055</color>
+            <color>aa0000</color>
+            <color>5500aa</color>
+            <color>ff0000</color>
+            <color>5555aa</color>
+            <color>5555ff</color>
+            <color>ff4444</color>
+            <color>55aaff</color>
+            <color>aaaaaa</color>
+            <color>aaaaff</color>
+            <color>55ffff</color>
+            <color>aaffff</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
+    <bitmap id="G9Bottom" filename="gauge9/g9_bottom.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
             <color>000055</color>
