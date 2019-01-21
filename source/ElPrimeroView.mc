@@ -26,6 +26,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mIconsFont;
     var mDatesFont;
     var mDayFont;
+    var mGaugeCenterFont;
 
     var cCoords; // int32-packed coords (even at high word, odd at low word)
     var cCommonPos = 0; // offset of coords arrays in cCoords
@@ -119,11 +120,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
         mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
-
+        mGaugeCenterFont = WatchUi.loadResource(Rez.Fonts.gauge_center);
         mStepsScaleFont = WatchUi.loadResource(Rez.Fonts.steps_scale);
-
         mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
-
         mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
 
         cCoords = WatchUi.loadResource(Rez.JsonData.coords_json);
@@ -255,15 +254,18 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Battery;
         pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
         drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], pos, -2007194504); // 136 92 44 0
+        bc.drawText(164 - bgX, 120 - bgY, mGaugeCenterFont, "0", cAlign);
 
         // Heartbeat;
         if (heartBeat != null) {
             pos = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
             drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], pos, 794577784); // 47 92 -45 0
+            bc.drawText(75 - bgX, 120 - bgY, mGaugeCenterFont, "0", cAlign);
         }
 
         // UTC time gauge;
-        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0x000000], utc, 1518827684); // 90 135 0 44
+        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0x000000], utc, 1552416812); // 92 136 0 44
+        bc.drawText(120 - bgX, 164 - bgY, mGaugeCenterFont, "0", cAlign);
 
         // Drawing clock hands
 
