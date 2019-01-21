@@ -48,6 +48,12 @@
             <color>ffffff</color>
         </palette>
     </bitmap>
+    <bitmap id="GaugeBG" filename="gauge_bg.png" dithering="none">
+        <palette disableTransparency="true">
+            <color>000000</color>
+            <color>000055</color>
+        </palette>
+    </bitmap>
     <bitmap id="Gauge3" filename="gauge_3.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
@@ -64,7 +70,8 @@
             <color>ffffff</color>
         </palette>
     </bitmap>
-    <bitmap id="Gauge6" filename="gauge_6.png" dithering="none">
+
+    <bitmap id="G6Top" filename="gauge6/g6_top.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
             <color>000055</color>
@@ -76,6 +83,43 @@
             <color>ffffff</color>
         </palette>
     </bitmap>
+    <bitmap id="G6Bottom" filename="gauge6/g6_bottom.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>000055</color>
+            <color>550055</color>
+            <color>555555</color>
+            <color>5555aa</color>
+            <color>aaaaaa</color>
+            <color>aaaaff</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
+    <bitmap id="G6Left" filename="gauge6/g6_left.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>000055</color>
+            <color>550055</color>
+            <color>555555</color>
+            <color>5555aa</color>
+            <color>aaaaaa</color>
+            <color>aaaaff</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
+    <bitmap id="G6Right" filename="gauge6/g6_right.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>000055</color>
+            <color>550055</color>
+            <color>555555</color>
+            <color>5555aa</color>
+            <color>aaaaaa</color>
+            <color>aaaaff</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
+
     <bitmap id="Gauge9" filename="gauge_9.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>

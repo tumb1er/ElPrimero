@@ -26,8 +26,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mIconsFont;
 
     var cBackgrounds;
-    var cBackgroundsX = [0, 0,  186, 0,   154, 47,  127, 81,  38];
-    var cBackgroundsY = [0, 68, 68,  134, 134, 163, 72,  115, 72];
+
+    var cCommonGaugeBG;
+    var cCommonX = [92];
+    var cCommonY = [126];
+    var cBackgroundsX = [0, 0,  186, 0,   154, 47,  127, 88,  81,  130, 88,  38];
+    var cBackgroundsY = [0, 68, 68,  134, 134, 163, 72,  115, 126, 126, 163, 72];
     var mBuffer;
 
     var mDatesFont;
@@ -96,9 +100,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
             WatchUi.loadResource(Rez.Drawables.BGRightBottom),
             WatchUi.loadResource(Rez.Drawables.BGBottom),
             WatchUi.loadResource(Rez.Drawables.Gauge3),
-            WatchUi.loadResource(Rez.Drawables.Gauge6),
+
+            WatchUi.loadResource(Rez.Drawables.G6Top),
+            WatchUi.loadResource(Rez.Drawables.G6Left),
+            WatchUi.loadResource(Rez.Drawables.G6Right),
+            WatchUi.loadResource(Rez.Drawables.G6Bottom),
+
             WatchUi.loadResource(Rez.Drawables.Gauge9)
         ];
+
+        cCommonGaugeBG = WatchUi.loadResource(Rez.Drawables.GaugeBG);
+
         mBuffer = new Graphics.BufferedBitmap({
             :width=>218,
             :height=>200
@@ -169,6 +181,11 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Drawing clock backgrounds
         bc.setColor(0xFFFFFF, 0x000055);
         bc.clear();
+
+        for (var i=0; i < cCommonX.size(); i++) {
+            bc.drawBitmap(cCommonX[i], cCommonY[i], cCommonGaugeBG);
+        }
+
         for (var i=0; i< cBackgrounds.size(); i++) {
             bc.drawBitmap(cBackgroundsX[i], cBackgroundsY[i], cBackgrounds[i]);
         }
