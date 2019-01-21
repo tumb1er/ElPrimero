@@ -11,13 +11,13 @@ class Hand {
     var mIndex;          // tiles index (16bit end positions in tiles data for each glyph)
     var mFont;           // cached font resource
     var mCurrentFontIdx; // current cached font number
-    var max;
+    var mCache;          // cache loaded font
 
     /**
     jsonId - Rez.jsonData identifier for tile data
     fontsList - list of Rez.Fonts identifiers
      */
-    function initialize(jsonId, fontsList) {
+    function initialize(jsonId, fontsList, cache) {
         var json = WatchUi.loadResource(jsonId);
         mTiles = json[0];
         mIndex = json[1];
@@ -26,7 +26,7 @@ class Hand {
 
         mFont = null;
         mCurrentFontIdx = -1;
-        max = 0;
+        mCache = cache;
     }
 
     /**
@@ -60,8 +60,9 @@ class Hand {
             dc.drawText(x, y, getFont(f), char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
         }
 
-        // FIXME: fix OOM
-        mFont = null;
+        if (!mCache) {
+            mFont = null;
+        }
     }
 
     /**
@@ -78,10 +79,7 @@ class Hand {
             mFont = WatchUi.loadResource(mFontList[f]);
             var stats = System.getSystemStats();
             var fontSize = stats.usedMemory - used;
-            if (max < fontSize) {
-                max = fontSize;
-            }
-            System.println(Lang.format("Loaded $1$ bytes, free $2$ (max $3$)", [fontSize, stats.freeMemory, max]));
+            System.println(Lang.format("Loaded $1$ bytes, free $2$", [fontSize, stats.freeMemory]));
             mCurrentFontIdx = f;
         }
         return mFont;

@@ -61,7 +61,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
                     Rez.Fonts.hour_sides4,
                     Rez.Fonts.hour_sides5,
                     Rez.Fonts.hour_sides6
-            ]
+            ],
+            false
         );
 
         mMinuteHand = new Hand(
@@ -75,15 +76,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
                 Rez.Fonts.minute_sides5,
                 Rez.Fonts.minute_sides6,
                 Rez.Fonts.minute_sides7
-            ]
-            );
+            ],
+            true
+        );
 
         mGaugeHand = new Hand(
             Rez.JsonData.gauge_sides_json,
             [
                 Rez.Fonts.gauge_sides0
-            ]
-         );
+            ],
+            true
+        );
 
         mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
         mIconsFont = WatchUi.loadResource(Rez.Fonts.Icons);
