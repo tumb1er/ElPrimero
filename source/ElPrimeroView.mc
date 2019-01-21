@@ -28,10 +28,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var cBackgrounds;
 
     var cCommonGaugeBG;
-    var cCommonX = [92, 45];
-    var cCommonY = [126, 82];
-    var cBackgroundsX = [0, 0,  186, 0,   154, 47,  127, 88,  81,  130, 88,  43, 38, 86, 44];
-    var cBackgroundsY = [0, 68, 68,  134, 134, 163, 72,  115, 126, 126, 163, 72, 84, 84, 116];
+    var cCommonX = [92, 45, 134];
+    var cCommonY = [126, 82, 83];
+    var cBackgroundsX = [0, 0,  186, 0,   154, 47,  133, 127, 171, 133, 88,  81,  130, 88,  43, 38, 86, 44];
+    var cBackgroundsY = [0, 68, 68,  134, 134, 163, 72,  83,  83,  117, 115, 126, 126, 163, 72, 84, 84, 116];
     var mBuffer;
 
     var mDatesFont;
@@ -99,7 +99,11 @@ class ElPrimeroView extends WatchUi.WatchFace {
             WatchUi.loadResource(Rez.Drawables.BGLeftBottom),
             WatchUi.loadResource(Rez.Drawables.BGRightBottom),
             WatchUi.loadResource(Rez.Drawables.BGBottom),
-            WatchUi.loadResource(Rez.Drawables.Gauge3),
+
+            WatchUi.loadResource(Rez.Drawables.G3Top),
+            WatchUi.loadResource(Rez.Drawables.G3Left),
+            WatchUi.loadResource(Rez.Drawables.G3Right),
+            WatchUi.loadResource(Rez.Drawables.G3Bottom),
 
             WatchUi.loadResource(Rez.Drawables.G6Top),
             WatchUi.loadResource(Rez.Drawables.G6Left),

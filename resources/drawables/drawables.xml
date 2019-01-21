@@ -54,7 +54,56 @@
             <color>000055</color>
         </palette>
     </bitmap>
-    <bitmap id="Gauge3" filename="gauge_3.png" dithering="none">
+
+    <bitmap id="G3Top" filename="gauge3/g3_top.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>000055</color>
+            <color>550000</color>
+            <color>550055</color>
+            <color>5500aa</color>
+            <color>aa0000</color>
+            <color>aa0055</color>
+            <color>555555</color>
+            <color>5555aa</color>
+            <color>aaaaaa</color>
+            <color>aaaaff</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
+    <bitmap id="G3Left" filename="gauge3/g3_left.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>000055</color>
+            <color>550000</color>
+            <color>550055</color>
+            <color>5500aa</color>
+            <color>aa0000</color>
+            <color>aa0055</color>
+            <color>555555</color>
+            <color>5555aa</color>
+            <color>aaaaaa</color>
+            <color>aaaaff</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
+    <bitmap id="G3Right" filename="gauge3/g3_right.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>000055</color>
+            <color>550000</color>
+            <color>550055</color>
+            <color>5500aa</color>
+            <color>aa0000</color>
+            <color>aa0055</color>
+            <color>555555</color>
+            <color>5555aa</color>
+            <color>aaaaaa</color>
+            <color>aaaaff</color>
+            <color>ffffff</color>
+        </palette>
+    </bitmap>
+    <bitmap id="G3Bottom" filename="gauge3/g3_bottom.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
             <color>000055</color>
