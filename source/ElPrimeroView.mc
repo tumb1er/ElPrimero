@@ -9,30 +9,30 @@ using Toybox.Time.Gregorian;
 // buffered background screen offset;
 const bgX = 9;
 const bgY = 20;
-
-// position of Gauge3 within buffer;
-const g3X = 136 - bgX;
-const g3Y = 92 - bgY;
-
-// screen Gauge3 position;
-const g3centerX = g3X + bgX;
-const g3centerY = g3Y + bgY;
-
-// position of Gauge6 within buffer;
-const g6X = 90 - bgX;
-const g6Y = 135 - bgY;
-
-// screen Gauge6 position;
-const g6centerX = g6X + bgX;
-const g6centerY = g6Y + bgY;
-
-// position of Gauge9 within buffer;
-const g9X = 47 - bgX;
-const g9Y = 92 - bgY;
-
-// screen Gauge9 position;
-const g9centerX = g9X + bgX;
-const g9centerY = g9Y + bgY;
+//
+//// position of Gauge3 within buffer;
+//const g3X = 136 - bgX;
+//const g3Y = 92 - bgY;
+//
+//// screen Gauge3 position;
+//const g3centerX = g3X + bgX;
+//const g3centerY = g3Y + bgY;
+//
+//// position of Gauge6 within buffer;
+//const g6X = 90 - bgX;
+//const g6Y = 135 - bgY;
+//
+//// screen Gauge6 position;
+//const g6centerX = g6X + bgX;
+//const g6centerY = g6Y + bgY;
+//
+//// position of Gauge9 within buffer;
+//const g9X = 47 - bgX;
+//const g9Y = 92 - bgY;
+//
+//// screen Gauge9 position;
+//const g9centerX = g9X + bgX;
+//const g9centerY = g9Y + bgY;
 
 // position of battery text within buffer;
 const batX = 164 - bgX;
@@ -74,18 +74,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mSmallyFont;
     var mIconsFont;
 
-    var mBackgrounds;
-    var mBGPositions = [
-        [0,0],
-        [0,68],
-        [184,68],
-        [0,134],
-        [154,134],
-        [47,163]
-    ];
-    var mGauge3;
-    var mGauge6;
-    var mGauge9;
+    var cBackgrounds;
+    var cBackgroundsX = [0, 0,  184, 0,   154, 47,  127, 81,  38];
+    var cBackgroundsY = [0, 68, 68,  134, 134, 163, 72,  115, 72];
     var mBuffer;
 
     var mDatesFont;
@@ -148,17 +139,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
         mIconsFont = WatchUi.loadResource(Rez.Fonts.Icons);
-        mBackgrounds = [
+        cBackgrounds = [
             WatchUi.loadResource(Rez.Drawables.BGTop),
             WatchUi.loadResource(Rez.Drawables.BGLeft),
             WatchUi.loadResource(Rez.Drawables.BGRight),
             WatchUi.loadResource(Rez.Drawables.BGLeftBottom),
             WatchUi.loadResource(Rez.Drawables.BGRightBottom),
-            WatchUi.loadResource(Rez.Drawables.BGBottom)
+            WatchUi.loadResource(Rez.Drawables.BGBottom),
+            WatchUi.loadResource(Rez.Drawables.Gauge3),
+            WatchUi.loadResource(Rez.Drawables.Gauge6),
+            WatchUi.loadResource(Rez.Drawables.Gauge9)
         ];
-        mGauge3 = WatchUi.loadResource(Rez.Drawables.Gauge3);
-        mGauge6 = WatchUi.loadResource(Rez.Drawables.Gauge6);
-        mGauge9 = WatchUi.loadResource(Rez.Drawables.Gauge9);
         mBuffer = new Graphics.BufferedBitmap({
             :width=>218,
             :height=>200
@@ -225,14 +216,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
         var bc = mBuffer.getDc();
         bc.setColor(0xFFFFFF, 0x000055);
         bc.clear();
-        for (var i=0; i< 6; i++) {
-            var pos = mBGPositions[i];
-            var bg = mBackgrounds[i];
-            bc.drawBitmap(pos[0], pos[1], bg);
+        for (var i=0; i< cBackgrounds.size(); i++) {
+            bc.drawBitmap(cBackgroundsX[i], cBackgroundsY[i], cBackgrounds[i]);
         }
-        bc.drawBitmap(g3X, g3Y, mGauge3);
-        bc.drawBitmap(g6X, g6Y, mGauge6);
-        bc.drawBitmap(g9X, g9Y, mGauge9);
+
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
         bc.drawText(batX, batY, mSmallyFont, stats.battery.toNumber(), cAlign);
         if (heartBeatSample != null) {
