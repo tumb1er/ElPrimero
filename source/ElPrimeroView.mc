@@ -24,31 +24,25 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     var mSmallyFont;
     var mIconsFont;
-
-    var cBackgrounds;
-
-    var cCommonGaugeBG;
-    var cCommonX = [92, 45, 134];
-    var cCommonY = [126, 82, 83];
-    var cBackgroundsX = [0, 0,  186, 0,   154, 47,  133, 127, 171, 133, 88,  81,  130, 88,  43, 38, 86, 44];
-    var cBackgroundsY = [0, 68, 68,  134, 134, 163, 72,  83,  83,  117, 115, 126, 126, 163, 72, 84, 84, 116];
-    var mBuffer;
-
     var mDatesFont;
-
     var mDayFont;
 
+    var cCoords; // int32-packed coords (even at high word, odd at low word)
+    var cCommonPos = 0; // offset of coords arrays in cCoords
+    var cBackgroundPos = 3;
+    var cStepsPos = 21;
+    var cActivityPos = 26;
+    var cMovementPos = 30;
+    var cEOF = 35;
+
+    var cCommonGaugeBG;
+    var cBackgrounds;
+
+    var mBuffer;
+
     var mStepsScaleFont;
-    var mStepsX = [8,   0,   0,  2,  11];
-    var mStepsY = [136, 111, 83, 56, 31];
-
     var mActivityScaleFont;
-    var mActivityX = [205, 200, 193, 185];
-    var mActivityY = [62,  48,  36,  25 ];
-
     var mMovementScaleFont;
-    var mMovementX = [176, 196, 200, 204, 207];
-    var mMovementY = [155, 147, 138, 130, 121];
 
     function initialize() {
         WatchFace.initialize();
@@ -131,6 +125,16 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
 
         mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
+
+        cCoords = WatchUi.loadResource(Rez.JsonData.coords_json);
+    }
+
+    function getXY(i) {
+        var d = cCoords[i / 2];
+        var shift = (i % 2 == 0)? 16: 0;
+        var x = (d >> (shift + 8)) & 0xFF;
+        var y = (d >> shift) & 0xFF;
+        return [x, y];
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -189,12 +193,14 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.setColor(0xFFFFFF, 0x000055);
         bc.clear();
 
-        for (var i=0; i < cCommonX.size(); i++) {
-            bc.drawBitmap(cCommonX[i], cCommonY[i], cCommonGaugeBG);
+        for (var i=0; i < cBackgroundPos; i++) {
+            var c = getXY(i);
+            bc.drawBitmap(c[0], c[1], cCommonGaugeBG);
         }
 
-        for (var i=0; i< cBackgrounds.size(); i++) {
-            bc.drawBitmap(cBackgroundsX[i], cBackgroundsY[i], cBackgrounds[i]);
+        for (var i=cBackgroundPos; i< cStepsPos; i++) {
+            var c = getXY(i);
+            bc.drawBitmap(c[0], c[1], cBackgrounds[i - cBackgroundPos]);
         }
 
         // Drawing texts
@@ -208,7 +214,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Icons
         var s = "ZABSN";
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
-        for (var i = 0; i < 5; i++) {
+        for (var i = cStepsPos; i < 5; i++) {
             var a = Math.toRadians(utc * 6 - 120 + i * 360 / 6);
             var x = 120 - bgX + 12 * Math.sin(-a);
             var y = 165 - bgY + 12 * Math.cos(-a);
@@ -228,17 +234,20 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         // Steps
         bc.setColor(0x55AAFF, Graphics.COLOR_TRANSPARENT);
-        for (var i = 0; i < 5; i++) {
-            bc.drawText(mStepsX[i], mStepsY[i], mStepsScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
+        for (var i = cStepsPos; i < cActivityPos; i++) {
+            var c = getXY(i);
+            bc.drawText(c[0], c[1], mStepsScaleFont, i - cStepsPos, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Activity
-        for (var i = 0; i < 4; i++) {
-            bc.drawText(mActivityX[i], mActivityY[i], mActivityScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
+        for (var i = cActivityPos; i < cMovementPos; i++) {
+            var c = getXY(i);
+            bc.drawText(c[0], c[1], mActivityScaleFont, i - cActivityPos, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Movement
         bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
-        for (var i = 0; i < 5; i++) {
-            bc.drawText(mMovementX[i], mMovementY[i], mMovementScaleFont, i, Graphics.TEXT_JUSTIFY_LEFT);
+        for (var i = cMovementPos; i < cEOF; i++) {
+            var c = getXY(i);
+            bc.drawText(c[0], c[1], mMovementScaleFont, i - cMovementPos, Graphics.TEXT_JUSTIFY_LEFT);
         }
 
         // Drawing gauge hands
