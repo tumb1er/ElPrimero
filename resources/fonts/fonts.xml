@@ -20,6 +20,18 @@
     <font id="hour_sides4" filename="hours_sides/hour_sides4.fnt" antialias="true"/>
     <font id="hour_sides5" filename="hours_sides/hour_sides5.fnt" antialias="true"/>
     <font id="hour_sides6" filename="hours_sides/hour_sides6.fnt" antialias="true"/>
+    <font id="hour_sides7" filename="hours_sides/hour_sides7.fnt" antialias="true"/>
+    <font id="hour_sides8" filename="hours_sides/hour_sides8.fnt" antialias="true"/>
+    <font id="hour_sides9" filename="hours_sides/hour_sides9.fnt" antialias="true"/>
+    <font id="hour_sides10" filename="hours_sides/hour_sides10.fnt" antialias="true"/>
+    <font id="hour_sides11" filename="hours_sides/hour_sides11.fnt" antialias="true"/>
+    <font id="hour_sides12" filename="hours_sides/hour_sides12.fnt" antialias="true"/>
+    <font id="hour_sides13" filename="hours_sides/hour_sides13.fnt" antialias="true"/>
+    <font id="hour_sides14" filename="hours_sides/hour_sides14.fnt" antialias="true"/>
+    <font id="hour_sides15" filename="hours_sides/hour_sides15.fnt" antialias="true"/>
+    <font id="hour_sides16" filename="hours_sides/hour_sides16.fnt" antialias="true"/>
+    <font id="hour_sides17" filename="hours_sides/hour_sides17.fnt" antialias="true"/>
+    <font id="hour_sides18" filename="hours_sides/hour_sides18.fnt" antialias="true"/>
 
     <font id="gauge_center" filename="gauge_center.fnt" antialias="true"/>
     <font id="gauge_sides0" filename="gauge_sides0.fnt" antialias="true"/>

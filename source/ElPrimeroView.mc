@@ -60,7 +60,19 @@ class ElPrimeroView extends WatchUi.WatchFace {
                     Rez.Fonts.hour_sides3,
                     Rez.Fonts.hour_sides4,
                     Rez.Fonts.hour_sides5,
-                    Rez.Fonts.hour_sides6
+                    Rez.Fonts.hour_sides6,
+                    Rez.Fonts.hour_sides7,
+                    Rez.Fonts.hour_sides8,
+                    Rez.Fonts.hour_sides9,
+                    Rez.Fonts.hour_sides10,
+                    Rez.Fonts.hour_sides11,
+                    Rez.Fonts.hour_sides12,
+                    Rez.Fonts.hour_sides13,
+                    Rez.Fonts.hour_sides14,
+                    Rez.Fonts.hour_sides15,
+                    Rez.Fonts.hour_sides16,
+                    Rez.Fonts.hour_sides17,
+                    Rez.Fonts.hour_sides18
             ],
             false
         );
