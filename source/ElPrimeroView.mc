@@ -21,12 +21,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mHourHand;
     var mMinuteHand;
     var mGaugeHand;
-
-    var mSmallyFont;
-    var mIconsFont;
-    var mDatesFont;
-    var mDayFont;
-    var mGaugeCenterFont;
+//
+//    var mSmallyFont;
+//    var mIconsFont;
+//    var mDatesFont;
+//    var mDayFont;
+//    var mGaugeCenterFont;
 
     var cCoords; // int32-packed coords (even at high word, odd at low word)
     var cCommonPos = 0; // offset of coords arrays in cCoords
@@ -42,10 +42,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var cBackgrounds;
 
     var mBuffer;
-
-    var mStepsScaleFont;
-    var mActivityScaleFont;
-    var mMovementScaleFont;
+//
+//    var mStepsScaleFont;
+//    var mActivityScaleFont;
+//    var mMovementScaleFont;
 
     function initialize() {
         WatchFace.initialize();
@@ -76,7 +76,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
                     Rez.Fonts.hour_sides17,
                     Rez.Fonts.hour_sides18
             ],
-            false
+            true
         );
 
         mMinuteHand = new Hand(
@@ -102,8 +102,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
             true
         );
 
-        mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
-        mIconsFont = WatchUi.loadResource(Rez.Fonts.Icons);
         cBackgrounds = [
             WatchUi.loadResource(Rez.Drawables.BGTop),
             WatchUi.loadResource(Rez.Drawables.BGLeft),
@@ -135,12 +133,14 @@ class ElPrimeroView extends WatchUi.WatchFace {
             :height=>200
         });
 
-        mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
-        mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
-        mGaugeCenterFont = WatchUi.loadResource(Rez.Fonts.gauge_center);
-        mStepsScaleFont = WatchUi.loadResource(Rez.Fonts.steps_scale);
-        mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
-        mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
+//        mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
+//        mIconsFont = WatchUi.loadResource(Rez.Fonts.Icons);
+//        mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
+//        mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
+//        mGaugeCenterFont = WatchUi.loadResource(Rez.Fonts.gauge_center);
+//        mStepsScaleFont = WatchUi.loadResource(Rez.Fonts.steps_scale);
+//        mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
+//        mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
 
         cCoords = WatchUi.loadResource(Rez.JsonData.coords_json);
 
@@ -250,70 +250,87 @@ class ElPrimeroView extends WatchUi.WatchFace {
             bc.drawBitmap(c[0], c[1], cBackgrounds[i - cBackgroundPos]);
         }
 
+//        mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
+//        mIconsFont = WatchUi.loadResource(Rez.Fonts.Icons);
+//        mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
+//        mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
+//        mGaugeCenterFont = WatchUi.loadResource(Rez.Fonts.gauge_center);
+//        mStepsScaleFont = WatchUi.loadResource(Rez.Fonts.steps_scale);
+//        mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
+//        mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
+
+        var font = WatchUi.loadResource(Rez.Fonts.Smally);
         // Drawing texts
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
         // Battery
-        bc.drawText(155, 90, mSmallyFont, stats.battery.toNumber(), cAlign);
+        bc.drawText(155, 90, font, stats.battery.toNumber(), cAlign);
         // Heartbeat
         if (heartBeat != null) {
-            bc.drawText(66, 90, mSmallyFont, heartBeat.toString(), cAlign);
+            bc.drawText(66, 90, font, heartBeat.toString(), cAlign);
         }
         // Icons
         var s = "ZABSN";
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+        font = WatchUi.loadResource(Rez.Fonts.Icons);
         for (var i = cStepsPos; i < 5; i++) {
             var a = Math.toRadians(utc * 6 - 120 + i * 360 / 6);
             var x = 120 - bgX + 12 * Math.sin(-a);
             var y = 165 - bgY + 12 * Math.cos(-a);
-            bc.drawText(x, y, mIconsFont, s.substring(i, i + 1), cAlign);
+            bc.drawText(x, y, font, s.substring(i, i + 1), cAlign);
         }
 
         // Day of month
         bc.setColor(0x000000, Graphics.COLOR_TRANSPARENT);
-        bc.drawText(172 - bgX, 178 - bgY, mDayFont, time.day / 10, cAlign);
-        bc.drawText(177 - bgX, 173 - bgY, mDayFont, time.day % 10, cAlign);
-        // Day of weeek
-        bc.drawText(61, 62, mDatesFont, time.day_of_week.toUpper(), cAlign);
+        font = WatchUi.loadResource(Rez.Fonts.Day);
+        bc.drawText(172 - bgX, 178 - bgY, font, time.day / 10, cAlign);
+        bc.drawText(177 - bgX, 173 - bgY, font, time.day % 10, cAlign);
+        font = WatchUi.loadResource(Rez.Fonts.Date);
+        // Day of week
+        bc.drawText(61, 62, font, time.day_of_week.toUpper(), cAlign);
         // Month
-        bc.drawText(160, 62, mDatesFont, time.month.toUpper(), cAlign);
+        bc.drawText(160, 62, font, time.month.toUpper(), cAlign);
 
         // Drawing scales
 
         // Steps
         bc.setColor(0x55AAFF, Graphics.COLOR_TRANSPARENT);
+        font = WatchUi.loadResource(Rez.Fonts.steps_scale);
         for (var i = cStepsPos; i < cActivityPos; i++) {
             var c = getXY(i, cCoords);
-            bc.drawText(c[0], c[1], mStepsScaleFont, i - cStepsPos, Graphics.TEXT_JUSTIFY_LEFT);
+            bc.drawText(c[0], c[1], font, i - cStepsPos, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Activity
+        font = WatchUi.loadResource(Rez.Fonts.activity_scale);
         for (var i = cActivityPos; i < cMovementPos; i++) {
             var c = getXY(i, cCoords);
-            bc.drawText(c[0], c[1], mActivityScaleFont, i - cActivityPos, Graphics.TEXT_JUSTIFY_LEFT);
+            bc.drawText(c[0], c[1], font, i - cActivityPos, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Movement
         bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
+        font = WatchUi.loadResource(Rez.Fonts.movement_scale);
         for (var i = cMovementPos; i < cEOF; i++) {
             var c = getXY(i, cCoords);
-            bc.drawText(c[0], c[1], mMovementScaleFont, i - cMovementPos, Graphics.TEXT_JUSTIFY_LEFT);
+            bc.drawText(c[0], c[1], font, i - cMovementPos, Graphics.TEXT_JUSTIFY_LEFT);
         }
 
         // Drawing gauge hands
 
         // Battery;
+        font = WatchUi.loadResource(Rez.Fonts.gauge_center);
         pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
         drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], pos, -2007194504); // 136 92 44 0
-        bc.drawText(164 - bgX, 120 - bgY, mGaugeCenterFont, "0", cAlign);
+        bc.drawText(164 - bgX, 120 - bgY, font, "0", cAlign);
 
         // Heartbeat;
         if (heartBeat != null) {
             pos = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
             drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], pos, 794577784); // 47 92 -45 0
-            bc.drawText(75 - bgX, 120 - bgY, mGaugeCenterFont, "0", cAlign);
+            bc.drawText(75 - bgX, 120 - bgY, font, "0", cAlign);
         }
 
         // UTC time gauge;
         drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0x000000], utc, 1552416812); // 92 136 0 44
-        bc.drawText(120 - bgX, 164 - bgY, mGaugeCenterFont, "0", cAlign);
+        bc.drawText(120 - bgX, 164 - bgY, font, "0", cAlign);
 
         // Drawing clock hands
 
