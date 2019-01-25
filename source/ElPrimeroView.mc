@@ -17,18 +17,19 @@ const cAlign = Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER;
 Watch view.
  */
 class ElPrimeroView extends WatchUi.WatchFace {
-
+    enum {
+        PosCommon,
+        PosBackground = 3,
+        PosSteps = 21,
+        PosActivity = 26,
+        PosMovement= 30,
+        PosEOF=35
+    }
     var mHourHand;
     var mMinuteHand;
     var mGaugeHand;
 
     var cCoords; // int32-packed coords (even at high word, odd at low word)
-    var cCommonPos = 0; // offset of coords arrays in cCoords
-    var cBackgroundPos = 3;
-    var cStepsPos = 21;
-    var cActivityPos = 26;
-    var cMovementPos = 30;
-    var cEOF = 35;
 
     var mSecondCoordsX, mSecondCoordsY;
 
@@ -236,14 +237,14 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.setColor(0xFFFFFF, 0x000055);
         bc.clear();
 
-        for (var i=0; i < cBackgroundPos; i++) {
+        for (var i=PosCommon; i < PosBackground; i++) {
             var c = getXY(i, cCoords);
             bc.drawBitmap(c[0], c[1], cCommonGaugeBG);
         }
 
-        for (var i=cBackgroundPos; i< cStepsPos; i++) {
+        for (var i=PosBackground; i< PosSteps; i++) {
             var c = getXY(i, cCoords);
-            bc.drawBitmap(c[0], c[1], cBackgrounds[i - cBackgroundPos]);
+            bc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground]);
         }
 
         var font = WatchUi.loadResource(Rez.Fonts.Smally);
@@ -259,7 +260,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         var s = "ZABSN";
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
         font = WatchUi.loadResource(Rez.Fonts.Icons);
-        for (var i = cStepsPos; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
             var a = Math.toRadians(utc * 6 - 120 + i * 360 / 6);
             var x = 120 - bgX + 12 * Math.sin(-a);
             var y = 165 - bgY + 12 * Math.cos(-a);
@@ -282,22 +283,22 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Steps
         bc.setColor(0x55AAFF, Graphics.COLOR_TRANSPARENT);
         font = WatchUi.loadResource(Rez.Fonts.steps_scale);
-        for (var i = cStepsPos; i < cActivityPos; i++) {
+        for (var i = PosSteps; i < PosActivity; i++) {
             var c = getXY(i, cCoords);
-            bc.drawText(c[0], c[1], font, i - cStepsPos, Graphics.TEXT_JUSTIFY_LEFT);
+            bc.drawText(c[0], c[1], font, i - PosSteps, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Activity
         font = WatchUi.loadResource(Rez.Fonts.activity_scale);
-        for (var i = cActivityPos; i < cMovementPos; i++) {
+        for (var i = PosActivity; i < PosMovement; i++) {
             var c = getXY(i, cCoords);
-            bc.drawText(c[0], c[1], font, i - cActivityPos, Graphics.TEXT_JUSTIFY_LEFT);
+            bc.drawText(c[0], c[1], font, i - PosActivity, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Movement
         bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
         font = WatchUi.loadResource(Rez.Fonts.movement_scale);
-        for (var i = cMovementPos; i < cEOF; i++) {
+        for (var i = PosMovement; i < PosEOF; i++) {
             var c = getXY(i, cCoords);
-            bc.drawText(c[0], c[1], font, i - cMovementPos, Graphics.TEXT_JUSTIFY_LEFT);
+            bc.drawText(c[0], c[1], font, i - PosMovement, Graphics.TEXT_JUSTIFY_LEFT);
         }
 
         // Drawing gauge hands
@@ -321,9 +322,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         }
 
         // UTC time gauge;
-        drawHandDetails(bc, pos, 120 - bgX, 120 - bgY + 44, {:width => 1, :colors => [0x000000], :coords => [8, 24]});
+        drawHandDetails(bc, utc, 120 - bgX, 120 - bgY + 44, {:width => 1, :colors => [0x000000], :coords => [8, 24]});
         bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
-        mGaugeHand.draw(bc, pos, 92 - bgX, 136 - bgY);
+        mGaugeHand.draw(bc, utc, 92 - bgX, 136 - bgY);
         bc.drawText(120 - bgX, 164 - bgY, font, "0", cAlign);
 
         // Drawing image to device context
