@@ -11,13 +11,13 @@ class Hand {
     var mIndex;          // tiles index (16bit end positions in tiles data for each glyph)
     var mFont;           // cached font resource
     var mCurrentFontIdx; // current cached font number
-    var mCache;          // cache loaded font
+    var mVectorList;     // list of poligons for vector-based drawing
 
     /**
     jsonId - Rez.jsonData identifier for tile data
     fontsList - list of Rez.Fonts identifiers
      */
-    function initialize(jsonId, fontsList, cache) {
+    function initialize(jsonId, fontsList, vectorList) {
         var json = WatchUi.loadResource(jsonId);
         mTiles = json[0];
         mIndex = json[1];
@@ -26,7 +26,7 @@ class Hand {
 
         mFont = null;
         mCurrentFontIdx = -1;
-        mCache = cache;
+        mVectorList = vectorList;
     }
 
     /**
@@ -60,9 +60,19 @@ class Hand {
             var y = (tile >> 24) & 0xFF + dy;
             dc.drawText(x, y, getFont(f), char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
         }
+    }
 
-        if (!mCache) {
-            mFont = null;
+    /**
+    Draws hand position with vector polygons
+
+    dc - device context
+    pos - position number
+    dx, dy - offset from screen center
+     */
+    function drawVector(dc, pos, dx, dy) {
+        var angle = Math.toRadians(pos * 6);
+        for (var i = 0; i < mVectorList.size(); i++) {
+            fillRadialPolygon(dc, angle, mVectorList[i], 120 + dx, 120 + dy);
         }
     }
 

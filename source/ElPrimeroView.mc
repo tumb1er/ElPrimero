@@ -17,6 +17,7 @@ const cAlign = Graphics.TEXT_JUSTIFY_CENTER|Graphics.TEXT_JUSTIFY_VCENTER;
 Watch view.
  */
 class ElPrimeroView extends WatchUi.WatchFace {
+    // coords.json offsets
     enum {
         PosCommon,
         PosBackground = 3,
@@ -25,13 +26,23 @@ class ElPrimeroView extends WatchUi.WatchFace {
         PosMovement= 30,
         PosEOF=35
     }
+    // hands.json offsets
+    enum {
+        PosSecond,
+        PosMinuteLeft = 5,
+        PosMinuteRight = 9,
+        PosHourLeft = 13,
+        PosHourRight = 17,
+        PosEOF2 = 21
+    }
+
     var mHourHand;
     var mMinuteHand;
     var mGaugeHand;
 
     var cCoords; // int32-packed coords (even at high word, odd at low word)
 
-    var mSecondCoordsX, mSecondCoordsY;
+    var mSecondCoords;
 
     var cCommonGaugeBG;
     var cBackgrounds;
@@ -42,31 +53,48 @@ class ElPrimeroView extends WatchUi.WatchFace {
         WatchFace.initialize();
     }
 
+    function loadCoords(data, start, end) {
+        var coords = new [(end - start) * 2];
+        for (var i = start; i < end; i++) {
+            var xy = getXY(i, data);
+            var x = xy[0] - 120;
+            var y = xy[1] - 120;
+            coords[2 * (i - start)] = getR(x, y);
+            coords[2 * (i - start) + 1] = getA(x, y);
+        }
+        return coords;
+    }
+
     // Load your resources here
     function onLayout(dc) {
+        var data = WatchUi.loadResource(Rez.JsonData.hands_json);
+        mSecondCoords = loadCoords(data, PosSecond, PosMinuteLeft);
         mHourHand = new Hand(
             Rez.JsonData.hour_sides_json,
             [
-                    Rez.Fonts.hour_sides0,
-                    Rez.Fonts.hour_sides1,
-                    Rez.Fonts.hour_sides2,
-                    Rez.Fonts.hour_sides3,
-                    Rez.Fonts.hour_sides4,
-                    Rez.Fonts.hour_sides5,
-                    Rez.Fonts.hour_sides6,
-                    Rez.Fonts.hour_sides7,
-                    Rez.Fonts.hour_sides8,
-                    Rez.Fonts.hour_sides9,
-                    Rez.Fonts.hour_sides10,
-                    Rez.Fonts.hour_sides11,
-                    Rez.Fonts.hour_sides12,
-                    Rez.Fonts.hour_sides13,
-                    Rez.Fonts.hour_sides14,
-                    Rez.Fonts.hour_sides15,
-                    Rez.Fonts.hour_sides16,
-                    Rez.Fonts.hour_sides17
+                Rez.Fonts.hour_sides0,
+                Rez.Fonts.hour_sides1,
+                Rez.Fonts.hour_sides2,
+                Rez.Fonts.hour_sides3,
+                Rez.Fonts.hour_sides4,
+                Rez.Fonts.hour_sides5,
+                Rez.Fonts.hour_sides6,
+                Rez.Fonts.hour_sides7,
+                Rez.Fonts.hour_sides8,
+                Rez.Fonts.hour_sides9,
+                Rez.Fonts.hour_sides10,
+                Rez.Fonts.hour_sides11,
+                Rez.Fonts.hour_sides12,
+                Rez.Fonts.hour_sides13,
+                Rez.Fonts.hour_sides14,
+                Rez.Fonts.hour_sides15,
+                Rez.Fonts.hour_sides16,
+                Rez.Fonts.hour_sides17
             ],
-            true
+            [
+                loadCoords(data, PosHourLeft, PosHourRight),
+                loadCoords(data, PosHourRight, PosEOF2)
+            ]
         );
 
         mMinuteHand = new Hand(
@@ -81,7 +109,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
                 Rez.Fonts.minute_sides6,
                 Rez.Fonts.minute_sides7
             ],
-            true
+            [
+                loadCoords(data, PosMinuteLeft, PosMinuteRight),
+                loadCoords(data, PosMinuteRight, PosHourLeft)
+            ]
         );
 
         mGaugeHand = new Hand(
@@ -89,7 +120,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             [
                 Rez.Fonts.gauge_sides0
             ],
-            true
+            []
         );
 
         cBackgrounds = [
@@ -124,18 +155,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
         });
 
         cCoords = WatchUi.loadResource(Rez.JsonData.coords_json);
-
-        var data = WatchUi.loadResource(Rez.JsonData.second_json);
-
-        mSecondCoordsX = new [5];
-        mSecondCoordsY = new [5];
-        for (var i = 0; i < 5; i++) {
-            var xy = getXY(i, data);
-            var x = xy[0] - 120;
-            var y = xy[1] - 120;
-            mSecondCoordsX[i] = getR(x, y);
-            mSecondCoordsY[i] = getA(x, y);
-        }
     }
 
     function getXY(i, data) {
@@ -174,12 +193,20 @@ class ElPrimeroView extends WatchUi.WatchFace {
         pos = (time.hour % 12) * 5 + time.min / 12;
         drawHandDetails(dc, pos, cx, cy + 1, {:width => 3, :colors => [0x000000, 0xFFFFFF], :coords => [-10, 20, 69]});
         dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
-        mHourHand.draw(dc, pos, 0, 0);
+        if (vector) {
+            mHourHand.drawVector(dc, pos, 0, 0);
+        } else {
+            mHourHand.draw(dc, pos, 0, 0);
+        }
         // Minute hand
         pos = time.min;
         drawHandDetails(dc, pos, cx, cy + 1, {:width => 2, :colors => [0x000000, 0xFFFFFF], :coords => [-10, 45, 93]});
         dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
-        mMinuteHand.draw(dc, pos, 0, 0);
+        if (vector) {
+            mMinuteHand.drawVector(dc, pos, 0, 0);
+        } else {
+            mMinuteHand.draw(dc, pos, 0, 0);
+        }
     }
 
     /**
@@ -194,18 +221,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
      */
     function drawSecondHand(dc, time) {
         var angle = Math.toRadians(time.sec * 6);
-        var points = new[5];
-        // Prepare polygon coords
-        for (var i = 0; i < 5; i++) {
-            var r = mSecondCoordsX[i];
-            var a = mSecondCoordsY[i];
-            var x = getX(120, r, a + angle);
-            var y = getY(120, r, a + angle);
-            points[i] = [x, y];
-        }
-        // Fill polygon with grey
         dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
-        dc.fillPolygon(points);
+        fillRadialPolygon(dc, angle, mSecondCoords, 120, 120);
         // Draw red line for hand accent
         dc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
         dc.drawLine(120 + 80 * Math.sin(angle), 120 - 80 * Math.cos(angle),
@@ -332,7 +349,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.drawBitmap(bgX, bgY, mBuffer);
 
         // Drawing clock hands
-        drawHourMinuteHands(dc, time, 120, 120, false);
+        drawHourMinuteHands(dc, time, 120, 120, true);
 
         // Drawind second hand to device context;
         drawSecondHand(dc, time);
