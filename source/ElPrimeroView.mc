@@ -64,8 +64,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
                     Rez.Fonts.hour_sides14,
                     Rez.Fonts.hour_sides15,
                     Rez.Fonts.hour_sides16,
-                    Rez.Fonts.hour_sides17,
-                    Rez.Fonts.hour_sides18
+                    Rez.Fonts.hour_sides17
             ],
             true
         );
@@ -173,12 +172,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
         var pos;
         // Hour hand
         pos = (time.hour % 12) * 5 + time.min / 12;
-        drawHandDetails(dc, pos, cx, cy + 1, {:width => 3, :colors => [0x000000, 0xFFFFFF], :coords => [-15, 20, 69]});
+        drawHandDetails(dc, pos, cx, cy + 1, {:width => 3, :colors => [0x000000, 0xFFFFFF], :coords => [-10, 20, 69]});
         dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
         mHourHand.draw(dc, pos, 0, 0);
         // Minute hand
         pos = time.min;
-        drawHandDetails(dc, pos, cx, cy + 1, {:width => 2, :colors => [0x000000, 0xFFFFFF], :coords => [-15, 45, 93]});
+        drawHandDetails(dc, pos, cx, cy + 1, {:width => 2, :colors => [0x000000, 0xFFFFFF], :coords => [-10, 45, 93]});
         dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
         mMinuteHand.draw(dc, pos, 0, 0);
     }

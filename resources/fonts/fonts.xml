@@ -31,7 +31,6 @@
     <font id="hour_sides15" filename="hours_sides/hour_sides15.fnt" antialias="true"/>
     <font id="hour_sides16" filename="hours_sides/hour_sides16.fnt" antialias="true"/>
     <font id="hour_sides17" filename="hours_sides/hour_sides17.fnt" antialias="true"/>
-    <font id="hour_sides18" filename="hours_sides/hour_sides18.fnt" antialias="true"/>
 
     <font id="gauge_center" filename="gauge_center.fnt" antialias="true"/>
     <font id="gauge_sides0" filename="gauge_sides0.fnt" antialias="true"/>
