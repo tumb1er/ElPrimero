@@ -25,3 +25,29 @@ function drawRadialRect(dc, angle, width, start, end, cx, cy) {
        [cx + ex + dx, cy + ey + dy]
     ]);
 }
+
+
+/*
+Get X coordinate from radius and angle.
+*/
+function getX(cx, r, a) {
+    return cx - r * Math.sin(-a);
+}
+/*
+Get Y coordinate from radius and angle.
+*/
+function getY(cy, r, a) {
+    return cy - r * Math.cos(-a);
+}
+/*
+Get radius coordinate from point.
+*/
+function getR(x, y) {
+    return Math.sqrt(x * x + y * y);
+}
+/*
+Get angle coordinate from points in radians.
+*/
+function getA(x, y) {
+    return Math.atan2(-x, -y);
+}

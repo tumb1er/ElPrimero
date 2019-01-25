@@ -3,4 +3,5 @@
     <jsonData id="hour_sides_json" filename="hour_sides.json"/>
     <jsonData id="gauge_sides_json" filename="gauge_sides.json"/>
     <jsonData id="coords_json" filename="coords.json"/>
+    <jsonData id="second_json" filename="second.json"/>
 </resources>

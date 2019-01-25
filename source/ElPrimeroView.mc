@@ -36,6 +36,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var cMovementPos = 30;
     var cEOF = 35;
 
+    var mSecondCoordsX, mSecondCoordsY;
+
     var cCommonGaugeBG;
     var cBackgrounds;
 
@@ -141,10 +143,22 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
 
         cCoords = WatchUi.loadResource(Rez.JsonData.coords_json);
+
+        var data = WatchUi.loadResource(Rez.JsonData.second_json);
+
+        mSecondCoordsX = new [5];
+        mSecondCoordsY = new [5];
+        for (var i = 0; i < 5; i++) {
+            var xy = getXY(i, data);
+            var x = xy[0] - 120;
+            var y = xy[1] - 120;
+            mSecondCoordsX[i] = getR(x, y);
+            mSecondCoordsY[i] = getA(x, y);
+        }
     }
 
-    function getXY(i) {
-        var d = cCoords[i / 2];
+    function getXY(i, data) {
+        var d = data[i / 2];
         var shift = (i % 2 == 0)? 16: 0;
         var x = (d >> (shift + 8)) & 0xFF;
         var y = (d >> shift) & 0xFF;
@@ -184,6 +198,25 @@ class ElPrimeroView extends WatchUi.WatchFace {
         hand.draw(dc, pos, hx, hy);
     }
 
+    /**
+    Draws second hand poligon
+    dc - device context
+    pos - second hand position [0-59]
+    cx, cy - rotation center
+     */
+    function drawSecondHand(dc, pos, cx, cy) {
+        var angle = Math.toRadians(pos * 6);
+        var points = new[5];
+        for (var i = 0; i < 5; i++) {
+            var r = mSecondCoordsX[i];
+            var a = mSecondCoordsY[i];
+            var x = getX(cx, r, a + angle);
+            var y = getY(cy, r, a + angle);
+            points[i] = [x, y];
+        }
+        dc.fillPolygon(points);
+    }
+
     // Update the view
     function onUpdate(dc) {
         // Prepare all data
@@ -208,12 +241,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.clear();
 
         for (var i=0; i < cBackgroundPos; i++) {
-            var c = getXY(i);
+            var c = getXY(i, cCoords);
             bc.drawBitmap(c[0], c[1], cCommonGaugeBG);
         }
 
         for (var i=cBackgroundPos; i< cStepsPos; i++) {
-            var c = getXY(i);
+            var c = getXY(i, cCoords);
             bc.drawBitmap(c[0], c[1], cBackgrounds[i - cBackgroundPos]);
         }
 
@@ -249,18 +282,18 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Steps
         bc.setColor(0x55AAFF, Graphics.COLOR_TRANSPARENT);
         for (var i = cStepsPos; i < cActivityPos; i++) {
-            var c = getXY(i);
+            var c = getXY(i, cCoords);
             bc.drawText(c[0], c[1], mStepsScaleFont, i - cStepsPos, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Activity
         for (var i = cActivityPos; i < cMovementPos; i++) {
-            var c = getXY(i);
+            var c = getXY(i, cCoords);
             bc.drawText(c[0], c[1], mActivityScaleFont, i - cActivityPos, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Movement
         bc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
         for (var i = cMovementPos; i < cEOF; i++) {
-            var c = getXY(i);
+            var c = getXY(i, cCoords);
             bc.drawText(c[0], c[1], mMovementScaleFont, i - cMovementPos, Graphics.TEXT_JUSTIFY_LEFT);
         }
 
@@ -292,9 +325,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
         drawHand(bc, mMinuteHand, 0xAAAAAA, 2, [-15, 45, 93], [0x000000, 0xFFFFFF], pos, 30841); // 0 0 0 1
 
         // Drawing image to device context
-        dc.setColor(0xFFFFFF, 0x000055);
+        dc.setColor(0xAAAAAA, 0x000055);
         dc.clear();
         dc.drawBitmap(bgX, bgY, mBuffer);
+
+        // Drawind second hand to device context;
+        pos = time.sec;
+        drawSecondHand(dc, pos, 120, 120);
+        var alpha = Math.toRadians(pos * 6);
+        dc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
+        dc.drawLine(120 + 80 * Math.sin(alpha), 120 - 80 * Math.cos(alpha),
+                    120 + 95 * Math.sin(alpha), 120 - 95 * Math.cos(alpha));
 
     }
 
