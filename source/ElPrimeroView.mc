@@ -21,12 +21,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mHourHand;
     var mMinuteHand;
     var mGaugeHand;
-//
-//    var mSmallyFont;
-//    var mIconsFont;
-//    var mDatesFont;
-//    var mDayFont;
-//    var mGaugeCenterFont;
 
     var cCoords; // int32-packed coords (even at high word, odd at low word)
     var cCommonPos = 0; // offset of coords arrays in cCoords
@@ -42,10 +36,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var cBackgrounds;
 
     var mBuffer;
-//
-//    var mStepsScaleFont;
-//    var mActivityScaleFont;
-//    var mMovementScaleFont;
 
     function initialize() {
         WatchFace.initialize();
@@ -133,15 +123,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
             :height=>200
         });
 
-//        mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
-//        mIconsFont = WatchUi.loadResource(Rez.Fonts.Icons);
-//        mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
-//        mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
-//        mGaugeCenterFont = WatchUi.loadResource(Rez.Fonts.gauge_center);
-//        mStepsScaleFont = WatchUi.loadResource(Rez.Fonts.steps_scale);
-//        mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
-//        mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
-
         cCoords = WatchUi.loadResource(Rez.JsonData.coords_json);
 
         var data = WatchUi.loadResource(Rez.JsonData.second_json);
@@ -171,56 +152,69 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function onShow() {
     }
 
-    /**
-    Draws hand with and it decorations
-
-    dc - device context
-    hand - HandView instance
-    color - color for hand
-    paths - array of RadialPath instances
-    colors - corresponding colors
-    pos - hand position (0-59)
-    offset - int32-encoded offsets for hand and rects position
-    hx, hy - correction for hand tiles position
-    cx, cy - rotation center
-     */
-    function drawHand(dc, hand, color, width, coords, colors, pos, offset) {
-        var hx = (offset >> 24) & 0xFF;
-        var hy = (offset >> 16) & 0xFF;
-        var cx = (offset >> 8) & 0xFF;
-        var cy = offset & 0xFF;
-        var r = Math.toRadians(pos * 6);
-        for (var i = 0; i < colors.size(); i++) {
-            dc.setColor(colors[i], Graphics.COLOR_TRANSPARENT);
-            drawRadialRect(dc, r, width, coords[i], coords[i + 1], cx - bgX, cy - bgY);
+    function drawHandDetails(dc, pos, cx, cy, params) {
+        var angle = Math.toRadians(pos * 6);
+        for (var i = 0; i < params[:colors].size(); i++) {
+            dc.setColor(params[:colors][i], Graphics.COLOR_TRANSPARENT);
+            drawRadialRect(dc, angle, params[:width], params[:coords][i], params[:coords][i + 1], cx, cy);
         }
-        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-        hand.draw(dc, pos, hx, hy);
     }
 
     /**
-    Draws second hand poligon
-    dc - device context
-    pos - second hand position [0-59]
+    Draws hour and minute hands to device or buffer
+
+    dc - device or buffer context
+    time - local time info
     cx, cy - rotation center
+    vector - bool flag to draw vector-based or font-based hands
      */
-    function drawSecondHand(dc, pos, cx, cy) {
-        var angle = Math.toRadians(pos * 6);
+    function drawHourMinuteHands(dc, time, cx, cy, vector) {
+        var pos;
+        // Hour hand
+        pos = (time.hour % 12) * 5 + time.min / 12;
+        drawHandDetails(dc, pos, cx, cy + 1, {:width => 3, :colors => [0x000000, 0xFFFFFF], :coords => [-15, 20, 69]});
+        dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
+        mHourHand.draw(dc, pos, 0, 0);
+        // Minute hand
+        pos = time.min;
+        drawHandDetails(dc, pos, cx, cy + 1, {:width => 2, :colors => [0x000000, 0xFFFFFF], :coords => [-15, 45, 93]});
+        dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
+        mMinuteHand.draw(dc, pos, 0, 0);
+    }
+
+    /**
+    Draws second hand poligon and accent
+
+    * second hand is always drawed directly to device
+    * thus, center is always (120, 120)
+    * accent r radial coord is (80, 95)
+
+    dc - device only context
+    time - local time
+     */
+    function drawSecondHand(dc, time) {
+        var angle = Math.toRadians(time.sec * 6);
         var points = new[5];
+        // Prepare polygon coords
         for (var i = 0; i < 5; i++) {
             var r = mSecondCoordsX[i];
             var a = mSecondCoordsY[i];
-            var x = getX(cx, r, a + angle);
-            var y = getY(cy, r, a + angle);
+            var x = getX(120, r, a + angle);
+            var y = getY(120, r, a + angle);
             points[i] = [x, y];
         }
+        // Fill polygon with grey
+        dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
         dc.fillPolygon(points);
+        // Draw red line for hand accent
+        dc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
+        dc.drawLine(120 + 80 * Math.sin(angle), 120 - 80 * Math.cos(angle),
+                    120 + 95 * Math.sin(angle), 120 - 95 * Math.cos(angle));
     }
 
     // Update the view
     function onUpdate(dc) {
         // Prepare all data
-        var time = System.getClockTime();
         var stats = System.getSystemStats();
         var heartBeatIter = SensorHistory.getHeartRateHistory({});
         var heartBeatSample = heartBeatIter.next();
@@ -229,10 +223,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
             heartBeat = heartBeatSample.data;
         }
         var pos;
-        var now = Time.now();
-        time = Gregorian.info(now, Time.FORMAT_MEDIUM);
 
+        // Getting UTC and local time info
+        var now = Time.now();
+        var time = Gregorian.info(now, Time.FORMAT_MEDIUM);
         var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
+
         utc = (utc.hour % 12) * 5 + utc.min / 12;
 
         var bc = mBuffer.getDc();
@@ -249,15 +245,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
             var c = getXY(i, cCoords);
             bc.drawBitmap(c[0], c[1], cBackgrounds[i - cBackgroundPos]);
         }
-
-//        mSmallyFont = WatchUi.loadResource(Rez.Fonts.Smally);
-//        mIconsFont = WatchUi.loadResource(Rez.Fonts.Icons);
-//        mDatesFont = WatchUi.loadResource(Rez.Fonts.Date);
-//        mDayFont = WatchUi.loadResource(Rez.Fonts.Day);
-//        mGaugeCenterFont = WatchUi.loadResource(Rez.Fonts.gauge_center);
-//        mStepsScaleFont = WatchUi.loadResource(Rez.Fonts.steps_scale);
-//        mActivityScaleFont = WatchUi.loadResource(Rez.Fonts.activity_scale);
-//        mMovementScaleFont = WatchUi.loadResource(Rez.Fonts.movement_scale);
 
         var font = WatchUi.loadResource(Rez.Fonts.Smally);
         // Drawing texts
@@ -318,41 +305,37 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Battery;
         font = WatchUi.loadResource(Rez.Fonts.gauge_center);
         pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
-        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], pos, -2007194504); // 136 92 44 0
+        drawHandDetails(bc, pos, 120 - bgX + 44, 120 - bgY, {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
+        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+        mGaugeHand.draw(bc, pos, 136 - bgX, 92 - bgY);
         bc.drawText(164 - bgX, 120 - bgY, font, "0", cAlign);
 
         // Heartbeat;
         if (heartBeat != null) {
             pos = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
-            drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0xFF0000], pos, 794577784); // 47 92 -45 0
+            drawHandDetails(bc, pos, 120 - bgX - 45, 120 - bgY,
+                {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
+            bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+            mGaugeHand.draw(bc, pos, 47 - bgX, 92 - bgY);
             bc.drawText(75 - bgX, 120 - bgY, font, "0", cAlign);
         }
 
         // UTC time gauge;
-        drawHand(bc, mGaugeHand, 0xFFFFFF, 1, [8, 24], [0x000000], utc, 1552416812); // 92 136 0 44
+        drawHandDetails(bc, pos, 120 - bgX, 120 - bgY + 44, {:width => 1, :colors => [0x000000], :coords => [8, 24]});
+        bc.setColor(0xFFFFFF, Graphics.COLOR_TRANSPARENT);
+        mGaugeHand.draw(bc, pos, 92 - bgX, 136 - bgY);
         bc.drawText(120 - bgX, 164 - bgY, font, "0", cAlign);
-
-        // Drawing clock hands
-
-        // Hour hand
-        pos = (time.hour % 12) * 5 + time.min / 12;
-        drawHand(bc, mHourHand, 0xAAAAAA, 3, [-15, 20, 69], [0x000000, 0xFFFFFF], pos, 30841); // 0 0 0 1
-        // Minute hand
-        pos = time.min;
-        drawHand(bc, mMinuteHand, 0xAAAAAA, 2, [-15, 45, 93], [0x000000, 0xFFFFFF], pos, 30841); // 0 0 0 1
 
         // Drawing image to device context
         dc.setColor(0xAAAAAA, 0x000055);
         dc.clear();
         dc.drawBitmap(bgX, bgY, mBuffer);
 
+        // Drawing clock hands
+        drawHourMinuteHands(dc, time, 120, 120, false);
+
         // Drawind second hand to device context;
-        pos = time.sec;
-        drawSecondHand(dc, pos, 120, 120);
-        var alpha = Math.toRadians(pos * 6);
-        dc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
-        dc.drawLine(120 + 80 * Math.sin(alpha), 120 - 80 * Math.cos(alpha),
-                    120 + 95 * Math.sin(alpha), 120 - 95 * Math.cos(alpha));
+        drawSecondHand(dc, time);
 
     }
 

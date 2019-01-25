@@ -47,6 +47,7 @@ class Hand {
 
     dc - device context
     pos - position number
+    dx, dy - offset for encoded tiles positions
      */
     function draw(dc, pos, dx, dy) {
         var start = getTileIdx(pos - 1);
@@ -55,8 +56,8 @@ class Hand {
             var tile = mTiles[j];
             var f = tile & 0x3F;
             var char = (tile >> 8) & 0xFF;
-            var x = (tile >> 16) & 0xFF - bgX + dx;
-            var y = (tile >> 24) & 0xFF - bgY + dy;
+            var x = (tile >> 16) & 0xFF + dx;
+            var y = (tile >> 24) & 0xFF + dy;
             dc.drawText(x, y, getFont(f), char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
         }
 
