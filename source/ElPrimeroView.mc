@@ -356,8 +356,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Drawing clock hands
         drawHourMinuteHands(dc, time, 120, 120, mIsBackgroundMode);
 
-        // Drawind second hand to device context;
-        drawSecondHand(dc, time);
+        if (!mIsBackgroundMode){
+            // Drawind second hand to device context;
+            drawSecondHand(dc, time);
+        }
 
     }
 
