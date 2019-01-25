@@ -49,8 +49,11 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     var mBuffer;
 
+    var mIsBackgroundMode;
+
     function initialize() {
         WatchFace.initialize();
+        mIsBackgroundMode = false;
     }
 
     function loadCoords(data, start, end) {
@@ -192,7 +195,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Hour hand
         pos = (time.hour % 12) * 5 + time.min / 12;
         drawHandDetails(dc, pos, cx, cy + 1, {:width => 3, :colors => [0x000000, 0xFFFFFF], :coords => [-10, 20, 69]});
-        dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
+        // FIXME: remove debug color
+        dc.setColor((vector)? 0x555555: 0xAAAAAA, Graphics.COLOR_TRANSPARENT);
         if (vector) {
             mHourHand.drawVector(dc, pos, 0, 0);
         } else {
@@ -201,7 +205,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Minute hand
         pos = time.min;
         drawHandDetails(dc, pos, cx, cy + 1, {:width => 2, :colors => [0x000000, 0xFFFFFF], :coords => [-10, 45, 93]});
-        dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
+        // FIXME: remove debug color
+        dc.setColor((vector)? 0x555555: 0xAAAAAA, Graphics.COLOR_TRANSPARENT);
         if (vector) {
             mMinuteHand.drawVector(dc, pos, 0, 0);
         } else {
@@ -349,7 +354,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.drawBitmap(bgX, bgY, mBuffer);
 
         // Drawing clock hands
-        drawHourMinuteHands(dc, time, 120, 120, true);
+        drawHourMinuteHands(dc, time, 120, 120, mIsBackgroundMode);
 
         // Drawind second hand to device context;
         drawSecondHand(dc, time);
@@ -364,10 +369,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
+        mIsBackgroundMode = false;
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
+        mIsBackgroundMode = true;
     }
 
 }
