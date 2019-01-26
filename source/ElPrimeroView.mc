@@ -48,6 +48,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var cBackgrounds;
 
     var mBuffer;
+    var mCap;
 
     var mIsBackgroundMode;
 
@@ -156,6 +157,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             :width=>218,
             :height=>200
         });
+        mCap = WatchUi.loadResource(Rez.Drawables.Cap);
 
         cCoords = WatchUi.loadResource(Rez.JsonData.coords_json);
     }
@@ -226,12 +228,13 @@ class ElPrimeroView extends WatchUi.WatchFace {
      */
     function drawSecondHand(dc, time) {
         var angle = Math.toRadians(time.sec * 6);
-        dc.setColor(0xAAAAAA, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(0x555555, Graphics.COLOR_TRANSPARENT);
         fillRadialPolygon(dc, angle, mSecondCoords, 120, 120);
         // Draw red line for hand accent
         dc.setColor(0xFF0000, Graphics.COLOR_TRANSPARENT);
         dc.drawLine(120 + 80 * Math.sin(angle), 120 - 80 * Math.cos(angle),
                     120 + 95 * Math.sin(angle), 120 - 95 * Math.cos(angle));
+        dc.drawBitmap(116, 116, mCap);
     }
 
     // Update the view
