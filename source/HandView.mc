@@ -72,7 +72,8 @@ class Hand {
     function drawVector(dc, pos, dx, dy) {
         var angle = Math.toRadians(pos * 6);
         for (var i = 0; i < mVectorList.size(); i++) {
-            fillRadialPolygon(dc, angle, mVectorList[i], 120 + dx, 120 + dy);
+            var points = fillRadialPolygon(dc, angle, mVectorList[i], 120 + dx, 120 + dy);
+            dc.fillPolygon(points);
         }
     }
 

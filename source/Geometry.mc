@@ -43,7 +43,7 @@ function fillRadialPolygon(dc, angle, coords, cx, cy) {
         var y = getY(cy, r, a + angle);
         points[i] = [x, y];
     }
-    dc.fillPolygon(points);
+    return points;
 }
 
 
