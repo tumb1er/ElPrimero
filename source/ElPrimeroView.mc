@@ -200,14 +200,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function onShow() {
     }
 
-    function drawHandDetails(dc, pos, cx, cy, params) {
-        var angle = Math.toRadians(pos * 6);
-        for (var i = 0; i < params[:colors].size(); i++) {
-            dc.setColor(params[:colors][i], cTransparent);
-            drawRadialRect(dc, angle, params[:width], params[:coords][i], params[:coords][i + 1], cx, cy);
-        }
-    }
-
     /**
     Draws hour and minute hands to device or buffer
 
@@ -217,24 +209,31 @@ class ElPrimeroView extends WatchUi.WatchFace {
     vector - bool flag to draw vector-based or font-based hands
      */
     function drawHourMinuteHands(dc, time, cx, cy, vector) {
-        var pos;
-        // Hour hand
-        pos = (time.hour % 12) * 5 + time.min / 12;
-        drawHandDetails(dc, pos, cx, cy + 1, {:width => 3, :colors => [0x000000, 0xFFFFFF], :coords => [-10, 20, 69]});
+        var hpos, hangle, mpos, mangle;
+        hpos = (time.hour % 12) * 5 + time.min / 12;
+        hangle = Math.toRadians(hpos * 6);
+        mpos = time.min;
+        mangle = Math.toRadians(mpos * 6);
+
+        // Accents
+        dc.setColor(0x000000, cTransparent);
+        drawRadialRect(dc, hangle, 3, -10, 30, cx, cy);
+        drawRadialRect(dc, mangle, 2, -10, 45, cx, cy);
+
+        // Main part
+        dc.setColor(0xFFFFFF, cTransparent);
+        drawRadialRect(dc, hangle, 3, 30, 69, cx, cy);
+        drawRadialRect(dc, mangle, 2, 45, 93, cx, cy);
+
+        // Hands
         dc.setColor(0xAAAAAA, cTransparent);
+
         if (vector) {
-            mHourHand.drawVector(dc, pos, cx - 120, cy - 120);
+            mHourHand.drawVector(dc, hpos, cx - 120, cy - 120);
+            mMinuteHand.drawVector(dc, mpos, cx - 120, cy - 120);
         } else {
-            mHourHand.draw(dc, pos, cx - 120, cy - 120);
-        }
-        // Minute hand
-        pos = time.min;
-        drawHandDetails(dc, pos, cx, cy + 1, {:width => 2, :colors => [0x000000, 0xFFFFFF], :coords => [-10, 45, 93]});
-        dc.setColor(0xAAAAAA, cTransparent);
-        if (vector) {
-            mMinuteHand.drawVector(dc, pos, cx - 120, cy - 120);
-        } else {
-            mMinuteHand.draw(dc, pos, cx - 120, cy - 120);
+            mHourHand.draw(dc, hpos, cx - 120, cy - 120);
+            mMinuteHand.draw(dc, mpos, cx - 120, cy - 120);
         }
     }
 
@@ -307,7 +306,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         if (heartBeatSample != null) {
             heartBeat = heartBeatSample.data;
         }
-        var pos;
+        var pos, angle;
 
         // Getting UTC and local time info
         var now = Time.now();
@@ -390,7 +389,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Battery;
         font = WatchUi.loadResource(Rez.Fonts.gauge_center);
         pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
-        drawHandDetails(bc, pos, 120 - 10 + 44, 120 - 20, {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
+        angle = Math.toRadians(pos * 6);
+        dc.setColor(0xFF0000, cTransparent);
+        drawRadialRect(dc, angle, 1, 8, 24, 120 - 10 + 44, 120 - 20);
+
         bc.setColor(0xFFFFFF, cTransparent);
         mGaugeHand.draw(bc, pos, 136 - 10, 91 - 20);
         bc.drawText(164 - 10, 120 - 1 - 20, font, "0", cAlign);
@@ -398,15 +400,18 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Heartbeat;
         if (heartBeat != null) {
             pos = (35 + 50 * (heartBeat + 70) / 200.0f).toNumber() % 60;
-            drawHandDetails(bc, pos, 120 - 10 - 45, 120 - 20,
-                {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
+            angle = Math.toRadians(pos * 6);
+            dc.setColor(0xFF0000, cTransparent);
+            drawRadialRect(dc, angle, 1, 8, 24, 120 - 10 - 45, 120 - 20);
             bc.setColor(0xFFFFFF, cTransparent);
             mGaugeHand.draw(bc, pos, 47 - 10, 91 - 20);
             bc.drawText(75 - 10, 120 - 1 - 20, font, "0", cAlign);
         }
 
         // UTC time gauge;
-        drawHandDetails(bc, utc, 120 - 10, 120 - 20 + 44, {:width => 1, :colors => [0x000000], :coords => [8, 24]});
+        angle = Math.toRadians(utc * 6);
+        dc.setColor(0x000000, cTransparent);
+        drawRadialRect(dc, angle, 1, 8, 24, 120 - 10, 120 - 20 + 44);
         bc.setColor(0xFFFFFF, cTransparent);
         mGaugeHand.draw(bc, utc, 92 - 10, 136 - 20);
         bc.drawText(120 - 10, 164 - 20, font, "0", cAlign);
