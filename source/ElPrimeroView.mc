@@ -390,19 +390,19 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Battery;
         font = WatchUi.loadResource(Rez.Fonts.gauge_center);
         pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
-        drawHandDetails(bc, pos, 120 - 9 + 44, 120 + 1 - 20, {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
+        drawHandDetails(bc, pos, 120 - 9 + 44, 120 - 20, {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
         bc.setColor(0xFFFFFF, cTransparent);
-        mGaugeHand.draw(bc, pos, 136 - 9, 92 - 20);
-        bc.drawText(164 - 9, 120 - 20, font, "0", cAlign);
+        mGaugeHand.draw(bc, pos, 136 - 9, 91 - 20);
+        bc.drawText(164 - 9, 120 - 1 - 20, font, "0", cAlign);
 
         // Heartbeat;
         if (heartBeat != null) {
-            pos = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
+            pos = (35 + 50 * (heartBeat + 70) / 200.0f).toNumber() % 60;
             drawHandDetails(bc, pos, 120 - 9 - 45, 120 - 20,
                 {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
             bc.setColor(0xFFFFFF, cTransparent);
-            mGaugeHand.draw(bc, pos, 47 - 9, 92 - 20);
-            bc.drawText(75 - 9, 120 - 20, font, "0", cAlign);
+            mGaugeHand.draw(bc, pos, 47 - 9, 91 - 20);
+            bc.drawText(75 - 9, 120 - 1 - 20, font, "0", cAlign);
         }
 
         // UTC time gauge;
