@@ -280,7 +280,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             // FIXME: debug rect
             dc.setColor(0x00FF00, cTransparent);
             dc.drawRectangle(mx, my, Math.ceil(nx - mx + 1), Math.ceil(ny - my + 1));
-            dc.drawBitmap(9, 20, mBuffer);
+            dc.drawBitmap(10, 20, mBuffer);
         }
 
         // Draw second hand main polygon
@@ -346,7 +346,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         font = WatchUi.loadResource(Rez.Fonts.Icons);
         for (var i = 0; i < 5; i++) {
             var a = Math.toRadians(utc * 6 - 120 + i * 360 / 6);
-            var x = 120 - 9 + 12 * Math.sin(-a);
+            var x = 120 - 10 + 12 * Math.sin(-a);
             var y = 165 - 20 + 12 * Math.cos(-a);
             bc.drawText(x, y, font, s.substring(i, i + 1), cAlign);
         }
@@ -354,8 +354,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Day of month
         bc.setColor(0x000000, cTransparent);
         font = WatchUi.loadResource(Rez.Fonts.Day);
-        bc.drawText(172 - 9, 178 - 20, font, time.day / 10, cAlign);
-        bc.drawText(177 - 9, 173 - 20, font, time.day % 10, cAlign);
+        bc.drawText(172 - 10, 178 - 20, font, time.day / 10, cAlign);
+        bc.drawText(177 - 10, 173 - 20, font, time.day % 10, cAlign);
         font = WatchUi.loadResource(Rez.Fonts.Date);
         // Day of week
         bc.drawText(61, 62, font, time.day_of_week.toUpper(), cAlign);
@@ -390,35 +390,35 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Battery;
         font = WatchUi.loadResource(Rez.Fonts.gauge_center);
         pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
-        drawHandDetails(bc, pos, 120 - 9 + 44, 120 - 20, {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
+        drawHandDetails(bc, pos, 120 - 10 + 44, 120 - 20, {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
         bc.setColor(0xFFFFFF, cTransparent);
-        mGaugeHand.draw(bc, pos, 136 - 9, 91 - 20);
-        bc.drawText(164 - 9, 120 - 1 - 20, font, "0", cAlign);
+        mGaugeHand.draw(bc, pos, 136 - 10, 91 - 20);
+        bc.drawText(164 - 10, 120 - 1 - 20, font, "0", cAlign);
 
         // Heartbeat;
         if (heartBeat != null) {
             pos = (35 + 50 * (heartBeat + 70) / 200.0f).toNumber() % 60;
-            drawHandDetails(bc, pos, 120 - 9 - 45, 120 - 20,
+            drawHandDetails(bc, pos, 120 - 10 - 45, 120 - 20,
                 {:width => 1, :colors => [0xFF0000], :coords => [8, 24]});
             bc.setColor(0xFFFFFF, cTransparent);
-            mGaugeHand.draw(bc, pos, 47 - 9, 91 - 20);
-            bc.drawText(75 - 9, 120 - 1 - 20, font, "0", cAlign);
+            mGaugeHand.draw(bc, pos, 47 - 10, 91 - 20);
+            bc.drawText(75 - 10, 120 - 1 - 20, font, "0", cAlign);
         }
 
         // UTC time gauge;
-        drawHandDetails(bc, utc, 120 - 9, 120 - 20 + 44, {:width => 1, :colors => [0x000000], :coords => [8, 24]});
+        drawHandDetails(bc, utc, 120 - 10, 120 - 20 + 44, {:width => 1, :colors => [0x000000], :coords => [8, 24]});
         bc.setColor(0xFFFFFF, cTransparent);
-        mGaugeHand.draw(bc, utc, 92 - 9, 136 - 20);
-        bc.drawText(120 - 9, 164 - 20, font, "0", cAlign);
+        mGaugeHand.draw(bc, utc, 92 - 10, 136 - 20);
+        bc.drawText(120 - 10, 164 - 20, font, "0", cAlign);
 
         // Drawing clock hands
-        drawHourMinuteHands(bc, time, 120 - 9, 120 - 20, mIsBackgroundMode);
+        drawHourMinuteHands(bc, time, 120 - 10, 120 - 20, mIsBackgroundMode);
 
         // Drawing image to device context
         dc.setColor(0xAAAAAA, 0x000055);
         dc.clear();
         dc.clearClip();
-        dc.drawBitmap(9, 20, mBuffer);
+        dc.drawBitmap(10, 20, mBuffer);
 
 
         // Drawind second hand to device context;
