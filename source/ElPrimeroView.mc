@@ -19,6 +19,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
     enum {
         PosCommon,
         PosBackground = 3,
+        PosGauge3 = 9,
+        PosGauge6 = 13,
+        PosGauge9 = 17,
         PosSteps = 21,
         PosActivity = 26,
         PosMovement= 30,
@@ -292,6 +295,41 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.drawBitmap(116, 116, mCap);
     }
 
+    /**
+    Draws background for gauge
+
+    dc - device context
+    number - index of gauge (used for compute common and gauge backgrounds position indices)
+     */
+    function drawGaugeBackground(dc, number) {
+        var c = getXY(number, cCoords);
+            dc.drawBitmap(c[0], c[1], cCommonGaugeBG);
+
+        for (var i=PosGauge3 + number * 4; i < PosGauge3 + number * 4 + 4; i++) {
+            c = getXY(i, cCoords);
+            dc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground]);
+        }
+    }
+
+    /**
+    Draws gauge hand
+
+    dc - device context
+    pos - gauge hand position [0-59]
+    dx, dy - offsets for accent
+    cap - font for gauge cap
+     */
+    function drawGaugeHand(dc, pos, dx, dy, cap) {
+        var angle = Math.toRadians(pos * 6);
+        dc.setColor(0xFF0000, cTransparent);
+        drawRadialRect(dc, angle, 1, 8, 24, 120 - 10 + dx, 120 - 20 + dy);
+
+        dc.setColor(0xFFFFFF, cTransparent);
+        mGaugeHand.draw(dc, pos, 92 - 10 + dx, 91 - 20 + dy);
+
+        dc.drawText(120 - 10 + dx, 120 - 1 - 20 + dy, cap, "0", cAlign);
+    }
+
     function onPartialUpdate(dc) {
         drawSecondHand(dc, System.getClockTime(), true);
     }
@@ -320,14 +358,13 @@ class ElPrimeroView extends WatchUi.WatchFace {
         bc.setColor(0xFFFFFF, 0x000055);
         bc.clear();
 
-        for (var i=PosCommon; i < PosBackground; i++) {
-            var c = getXY(i, cCoords);
-            bc.drawBitmap(c[0], c[1], cCommonGaugeBG);
-        }
-
-        for (var i=PosBackground; i< PosSteps; i++) {
+        for (var i=PosBackground; i< PosGauge3; i++) {
             var c = getXY(i, cCoords);
             bc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground]);
+        }
+
+        for (var i=0; i< 3; i++) {
+            drawGaugeBackground(bc, i);
         }
 
         var font = WatchUi.loadResource(Rez.Fonts.Smally);
@@ -385,36 +422,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
         }
 
         // Drawing gauge hands
-
-        // Battery;
         font = WatchUi.loadResource(Rez.Fonts.gauge_center);
+        // Battery;
         pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
-        angle = Math.toRadians(pos * 6);
-        dc.setColor(0xFF0000, cTransparent);
-        drawRadialRect(dc, angle, 1, 8, 24, 120 - 10 + 44, 120 - 20);
-
-        bc.setColor(0xFFFFFF, cTransparent);
-        mGaugeHand.draw(bc, pos, 136 - 10, 91 - 20);
-        bc.drawText(164 - 10, 120 - 1 - 20, font, "0", cAlign);
-
-        // Heartbeat;
+        drawGaugeHand(bc, pos, 44, 0, font);
+        // UTC;
+        drawGaugeHand(bc, utc, 0, 44, font);
+        // Heartbeat
         if (heartBeat != null) {
             pos = (35 + 50 * (heartBeat + 70) / 200.0f).toNumber() % 60;
-            angle = Math.toRadians(pos * 6);
-            dc.setColor(0xFF0000, cTransparent);
-            drawRadialRect(dc, angle, 1, 8, 24, 120 - 10 - 45, 120 - 20);
-            bc.setColor(0xFFFFFF, cTransparent);
-            mGaugeHand.draw(bc, pos, 47 - 10, 91 - 20);
-            bc.drawText(75 - 10, 120 - 1 - 20, font, "0", cAlign);
+            drawGaugeHand(bc, pos, -45, 0, font);
         }
-
-        // UTC time gauge;
-        angle = Math.toRadians(utc * 6);
-        dc.setColor(0x000000, cTransparent);
-        drawRadialRect(dc, angle, 1, 8, 24, 120 - 10, 120 - 20 + 44);
-        bc.setColor(0xFFFFFF, cTransparent);
-        mGaugeHand.draw(bc, utc, 92 - 10, 136 - 20);
-        bc.drawText(120 - 10, 164 - 20, font, "0", cAlign);
 
         // Drawing clock hands
         drawHourMinuteHands(bc, time, 120 - 10, 120 - 20, mIsBackgroundMode);
