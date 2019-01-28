@@ -5,6 +5,7 @@ using Toybox.Lang;
 using Toybox.Math;
 using Toybox.SensorHistory;
 using Toybox.Time.Gregorian;
+using Toybox.UserProfile;
 
 // buffered background screen offset;
 
@@ -52,6 +53,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mCap;
 
     var mIsBackgroundMode;
+
+    var mIcons; // bit-packed flags
 
 
     // prev clip
@@ -330,8 +333,45 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.drawText(120 - 10 + dx, 120 - 1 - 20 + dy, cap, "0", cAlign);
     }
 
+    /**
+    Draws icons in utc gauge
+
+    dc - device context
+    pos - gauge hand position for proper icon rotation
+     */
+    function drawIcons(dc, pos, font) {
+        var s = "ZABSN";
+        for (var i = 0; i < 5; i++) {
+            var a = Math.toRadians(pos * 6 - 120 + i * 360 / 6);
+            var x = 120 - 10 + 12 * Math.sin(-a);
+            var y = 165 - 20 + 12 * Math.cos(-a);
+            dc.setColor((mIcons && (1 << i))? 0xFFFFFF: 0xAAAAAA, cTransparent);
+            dc.drawText(x, y, font, s.substring(i, i + 1), cAlign);
+        }
+
+    }
+
     function onPartialUpdate(dc) {
         drawSecondHand(dc, System.getClockTime(), true);
+    }
+
+    /**
+    Retrieves icons status from system.
+
+    time - current time;
+     */
+    function updateIconStatus(time) {
+        mIcons = 0;
+        var settings = System.getDeviceSettings();
+        var profile = UserProfile.getProfile();
+        var alreadySleeping = time.hour * 3600 + time.min * 60 + time.sec > profile.sleepTime.value();
+        var stillSleeping = time.hour * 3600 + time.min * 60 + time.sec < profile.wakeTime.value();
+
+        mIcons += (alreadySleeping || stillSleeping)? 1: 0;
+        mIcons += (settings.alarmCount > 0)? 2: 0;
+        mIcons += (settings.phoneConnected)? 4: 0;
+        mIcons += (settings.doNotDisturb)? 8: 0;
+        mIcons += (settings.notificationCount > 0)? 16: 0;
     }
 
     // Update the view
@@ -352,6 +392,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
 
         utc = (utc.hour % 12) * 5 + utc.min / 12;
+
+        updateIconStatus(time);
 
         var bc = mBuffer.getDc();
         // Drawing clock backgrounds
@@ -377,15 +419,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
             bc.drawText(66, 90, font, heartBeat.toString(), cAlign);
         }
         // Icons
-        var s = "ZABSN";
-        bc.setColor(0xFFFFFF, cTransparent);
         font = WatchUi.loadResource(Rez.Fonts.Icons);
-        for (var i = 0; i < 5; i++) {
-            var a = Math.toRadians(utc * 6 - 120 + i * 360 / 6);
-            var x = 120 - 10 + 12 * Math.sin(-a);
-            var y = 165 - 20 + 12 * Math.cos(-a);
-            bc.drawText(x, y, font, s.substring(i, i + 1), cAlign);
-        }
+        drawIcons(bc, utc, font);
 
         // Day of month
         bc.setColor(0x000000, cTransparent);
