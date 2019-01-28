@@ -311,8 +311,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
      */
     function drawGaugeBackground(dc, number) {
         var c = getXY(number, cCoords);
-            dc.drawBitmap(c[0], c[1], cCommonGaugeBG);
-
+//            dc.drawBitmap(c[0], c[1], cCommonGaugeBG);
+        dc.setColor(0x000000, 0x000000);
+        dc.fillRectangle(c[0], c[1], 41, 37);
         for (var i=PosGauge3 + number * 4; i < PosGauge3 + number * 4 + 4; i++) {
             c = getXY(i, cCoords);
             dc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground]);

@@ -58,190 +58,130 @@
     <bitmap id="G3Top" filename="gauge3/g3_top.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
-            <color>000055</color>
-            <color>550000</color>
-            <color>550055</color>
-            <color>5500aa</color>
-            <color>aa0000</color>
-            <color>aa0055</color>
-            <color>555555</color>
-            <color>5555aa</color>
             <color>aaaaaa</color>
-            <color>aaaaff</color>
             <color>ffffff</color>
+            <color>555555</color>
         </palette>
     </bitmap>
     <bitmap id="G3Left" filename="gauge3/g3_left.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
-            <color>000055</color>
-            <color>550000</color>
+            <color>aaaaaa</color>
+            <color>ffffff</color>
+            <color>555555</color>
             <color>550055</color>
-            <color>5500aa</color>
             <color>aa0000</color>
             <color>aa0055</color>
-            <color>555555</color>
-            <color>5555aa</color>
-            <color>aaaaaa</color>
-            <color>aaaaff</color>
-            <color>ffffff</color>
         </palette>
     </bitmap>
     <bitmap id="G3Right" filename="gauge3/g3_right.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
-            <color>000055</color>
-            <color>550000</color>
-            <color>550055</color>
-            <color>5500aa</color>
-            <color>aa0000</color>
-            <color>aa0055</color>
-            <color>555555</color>
-            <color>5555aa</color>
             <color>aaaaaa</color>
-            <color>aaaaff</color>
             <color>ffffff</color>
+            <color>555555</color>
         </palette>
     </bitmap>
     <bitmap id="G3Bottom" filename="gauge3/g3_bottom.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
-            <color>000055</color>
-            <color>550000</color>
-            <color>550055</color>
-            <color>5500aa</color>
-            <color>aa0000</color>
-            <color>aa0055</color>
-            <color>555555</color>
-            <color>5555aa</color>
-            <color>aaaaaa</color>
-            <color>aaaaff</color>
             <color>ffffff</color>
+            <color>aa0000</color>
+            <color>aaaaaa</color>
+            <color>550000</color>
+            <color>aa0055</color>
         </palette>
     </bitmap>
 
     <bitmap id="G6Top" filename="gauge6/g6_top.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
-            <color>000055</color>
-            <color>550055</color>
-            <color>555555</color>
-            <color>5555aa</color>
-            <color>aaaaaa</color>
-            <color>aaaaff</color>
             <color>ffffff</color>
-        </palette>
-    </bitmap>
-    <bitmap id="G6Bottom" filename="gauge6/g6_bottom.png" dithering="none">
-        <palette disableTransparency="false">
-            <color>000000</color>
-            <color>000055</color>
-            <color>550055</color>
-            <color>555555</color>
-            <color>5555aa</color>
             <color>aaaaaa</color>
-            <color>aaaaff</color>
-            <color>ffffff</color>
+            <color>555555</color>
         </palette>
     </bitmap>
     <bitmap id="G6Left" filename="gauge6/g6_left.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
-            <color>000055</color>
-            <color>550055</color>
-            <color>555555</color>
-            <color>5555aa</color>
-            <color>aaaaaa</color>
-            <color>aaaaff</color>
             <color>ffffff</color>
+            <color>aaaaaa</color>
+            <color>555555</color>
         </palette>
     </bitmap>
     <bitmap id="G6Right" filename="gauge6/g6_right.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
-            <color>000055</color>
-            <color>550055</color>
-            <color>555555</color>
-            <color>5555aa</color>
-            <color>aaaaaa</color>
-            <color>aaaaff</color>
             <color>ffffff</color>
+            <color>aaaaaa</color>
+            <color>555555</color>
+        </palette>
+    </bitmap>
+    <bitmap id="G6Bottom" filename="gauge6/g6_bottom.png" dithering="none">
+        <palette disableTransparency="false">
+            <color>000000</color>
+            <color>ffffff</color>
+            <color>aaaaaa</color>
+            <color>555555</color>
         </palette>
     </bitmap>
 
     <bitmap id="G9Top" filename="gauge9/g9_top.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
-            <color>000055</color>
-            <color>550055</color>
-            <color>aa0000</color>
-            <color>5500aa</color>
-            <color>ff0000</color>
-            <color>5555aa</color>
-            <color>5555ff</color>
-            <color>ff4444</color>
-            <color>55aaff</color>
-            <color>aaaaaa</color>
-            <color>aaaaff</color>
-            <color>55ffff</color>
-            <color>aaffff</color>
             <color>ffffff</color>
+            <color>aaaaaa</color>
+            <color>555555</color>
         </palette>
     </bitmap>
     <bitmap id="G9Left" filename="gauge9/g9_left.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
+            <color>ffffff</color>
+            <color>aaaaaa</color>
             <color>000055</color>
-            <color>550055</color>
+            <color>555555</color>
             <color>aa0000</color>
-            <color>5500aa</color>
-            <color>ff0000</color>
+            <color>55aaff</color>
+            <color>aaffff</color>
             <color>5555aa</color>
             <color>5555ff</color>
-            <color>ff4444</color>
-            <color>55aaff</color>
-            <color>aaaaaa</color>
             <color>aaaaff</color>
+            <color>5500aa</color>
+            <color>0055ff</color>
+            <color>5500ff</color>
             <color>55ffff</color>
-            <color>aaffff</color>
-            <color>ffffff</color>
         </palette>
     </bitmap>
     <bitmap id="G9Right" filename="gauge9/g9_right.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
-            <color>000055</color>
-            <color>550055</color>
-            <color>aa0000</color>
-            <color>5500aa</color>
-            <color>ff0000</color>
-            <color>5555aa</color>
-            <color>5555ff</color>
-            <color>ff4444</color>
-            <color>55aaff</color>
-            <color>aaaaaa</color>
-            <color>aaaaff</color>
-            <color>55ffff</color>
-            <color>aaffff</color>
             <color>ffffff</color>
+            <color>aaaaaa</color>
+            <color>555555</color>
+            <color>ff0000</color>
+            <color>550000</color>
+            <color>ff0055</color>
+            <color>000055</color>
+            <color>ff0000</color>
         </palette>
     </bitmap>
     <bitmap id="G9Bottom" filename="gauge9/g9_bottom.png" dithering="none">
         <palette disableTransparency="false">
             <color>000000</color>
             <color>000055</color>
+            <color>550000</color>
             <color>550055</color>
             <color>aa0000</color>
-            <color>5500aa</color>
             <color>ff0000</color>
+            <color>555555</color>
             <color>5555aa</color>
             <color>5555ff</color>
-            <color>ff4444</color>
+            <color>aa5555</color>
+            <color>ff5555</color>
             <color>55aaff</color>
             <color>aaaaaa</color>
             <color>aaaaff</color>
-            <color>55ffff</color>
-            <color>aaffff</color>
             <color>ffffff</color>
         </palette>
     </bitmap>
