@@ -416,16 +416,16 @@ class ElPrimeroView extends WatchUi.WatchFace {
             info.stepGoal = 5000;
         }
 
-        mStepsFraction = info.steps * 5 / info.stepGoal;
-        mStepsFraction = (mStepsFraction > 4)? 4: mStepsFraction;
+        mStepsFraction = info.steps * 6 / info.stepGoal;
+        mStepsFraction = (mStepsFraction > 5)? 5: mStepsFraction;
 
         if (info.activeMinutesWeekGoal == 0) {
             info.activeMinutesWeekGoal = 150;
         }
-        mActivityFraction = info.activeMinutesWeek.total * 5 / info.activeMinutesWeekGoal;
-        mActivityFraction = (mActivityFraction > 4)? 4: mActivityFraction;
+        mActivityFraction = info.activeMinutesWeek.total * 6 / info.activeMinutesWeekGoal;
+        mActivityFraction = (mActivityFraction > 5)? 5: mActivityFraction;
 
-        mMoveFraction = (info.moveBarLevel - ActivityMonitor.MOVE_BAR_LEVEL_MIN) * 5 / (
+        mMoveFraction = (info.moveBarLevel - ActivityMonitor.MOVE_BAR_LEVEL_MIN) * 6 / (
             ActivityMonitor.MOVE_BAR_LEVEL_MAX - ActivityMonitor.MOVE_BAR_LEVEL_MIN);
 
         var bc = mBuffer.getDc();
@@ -472,14 +472,14 @@ class ElPrimeroView extends WatchUi.WatchFace {
         font = WatchUi.loadResource(Rez.Fonts.steps_scale);
         for (var i = PosSteps; i < PosActivity; i++) {
             var c = getXY(i, cCoords);
-            bc.setColor((i <= mStepsFraction + PosSteps)? 0xFFFFFF: 0x5555AA, cTransparent);
+            bc.setColor((i < mStepsFraction + PosSteps)? 0xFFFFFF: 0x5555AA, cTransparent);
             bc.drawText(c[0], c[1], font, i - PosSteps, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Activity
         font = WatchUi.loadResource(Rez.Fonts.activity_scale);
         for (var i = PosActivity; i < PosMovement; i++) {
             var c = getXY(i, cCoords);
-            bc.setColor((i <= mActivityFraction + PosActivity)? 0xFFFFFF: 0x5555AA, cTransparent);
+            bc.setColor((i < mActivityFraction + PosActivity)? 0xFFFFFF: 0x5555AA, cTransparent);
             bc.drawText(c[0], c[1], font, i - PosActivity, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Movement
@@ -487,7 +487,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         font = WatchUi.loadResource(Rez.Fonts.movement_scale);
         for (var i = PosMovement; i < PosEOF; i++) {
             var c = getXY(i, cCoords);
-            bc.setColor((i <= mMoveFraction + PosMovement)? 0xFF0000: 0xAAAAAA, cTransparent);
+            bc.setColor((i < mMoveFraction + PosMovement)? 0xFF0000: 0xAAAAAA, cTransparent);
             bc.drawText(c[0], c[1], font, i - PosMovement, Graphics.TEXT_JUSTIFY_LEFT);
         }
 
