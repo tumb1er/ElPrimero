@@ -1,3 +1,7 @@
 <strings>
     <string id="AppName">ElPrimero</string>
+    <string id="WeekDays">SUNMONTUEWEDTHUFRISAT</string>
+    <string id="Months">JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC</string>
+    <string id="Icons">ZABSN</string>
+
 </strings>

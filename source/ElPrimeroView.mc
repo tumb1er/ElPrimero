@@ -50,13 +50,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mBuffer;
     var mCap;
 
-    var mIsBackgroundMode;
+    var cWeekDays, cMonths, cIcons;
 
-    var mIcons; // bit-packed flags
+    var mIsBackgroundMode;
+//
+//    var mIcons; // bit-packed flags
 
     var mStepsFraction; // [0 - StepsGoal] * 5
     var mActivityFraction; // [0 - ActivityWeekGoal] * 5
     var mMoveFraction; // [0 - moveLimit] * 5
+
+    var mState;
 
 
     // prev clip
@@ -71,6 +75,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         fy = 240;
         gx = 0;
         gy = 0;
+        mState = new State();
     }
 
     function loadCoords(data, start, end) {
@@ -168,6 +173,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mCap = WatchUi.loadResource(Rez.Drawables.Cap);
 
         cCoords = WatchUi.loadResource(Rez.JsonData.coords_json);
+        cWeekDays = WatchUi.loadResource(Rez.Strings.WeekDays);
+        cMonths = WatchUi.loadResource(Rez.Strings.Months);
+        cIcons = WatchUi.loadResource(Rez.Strings.Icons);
     }
 
     function getXY(i, data) {
@@ -204,20 +212,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
     Draws hour and minute hands to device or buffer
 
     dc - device or buffer context
-    time - local time info
     cx, cy - rotation center
     vector - bool flag to draw vector-based or font-based hands
      */
-    function drawHourMinuteHands(dc, time, cx, cy, vector) {
-        var hpos, hangle, mpos, mangle;
-        hpos = (time.hour % 12) * 5 + time.min / 12;
-        hangle = Math.toRadians(hpos * 6);
-        mpos = time.min;
-        mangle = Math.toRadians(mpos * 6);
+    function drawHourMinuteHands(dc, cx, cy, vector) {
+        var hangle, mangle;
+        hangle = Math.toRadians(mState.mHourPos * 6);
+        mangle = Math.toRadians(mState.mMinutePos * 6);
 
         if (vector) {
             dc.setColor(0xAAAAAA, cTransparent);
-            mHourHand.drawVector(dc, hpos, cx - 120, cy +1 - 120);
+            mHourHand.drawVector(dc, mState.mHourPos, cx - 120, cy +1 - 120);
         }
 
         // Hour details
@@ -228,12 +233,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         if (!vector) {
             dc.setColor(0xAAAAAA, cTransparent);
-            mHourHand.draw(dc, hpos, cx - 120, cy - 120);
+            mHourHand.draw(dc, mState.mHourPos, cx - 120, cy - 120);
         }
 
         if (vector) {
             dc.setColor(0xAAAAAA, cTransparent);
-            mMinuteHand.drawVector(dc, mpos, cx - 120, cy + 1 - 120);
+            mMinuteHand.drawVector(dc, mState.mMinutePos, cx - 120, cy + 1 - 120);
         }
         // Minute  details
         dc.setColor(0x000000, cTransparent);
@@ -244,7 +249,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Hands
         if (!vector) {
             dc.setColor(0xAAAAAA, cTransparent);
-            mMinuteHand.draw(dc, mpos, cx - 120, cy - 120);
+            mMinuteHand.draw(dc, mState.mMinutePos, cx - 120, cy - 120);
         }
     }
 
@@ -258,7 +263,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     dc - device only context
     time - local time
      */
-    function drawSecondHand(dc, time, withBuffer) {
+    function drawSecondHand(dc, withBuffer) {
         fx = ax;
         fy = ay;
         gx = bx;
@@ -267,7 +272,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         ay = 240;
         bx = 0;
         by = 0;
-        var angle = Math.toRadians(time.sec * 6);
+        var angle = Math.toRadians(mState.mSecondPos * 6);
         var sa = Math.sin(angle);
         var ca = Math.cos(angle);
         var x1 = 120 + 80 * sa;
@@ -340,45 +345,28 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     dc - device context
     pos - gauge hand position for proper icon rotation
+    font - icons font
      */
     function drawIcons(dc, pos, font) {
-        var s = "ZABSN";
         for (var i = 0; i < 5; i++) {
             var a = Math.toRadians(pos * 6 - 120 + i * 360 / 6);
             var x = 120 - 10 + 12 * Math.sin(-a);
             var y = 165 - 20 + 12 * Math.cos(-a);
-            dc.setColor((mIcons && (1 << i))? 0xFFFFFF: 0xAAAAAA, cTransparent);
-            dc.drawText(x, y, font, s.substring(i, i + 1), cAlign);
+            dc.setColor((mState.mIcons && (1 << i))? 0xFFFFFF: 0xAAAAAA, cTransparent);
+            dc.drawText(x, y, font, cIcons.substring(i, i + 1), cAlign);
         }
 
     }
 
     function onPartialUpdate(dc) {
-        drawSecondHand(dc, System.getClockTime(), true);
-    }
-
-    /**
-    Retrieves icons status from system.
-
-    time - current time;
-     */
-    function updateIconStatus(time) {
-        mIcons = 0;
-        var settings = System.getDeviceSettings();
-        var profile = UserProfile.getProfile();
-        var alreadySleeping = time.hour * 3600 + time.min * 60 + time.sec > profile.sleepTime.value();
-        var stillSleeping = time.hour * 3600 + time.min * 60 + time.sec < profile.wakeTime.value();
-
-        mIcons += (alreadySleeping || stillSleeping)? 1: 0;
-        mIcons += (settings.alarmCount > 0)? 2: 0;
-        mIcons += (settings.phoneConnected)? 4: 0;
-        mIcons += (settings.doNotDisturb)? 8: 0;
-        mIcons += (settings.notificationCount > 0)? 16: 0;
+        mState.updateDateTime();
+        drawSecondHand(dc, true);
     }
 
     // Update the view
     function onUpdate(dc) {
         // Prepare all data
+        mState.update();
         var stats = System.getSystemStats();
         var heartBeatIter = SensorHistory.getHeartRateHistory({});
         var heartBeatSample = heartBeatIter.next();
@@ -387,15 +375,15 @@ class ElPrimeroView extends WatchUi.WatchFace {
             heartBeat = heartBeatSample.data;
         }
         var pos, angle;
+//
+//        // Getting UTC and local time info
+//        var now = Time.now();
+//        var time = Gregorian.info(now, Time.FORMAT_MEDIUM);
+//        var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
+//
+//        utc = (utc.hour % 12) * 5 + utc.min / 12;
 
-        // Getting UTC and local time info
-        var now = Time.now();
-        var time = Gregorian.info(now, Time.FORMAT_MEDIUM);
-        var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
-
-        utc = (utc.hour % 12) * 5 + utc.min / 12;
-
-        updateIconStatus(time);
+//        updateIconStatus(time);
 
         var profile = UserProfile.getProfile();
         var zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
@@ -449,18 +437,18 @@ class ElPrimeroView extends WatchUi.WatchFace {
         }
         // Icons
         font = WatchUi.loadResource(Rez.Fonts.Icons);
-        drawIcons(bc, utc, font);
+        drawIcons(bc, mState.mUTCPos, font);
 
         // Day of month
         bc.setColor(0x000000, cTransparent);
         font = WatchUi.loadResource(Rez.Fonts.Day);
-        bc.drawText(172 - 10, 178 - 20, font, time.day / 10, cAlign);
-        bc.drawText(177 - 10, 173 - 20, font, time.day % 10, cAlign);
+        bc.drawText(172 - 10, 178 - 20, font, mState.mDay / 10, cAlign);
+        bc.drawText(177 - 10, 173 - 20, font, mState.mDay % 10, cAlign);
         font = WatchUi.loadResource(Rez.Fonts.Date);
         // Day of week
-        bc.drawText(61, 62, font, time.day_of_week.toUpper(), cAlign);
+        bc.drawText(61, 62, font, cWeekDays.substring(mState.mWeekDay * 3 - 3, mState.mWeekDay * 3), cAlign);
         // Month
-        bc.drawText(160, 62, font, time.month.toUpper(), cAlign);
+        bc.drawText(160, 62, font, cMonths.substring(mState.mMonth * 3 - 3, mState.mMonth * 3), cAlign);
 
         // Drawing scales
 
@@ -493,7 +481,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
         drawGaugeHand(bc, pos, 44, 0, font);
         // UTC;
-        drawGaugeHand(bc, utc, 0, 44, font);
+        drawGaugeHand(bc, mState.mUTCPos, 0, 44, font);
         // Heartbeat
         if (heartBeat != null) {
             pos = (45 + (heartBeat - minHR) * 40 / (maxHR - minHR)).toNumber() % 60;
@@ -501,7 +489,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         }
 
         // Drawing clock hands
-        drawHourMinuteHands(bc, time, 120 - 10, 120 - 20, mIsBackgroundMode);
+        drawHourMinuteHands(bc, 120 - 10, 120 - 20, mIsBackgroundMode);
 
         // Drawing image to device context
         dc.setColor(0xAAAAAA, 0x000055);
@@ -511,7 +499,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
 
         // Drawind second hand to device context;
-        drawSecondHand(dc, time, false);
+        drawSecondHand(dc, false);
 
     }
 
