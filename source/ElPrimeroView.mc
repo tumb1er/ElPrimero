@@ -45,7 +45,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     var mSecondCoords;
 
-    var cCommonGaugeBG;
     var cBackgrounds;
 
     var mBuffer;
@@ -161,8 +160,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
             WatchUi.loadResource(Rez.Drawables.G9Right),
             WatchUi.loadResource(Rez.Drawables.G9Bottom)
         ];
-
-        cCommonGaugeBG = WatchUi.loadResource(Rez.Drawables.GaugeBG);
 
         mBuffer = new Graphics.BufferedBitmap({
             :width=>218,
@@ -311,8 +308,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
      */
     function drawGaugeBackground(dc, number) {
         var c = getXY(number, cCoords);
-            dc.drawBitmap(c[0], c[1], cCommonGaugeBG);
-
+        dc.setColor(0x000000, 0x000000);
+        dc.fillRectangle(c[0], c[1], 41, 37);
         for (var i=PosGauge3 + number * 4; i < PosGauge3 + number * 4 + 4; i++) {
             c = getXY(i, cCoords);
             dc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground]);
@@ -402,8 +399,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         var profile = UserProfile.getProfile();
         var zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
-        System.println(zones);
+
         var maxHR = zones[zones.size() - 1];
+        var minHR = profile.restingHeartRate;
+        if (minHR == 0) {
+            minHR = 50;
+        }
 
         // Getting activity data;
         var info = ActivityMonitor.getInfo();
@@ -411,16 +412,16 @@ class ElPrimeroView extends WatchUi.WatchFace {
             info.stepGoal = 5000;
         }
 
-        mStepsFraction = info.steps * 5 / info.stepGoal;
-        mStepsFraction = (mStepsFraction > 4)? 4: mStepsFraction;
+        mStepsFraction = info.steps * 6 / info.stepGoal;
+        mStepsFraction = (mStepsFraction > 5)? 5: mStepsFraction;
 
         if (info.activeMinutesWeekGoal == 0) {
             info.activeMinutesWeekGoal = 150;
         }
-        mActivityFraction = info.activeMinutesWeek.total * 5 / info.activeMinutesWeekGoal;
-        mActivityFraction = (mActivityFraction > 4)? 4: mActivityFraction;
+        mActivityFraction = info.activeMinutesWeek.total * 6 / info.activeMinutesWeekGoal;
+        mActivityFraction = (mActivityFraction > 5)? 5: mActivityFraction;
 
-        mMoveFraction = (info.moveBarLevel - ActivityMonitor.MOVE_BAR_LEVEL_MIN) * 5 / (
+        mMoveFraction = (info.moveBarLevel - ActivityMonitor.MOVE_BAR_LEVEL_MIN) * 6 / (
             ActivityMonitor.MOVE_BAR_LEVEL_MAX - ActivityMonitor.MOVE_BAR_LEVEL_MIN);
 
         var bc = mBuffer.getDc();
@@ -467,14 +468,14 @@ class ElPrimeroView extends WatchUi.WatchFace {
         font = WatchUi.loadResource(Rez.Fonts.steps_scale);
         for (var i = PosSteps; i < PosActivity; i++) {
             var c = getXY(i, cCoords);
-            bc.setColor((i <= mStepsFraction + PosSteps)? 0xFFFFFF: 0x5555AA, cTransparent);
+            bc.setColor((i < mStepsFraction + PosSteps)? 0xFFFFFF: 0x5555AA, cTransparent);
             bc.drawText(c[0], c[1], font, i - PosSteps, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Activity
         font = WatchUi.loadResource(Rez.Fonts.activity_scale);
         for (var i = PosActivity; i < PosMovement; i++) {
             var c = getXY(i, cCoords);
-            bc.setColor((i <= mActivityFraction + PosActivity)? 0xFFFFFF: 0x5555AA, cTransparent);
+            bc.setColor((i < mActivityFraction + PosActivity)? 0xFFFFFF: 0x5555AA, cTransparent);
             bc.drawText(c[0], c[1], font, i - PosActivity, Graphics.TEXT_JUSTIFY_LEFT);
         }
         // Movement
@@ -482,7 +483,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         font = WatchUi.loadResource(Rez.Fonts.movement_scale);
         for (var i = PosMovement; i < PosEOF; i++) {
             var c = getXY(i, cCoords);
-            bc.setColor((i <= mMoveFraction + PosMovement)? 0xFF0000: 0xAAAAAA, cTransparent);
+            bc.setColor((i < mMoveFraction + PosMovement)? 0xFF0000: 0xAAAAAA, cTransparent);
             bc.drawText(c[0], c[1], font, i - PosMovement, Graphics.TEXT_JUSTIFY_LEFT);
         }
 
@@ -495,7 +496,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         drawGaugeHand(bc, utc, 0, 44, font);
         // Heartbeat
         if (heartBeat != null) {
-            pos = (45 + (heartBeat - profile.restingHeartRate) * 40 / (maxHR - profile.restingHeartRate)).toNumber() % 60;
+            pos = (45 + (heartBeat - minHR) * 40 / (maxHR - minHR)).toNumber() % 60;
             drawGaugeHand(bc, pos, -45, 0, font);
         }
 
