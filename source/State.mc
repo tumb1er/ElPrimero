@@ -1,6 +1,8 @@
 using Toybox.Time.Gregorian;
 using Toybox.System;
 using Toybox.UserProfile;
+using Toybox.ActivityMonitor;
+using Toybox.SensorHistory;
 
 /**
 State computes differences to be drawn on watch face and current values.
@@ -11,6 +13,8 @@ class State {
     var mDay = 0, mWeekDay = 0, mMonth = 0;
 
     var mHeartRatePos = null, mHeartRateValue = null;
+
+    var mStepsFraction = 0, mActivityFraction = 0, mMovementFraction = 0;
 
     /**
     1 - sleeping
@@ -29,6 +33,9 @@ class State {
     8 - G3 invalidated
     16 - G6 invalidated
     32 - G9 invalidated
+    64 - steps scale invalidated
+    128 - activity scale invalidated
+    256 - movement scale invalidated
      */
     var mFlags = 0;
 
@@ -39,10 +46,12 @@ class State {
     function update() {
         var settings = System.getDeviceSettings();
         var profile = UserProfile.getProfile();
+        var activityInfo = ActivityMonitor.getInfo();
 
         var time = updateDateTime();
         updateIconStatus(time, settings, profile);
         updateHeartRate(profile);
+        updateActivity(activityInfo);
     }
 
     /**
@@ -105,6 +114,11 @@ class State {
         }
     }
 
+    /**
+    Handles heart rate status changes.
+
+    profile Profile: user profile
+     */
     function updateHeartRate(profile) {
         var zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
         var maxHR = zones[zones.size() - 1];
@@ -127,7 +141,49 @@ class State {
             mFlags |= 32;
             mHeartRateValue = heartBeat;
         }
+    }
 
+    function getFraction(value, max, count) {
+        var f = value * (count + 1) / max;
+        return (f > count)? count : f;
+    }
+
+    /**
+    Handles activity state changes.
+
+    info ActivityInfo: activity info
+    */
+    function updateActivity(info) {
+        var f;
+        if (info.stepGoal == 0) {
+            info.stepGoal = 5000;
+        }
+
+        if (info.activeMinutesWeekGoal == 0) {
+            info.activeMinutesWeekGoal = 150;
+        }
+
+        f = getFraction(info.steps, info.stepGoal, 5);
+        if (mStepsFraction != f) {
+            mFlags |= 64;
+            mStepsFraction = f;
+        }
+
+        mStepsFraction = info.steps * 6 / info.stepGoal;
+        mStepsFraction = (mStepsFraction > 5)? 5: mStepsFraction;
+
+        f = getFraction(info.activeMinutesWeek.total, info.activeMinutesWeekGoal, 5);
+        if (mActivityFraction != f) {
+            mFlags |= 128;
+            mActivityFraction = f;
+        }
+
+        f = getFraction(info.moveBarLevel - ActivityMonitor.MOVE_BAR_LEVEL_MIN,
+                        ActivityMonitor.MOVE_BAR_LEVEL_MAX - ActivityMonitor.MOVE_BAR_LEVEL_MIN, 4);
+        if (mMovementFraction != f) {
+            mFlags |= 256;
+            mMovementFraction = f;
+        }
 
     }
 
