@@ -50,18 +50,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var mBuffer;
     var mCap;
 
+    // String resources
     var cWeekDays, cMonths, cIcons;
 
     var mIsBackgroundMode;
-//
-//    var mIcons; // bit-packed flags
 
     var mStepsFraction; // [0 - StepsGoal] * 5
     var mActivityFraction; // [0 - ActivityWeekGoal] * 5
     var mMoveFraction; // [0 - moveLimit] * 5
 
+    // internal state
     var mState;
-
 
     // prev clip
     var fx, fy, gx, gy;
@@ -368,31 +367,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Prepare all data
         mState.update();
         var stats = System.getSystemStats();
-        var heartBeatIter = SensorHistory.getHeartRateHistory({});
-        var heartBeatSample = heartBeatIter.next();
-        var heartBeat = null;
-        if (heartBeatSample != null) {
-            heartBeat = heartBeatSample.data;
-        }
         var pos, angle;
-//
-//        // Getting UTC and local time info
-//        var now = Time.now();
-//        var time = Gregorian.info(now, Time.FORMAT_MEDIUM);
-//        var utc = Gregorian.utcInfo(now, Time.FORMAT_MEDIUM);
-//
-//        utc = (utc.hour % 12) * 5 + utc.min / 12;
-
-//        updateIconStatus(time);
-
-        var profile = UserProfile.getProfile();
-        var zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
-
-        var maxHR = zones[zones.size() - 1];
-        var minHR = profile.restingHeartRate;
-        if (minHR == 0) {
-            minHR = 50;
-        }
 
         // Getting activity data;
         var info = ActivityMonitor.getInfo();
@@ -432,8 +407,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Battery
         bc.drawText(155, 90, font, stats.battery.toNumber(), cAlign);
         // Heartbeat
-        if (heartBeat != null) {
-            bc.drawText(66, 90, font, heartBeat.toString(), cAlign);
+        if (mState.mHeartRateValue != null) {
+            bc.drawText(66, 90, font, mState.mHeartRateValue, cAlign);
         }
         // Icons
         font = WatchUi.loadResource(Rez.Fonts.Icons);
@@ -483,9 +458,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // UTC;
         drawGaugeHand(bc, mState.mUTCPos, 0, 44, font);
         // Heartbeat
-        if (heartBeat != null) {
-            pos = (45 + (heartBeat - minHR) * 40 / (maxHR - minHR)).toNumber() % 60;
-            drawGaugeHand(bc, pos, -45, 0, font);
+        if (mState.mHeartRatePos != null) {
+            drawGaugeHand(bc, mState.mHeartRatePos, -45, 0, font);
         }
 
         // Drawing clock hands

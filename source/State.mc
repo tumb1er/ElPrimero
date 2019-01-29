@@ -10,6 +10,8 @@ class State {
     var mSecondPos = 0, mMinutePos = 0, mHourPos = 0, mUTCPos;
     var mDay = 0, mWeekDay = 0, mMonth = 0;
 
+    var mHeartRatePos = null, mHeartRateValue = null;
+
     /**
     1 - sleeping
     2 - alarm
@@ -24,7 +26,9 @@ class State {
     2 - minute invalidated
     * hour hand is invalidated every time when minute hand moves
     4 - date invalidated
-    8 - G6 invalidated
+    8 - G3 invalidated
+    16 - G6 invalidated
+    32 - G9 invalidated
      */
     var mFlags = 0;
 
@@ -38,6 +42,7 @@ class State {
 
         var time = updateDateTime();
         updateIconStatus(time, settings, profile);
+        updateHeartRate(profile);
     }
 
     /**
@@ -63,7 +68,7 @@ class State {
             var utc = Gregorian.utcInfo(now, Time.FORMAT_SHORT);
             utc = (utc.hour % 12) * 5 + utc.min / 12;
             if (mUTCPos != utc) {
-                mFlags |= 8;
+                mFlags |= 16;
                 mUTCPos = utc;
             }
         }
@@ -95,9 +100,35 @@ class State {
         value += (settings.doNotDisturb)? 8: 0;
         value += (settings.notificationCount > 0)? 16: 0;
         if (mIcons != value) {
-            mFlags |= 8;
+            mFlags |= 16;
             mIcons = value;
         }
+    }
+
+    function updateHeartRate(profile) {
+        var zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
+        var maxHR = zones[zones.size() - 1];
+        var minHR = profile.restingHeartRate;
+        if (minHR == 0) {
+            minHR = 50;
+        }
+        var heartBeatIter = SensorHistory.getHeartRateHistory({});
+        var heartBeatSample = heartBeatIter.next();
+        var heartBeat = null;
+        if (heartBeatSample != null) {
+            heartBeat = heartBeatSample.data;
+        }
+        if (heartBeat != null) {
+            mHeartRatePos = (45 + (heartBeat - minHR) * 40 / (maxHR - minHR)).toNumber() % 60;
+        } else {
+            mHeartRatePos = null;
+        }
+        if (mHeartRateValue != heartBeat) {
+            mFlags |= 32;
+            mHeartRateValue = heartBeat;
+        }
+
+
     }
 
 }
