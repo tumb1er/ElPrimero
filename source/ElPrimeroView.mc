@@ -32,10 +32,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // hands.json offsets
     enum {
         PosSecond,
-        PosMinuteLeft = 5,
-        PosMinuteRight = 9,
-        PosHourLeft = 13,
-        PosHourRight = 17,
+        PosMinute = 5,
+        PosHour = 13,
         PosEOF2 = 21
     }
 
@@ -91,7 +89,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // Load your resources here
     function onLayout(dc) {
         var data = WatchUi.loadResource(Rez.JsonData.hands_json);
-        mSecondCoords = loadCoords(data, PosSecond, PosMinuteLeft);
+        mSecondCoords = loadCoords(data, PosSecond, PosMinute);
         mHourHand = new Hand(
             Rez.JsonData.hour_sides_json,
             [
@@ -114,10 +112,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
                 Rez.Fonts.hour_sides16,
                 Rez.Fonts.hour_sides17
             ],
-            [
-                loadCoords(data, PosHourLeft, PosHourRight),
-                loadCoords(data, PosHourRight, PosEOF2)
-            ]
+            loadCoords(data, PosHour, PosEOF2)
         );
 
         mMinuteHand = new Hand(
@@ -132,10 +127,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
                 Rez.Fonts.minute_sides6,
                 Rez.Fonts.minute_sides7
             ],
-            [
-                loadCoords(data, PosMinuteLeft, PosMinuteRight),
-                loadCoords(data, PosMinuteRight, PosHourLeft)
-            ]
+            loadCoords(data, PosMinute, PosHour)
         );
 
         mGaugeHand = new Hand(
@@ -143,7 +135,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             [
                 Rez.Fonts.gauge_sides0
             ],
-            []
+            null
         );
 
         cBackgrounds = [
@@ -226,24 +218,35 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mpos = time.min;
         mangle = Math.toRadians(mpos * 6);
 
-        // Accents
+        if (vector) {
+            dc.setColor(0xAAAAAA, cTransparent);
+            mHourHand.drawVector(dc, hpos, cx - 120, cy +1 - 120);
+        }
+
+        // Hour details
         dc.setColor(0x000000, cTransparent);
-        drawRadialRect(dc, hangle, 3, -10, 30, cx, cy);
-        drawRadialRect(dc, mangle, 2, -10, 45, cx, cy);
-
-        // Main part
+        drawRadialRect(dc, hangle, 3, -10, 30, cx, cy + 1);
         dc.setColor(0xFFFFFF, cTransparent);
-        drawRadialRect(dc, hangle, 3, 30, 69, cx, cy);
-        drawRadialRect(dc, mangle, 2, 45, 93, cx, cy);
+        drawRadialRect(dc, hangle, 3, 30, 69, cx, cy + 1);
 
-        // Hands
-        dc.setColor(0xAAAAAA, cTransparent);
+        if (!vector) {
+            dc.setColor(0xAAAAAA, cTransparent);
+            mHourHand.draw(dc, hpos, cx - 120, cy - 120);
+        }
 
         if (vector) {
-            mHourHand.drawVector(dc, hpos, cx - 120, cy - 120);
-            mMinuteHand.drawVector(dc, mpos, cx - 120, cy - 120);
-        } else {
-            mHourHand.draw(dc, hpos, cx - 120, cy - 120);
+            dc.setColor(0xAAAAAA, cTransparent);
+            mMinuteHand.drawVector(dc, mpos, cx - 120, cy + 1 - 120);
+        }
+        // Minute  details
+        dc.setColor(0x000000, cTransparent);
+        drawRadialRect(dc, mangle, 2, -10, 45, cx, cy + 1);
+        dc.setColor(0xFFFFFF, cTransparent);
+        drawRadialRect(dc, mangle, 2, 45, 93, cx, cy + 1);
+
+        // Hands
+        if (!vector) {
+            dc.setColor(0xAAAAAA, cTransparent);
             mMinuteHand.draw(dc, mpos, cx - 120, cy - 120);
         }
     }
@@ -287,9 +290,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
             var nx = (gx > bx)? gx: bx;
             var ny = (gy > by)? gy: by;
             dc.setClip(mx, my, Math.ceil(nx - mx + 1), Math.ceil(ny - my + 1));
-            // FIXME: debug rect
-            dc.setColor(0x00FF00, cTransparent);
-            dc.drawRectangle(mx, my, Math.ceil(nx - mx + 1), Math.ceil(ny - my + 1));
             dc.drawBitmap(10, 20, mBuffer);
         }
 
@@ -490,7 +490,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         drawGaugeHand(bc, utc, 0, 44, font);
         // Heartbeat
         if (heartBeat != null) {
-            pos = (35 + 50 * (heartBeat + 70) / 200.0f).toNumber() % 60;
+            pos = (35 + 50 * heartBeat / 200.0f).toNumber() % 60;
             drawGaugeHand(bc, pos, -45, 0, font);
         }
 

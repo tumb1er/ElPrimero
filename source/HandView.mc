@@ -16,6 +16,7 @@ class Hand {
     /**
     jsonId - Rez.jsonData identifier for tile data
     fontsList - list of Rez.Fonts identifiers
+    vectorList - packed coords for vector hand shape
      */
     function initialize(jsonId, fontsList, vectorList) {
         var json = WatchUi.loadResource(jsonId);
@@ -71,10 +72,8 @@ class Hand {
      */
     function drawVector(dc, pos, dx, dy) {
         var angle = Math.toRadians(pos * 6);
-        for (var i = 0; i < mVectorList.size(); i++) {
-            var points = fillRadialPolygon(dc, angle, mVectorList[i], 120 + dx, 120 + dy);
-            dc.fillPolygon(points);
-        }
+        var points = fillRadialPolygon(dc, angle, mVectorList, 120 + dx, 120 + dy);
+        dc.fillPolygon(points);
     }
 
     /**
