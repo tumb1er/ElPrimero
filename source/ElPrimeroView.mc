@@ -45,7 +45,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     var mSecondCoords;
 
-    var cCommonGaugeBG;
     var cBackgrounds;
 
     var mBuffer;
@@ -161,8 +160,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
             WatchUi.loadResource(Rez.Drawables.G9Right),
             WatchUi.loadResource(Rez.Drawables.G9Bottom)
         ];
-
-        cCommonGaugeBG = WatchUi.loadResource(Rez.Drawables.GaugeBG);
 
         mBuffer = new Graphics.BufferedBitmap({
             :width=>218,
@@ -311,7 +308,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
      */
     function drawGaugeBackground(dc, number) {
         var c = getXY(number, cCoords);
-//            dc.drawBitmap(c[0], c[1], cCommonGaugeBG);
         dc.setColor(0x000000, 0x000000);
         dc.fillRectangle(c[0], c[1], 41, 37);
         for (var i=PosGauge3 + number * 4; i < PosGauge3 + number * 4 + 4; i++) {

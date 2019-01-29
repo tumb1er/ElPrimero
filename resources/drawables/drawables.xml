@@ -48,12 +48,6 @@
             <color>ffffff</color>
         </palette>
     </bitmap>
-    <bitmap id="GaugeBG" filename="gauge_bg.png" dithering="none">
-        <palette disableTransparency="true">
-            <color>000000</color>
-            <color>000055</color>
-        </palette>
-    </bitmap>
 
     <bitmap id="G3Top" filename="gauge3/g3_top.png" dithering="none">
         <palette disableTransparency="false">
