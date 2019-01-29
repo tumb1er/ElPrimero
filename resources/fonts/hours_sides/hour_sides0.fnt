@@ -2,7 +2,7 @@ info face="hour_sides0" size=24 bold=0 italic=0 charset=ascii unicode=0 stretchH
 common lineHeight=24 base=24 scaleW=96 scaleH=96 pages=1 
 packed=0 alphaChnl=0 redChnl=0 greenChnl=0 blueChnl=0
 page id=0 file="hour_sides0_0.png"
-chars count=21
+chars count=19
 char id=33 x=0 y=0 width=13 height=24 xoffset=0 yoffset=0 xadvance=13 page=0 chnl=15
 char id=34 x=13 y=0 width=14 height=24 xoffset=0 yoffset=0 xadvance=14 page=0 chnl=15
 char id=35 x=27 y=0 width=16 height=24 xoffset=0 yoffset=0 xadvance=16 page=0 chnl=15
@@ -22,5 +22,3 @@ char id=48 x=0 y=72 width=18 height=9 xoffset=0 yoffset=0 xadvance=18 page=0 chn
 char id=49 x=18 y=72 width=22 height=24 xoffset=0 yoffset=0 xadvance=22 page=0 chnl=15
 char id=50 x=40 y=72 width=24 height=24 xoffset=0 yoffset=0 xadvance=24 page=0 chnl=15
 char id=51 x=64 y=72 width=1 height=2 xoffset=0 yoffset=0 xadvance=1 page=0 chnl=15
-char id=52 x=65 y=72 width=24 height=24 xoffset=0 yoffset=0 xadvance=24 page=0 chnl=15
-char id=53 x=89 y=72 width=3 height=7 xoffset=0 yoffset=0 xadvance=3 page=0 chnl=15
