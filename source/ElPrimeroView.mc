@@ -403,8 +403,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         var profile = UserProfile.getProfile();
         var zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
-        System.println(zones);
+
         var maxHR = zones[zones.size() - 1];
+        var minHR = profile.restingHeartRate;
+        if (minHR == 0) {
+            minHR = 50;
+        }
 
         // Getting activity data;
         var info = ActivityMonitor.getInfo();
@@ -496,7 +500,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         drawGaugeHand(bc, utc, 0, 44, font);
         // Heartbeat
         if (heartBeat != null) {
-            pos = (45 + (heartBeat - profile.restingHeartRate) * 40 / (maxHR - profile.restingHeartRate)).toNumber() % 60;
+            pos = (45 + (heartBeat - minHR) * 40 / (maxHR - minHR)).toNumber() % 60;
             drawGaugeHand(bc, pos, -45, 0, font);
         }
 
