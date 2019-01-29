@@ -358,7 +358,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function onUpdate(dc) {
         // Prepare all data
         mState.update();
-        var stats = System.getSystemStats();
         var pos, angle;
 
         var bc = mBuffer.getDc();
@@ -379,7 +378,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Drawing texts
         bc.setColor(0xFFFFFF, cTransparent);
         // Battery
-        bc.drawText(155, 90, font, stats.battery.toNumber(), cAlign);
+        bc.drawText(155, 90, font, mState.mBatteryValue, cAlign);
         // Heartbeat
         if (mState.mHeartRateValue != null) {
             bc.drawText(66, 90, font, mState.mHeartRateValue, cAlign);
@@ -427,8 +426,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Drawing gauge hands
         font = WatchUi.loadResource(Rez.Fonts.gauge_center);
         // Battery;
-        pos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
-        drawGaugeHand(bc, pos, 44, 0, font);
+        drawGaugeHand(bc, mState.mBatteryPos, 44, 0, font);
         // UTC;
         drawGaugeHand(bc, mState.mUTCPos, 0, 44, font);
         // Heartbeat
@@ -444,7 +442,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.clear();
         dc.clearClip();
         dc.drawBitmap(10, 20, mBuffer);
-
 
         // Drawind second hand to device context;
         drawSecondHand(dc, false);

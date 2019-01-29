@@ -15,6 +15,7 @@ class State {
     var mHeartRatePos = null, mHeartRateValue = null;
 
     var mStepsFraction = 0, mActivityFraction = 0, mMovementFraction = 0;
+    var mBatteryPos = 0, mBatteryValue = 0;
 
     /**
     1 - sleeping
@@ -47,11 +48,13 @@ class State {
         var settings = System.getDeviceSettings();
         var profile = UserProfile.getProfile();
         var activityInfo = ActivityMonitor.getInfo();
+        var stats = System.getSystemStats();
 
         var time = updateDateTime();
         updateIconStatus(time, settings, profile);
         updateHeartRate(profile);
         updateActivity(activityInfo);
+        updateBattery(stats);
     }
 
     /**
@@ -184,7 +187,21 @@ class State {
             mFlags |= 256;
             mMovementFraction = f;
         }
+    }
 
+    /**
+    Handles battery updates
+
+    stats Stats: system statistics
+     */
+
+    function updateBattery(stats) {
+        var value = stats.battery.toNumber();
+        if (mBatteryValue != value) {
+            mFlags |= 8;
+            mBatteryValue = value;
+            mBatteryPos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
+        }
     }
 
 }
