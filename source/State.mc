@@ -287,20 +287,9 @@ class State {
         }
     }
 
-    function onExitSleep() {
-        mIsBackgroundMode = false;
+    function reset(isInBackground) {
+        mIsBackgroundMode = isInBackground;
         mFlags = 32767;
         // System.println(["onExitSleep", mFlags.format("%x")]);
-    }
-
-    function onEnterSleep() {
-        mIsBackgroundMode = true;
-        mFlags = 32767;
-        // System.println(["onEnterSleep", mFlags.format("%x")]);
-    }
-
-    function onShow() {
-        mFlags = 32767;
-        // System.println(["onShow", mFlags.format("%x")]);
     }
 }

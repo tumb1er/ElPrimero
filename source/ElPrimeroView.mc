@@ -332,6 +332,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
     cap - font for gauge cap
      */
     function drawGaugeHand(dc, pos, dx, dy, cap) {
+        if (pos == null) {
+            return;
+        }
         var angle = Math.toRadians(pos * 6);
         dc.setColor(0xFF0000, cTransparent);
         drawRadialRect(dc, angle, 1, 8, 24, 120 - 10 + dx, 120 - 20 + dy);
@@ -538,7 +541,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() {
-        mState.onShow();
+        mState.reset(false);
     }
 
     // Called when this View is removed from the screen. Save the
@@ -549,12 +552,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
-        mState.onExitSleep();
+        mState.reset(false);
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
-        mState.onEnterSleep();
+        mState.reset(true);
     }
 
 }

@@ -2,6 +2,9 @@ using Toybox.Graphics;
 using Toybox.System;
 using Toybox.WatchUi;
 
+
+
+
 /**
 Draws anti-aliased clock hand from tiles
  */
@@ -13,6 +16,21 @@ class Hand {
     var mCurrentFontIdx; // current cached font number
     var mVectorList;     // list of poligons for vector-based drawing
     var mPos;            // last drawn position
+    /**
+     Unpacks int32-packed to bytes array
+     */
+    function toBytes(array){
+        var res = new [array.size() * 4]b;
+        for (var i = 0; i<array.size(); i++) {
+            var v = array[i];
+            var j = i * 4;
+            res[j] = (v >> 24) && 0xFF;
+            res[j + 1] = (v >> 16) && 0xFF;
+            res[j + 2] = (v >> 8) && 0xFF;
+            res[j + 3] = v && 0xFF;
+        }
+        return res;
+    }
 
     /**
     jsonId - Rez.jsonData identifier for tile data
@@ -21,8 +39,8 @@ class Hand {
      */
     function initialize(jsonId, fontsList, vectorList) {
         var json = WatchUi.loadResource(jsonId);
-        mTiles = json[0];
-        mIndex = json[1];
+        mTiles = toBytes(json[0]);
+        mIndex = toBytes(json[1]);
 
         mFontList = fontsList;
 
@@ -40,8 +58,7 @@ class Hand {
         if (i == -1) {
             return 0;
         }
-        var shift = (i % 2) ? 0: 16;
-        return (mIndex[i/ 2] >> shift) && 0x0000FFFF;
+        return mIndex[i * 2] * 256 + mIndex[i * 2 + 1];
     }
 
     /**
@@ -55,11 +72,16 @@ class Hand {
         var start = getTileIdx(pos - 1);
         var end = getTileIdx(pos);
         for (var j = start; j < end; j++) {
-            var tile = mTiles[j];
-            var f = tile & 0x3F;
-            var char = (tile >> 8) & 0xFF;
-            var x = (tile >> 16) & 0xFF + dx;
-            var y = (tile >> 24) & 0xFF + dy;
+//            var tile = mTiles[j];
+//            var f = tile & 0x3F;
+//            var char = (tile >> 8) & 0xFF;
+//            var x = (tile >> 16) & 0xFF + dx;
+//            var y = (tile >> 24) & 0xFF + dy;
+            var k = j * 4;
+            var f = mTiles[k + 3];
+            var char = mTiles[k + 2];
+            var x = mTiles[k + 1] + dx;
+            var y = mTiles[k] + dy;
             dc.drawText(x, y, getFont(f), char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
         }
         mPos = pos;
