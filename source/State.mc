@@ -17,6 +17,8 @@ class State {
     var mStepsFraction = 0, mActivityFraction = 0, mMovementFraction = 0;
     var mBatteryPos = 0, mBatteryValue = 0;
 
+    var mIsBackgroundMode = false;
+
     /**
     1 - sleeping
     2 - alarm
@@ -25,6 +27,26 @@ class State {
     16 - notifications
      */
     var mIcons;
+
+    enum {
+        SECOND = 1,
+        MINUTE = 2,
+        DATE = 4,
+        G3 = 8,
+        G6 = 16,
+        G9 = 32,
+        STEPS = 64,
+        ACTIVITY = 128,
+        MOVEMENT = 256,
+        BG_TOP = 512,
+        BG_LEFT = 1024,
+        BG_RIGHT = 2048,
+        BG_LEFT_BOTTOM = 4096,
+        BG_RIGHT_BOTTOM = 8192,
+        BG_BOTTOM = 16384,
+        // Sum of all backgrounds
+        BACKGROUNDS = 32256
+    }
 
     /**
     1 - second invalidated
@@ -37,11 +59,28 @@ class State {
     64 - steps scale invalidated
     128 - activity scale invalidated
     256 - movement scale invalidated
+    512 - BG Top
+    1024 - BG Left
+    2048 - BG Right
+    4096 - BG Left Bottom
+    8192 - BG Right Bottom
+    16384 - BG Bottom
      */
     var mFlags = 0;
 
     function initialize() {
         update();
+    }
+
+    function onUpdateStart() {
+        // System.println(["onUpdateStart", mFlags.format("%x")]);
+        update();
+        return mFlags;
+    }
+
+    function onUpdateFinished() {
+        mFlags = 0;
+        // System.println(["onUpdateFinished", mFlags.format("%x")]);
     }
 
     function update() {
@@ -58,6 +97,46 @@ class State {
     }
 
     /**
+    Invalidates backgrounds depending on hour and minute hands positions
+     */
+    function updateBackgrounds(h, m) {
+        if (m < 12 || m > 47 || h < 12 || h > 47) {
+            mFlags |= 512 | 64 | 128;
+        }
+        if (m > 41 && m < 49) {
+            mFlags |= 1024 | 64;
+        }
+        if (m > 11 && m < 20) {
+            mFlags |= 2048 | 128 | 256;
+        }
+        if (m > 36 && m < 43) {
+            mFlags |= 4096 | 64;
+        }
+        if (m > 19 && m < 27) {
+            mFlags |= 8192 | 256;
+        }
+        if (m > 24 && m < 37) {
+            mFlags |= 16384;
+        }
+        // System.println(["updateBackgrounds", mFlags.format("%x"), h, m]);
+    }
+
+    /**
+    Invalidates gauges backgrouns depending on hand position
+     */
+    function updateGaugeBackgrounds(t) {
+        if (t >= 10 && t <= 22) {
+            mFlags |= 8;
+        }
+        if (t >= 25 && t <= 38) {
+            mFlags |= 16;
+        }
+        if (t >= 40 && t <= 53) {
+            mFlags |= 32;
+        }
+    }
+
+    /**
     Handles current datetime changes.
 
     return Time info
@@ -69,12 +148,15 @@ class State {
 
         pos = time.sec;
         if (mSecondPos != pos) {
-            mFlags |= 1;
+            mFlags |= 1; // SECOND
             mSecondPos = pos;
         }
         pos = time.min;
         if (mMinutePos != pos) {
             mFlags |= 2;
+            updateBackgrounds(mHourPos, mMinutePos);
+            updateGaugeBackgrounds(mHourPos);
+            updateGaugeBackgrounds(mMinutePos);
             mMinutePos = pos;
             mHourPos = (time.hour % 12) * 5 + time.min / 12;
             var utc = Gregorian.utcInfo(now, Time.FORMAT_SHORT);
@@ -129,7 +211,8 @@ class State {
         if (minHR == 0) {
             minHR = 50;
         }
-        var heartBeatIter = SensorHistory.getHeartRateHistory({});
+        zones = null;
+        var heartBeatIter = SensorHistory.getHeartRateHistory({:period => 1});
         var heartBeatSample = heartBeatIter.next();
         var heartBeat = null;
         if (heartBeatSample != null) {
@@ -204,4 +287,20 @@ class State {
         }
     }
 
+    function onExitSleep() {
+        mIsBackgroundMode = false;
+        mFlags = 32767;
+        // System.println(["onExitSleep", mFlags.format("%x")]);
+    }
+
+    function onEnterSleep() {
+        mIsBackgroundMode = true;
+        mFlags = 32767;
+        // System.println(["onEnterSleep", mFlags.format("%x")]);
+    }
+
+    function onShow() {
+        mFlags = 32767;
+        // System.println(["onShow", mFlags.format("%x")]);
+    }
 }

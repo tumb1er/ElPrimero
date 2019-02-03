@@ -13,6 +13,10 @@ const cTransparent = Graphics.COLOR_TRANSPARENT;
 Watch view.
  */
 class ElPrimeroView extends WatchUi.WatchFace {
+
+    var CFonts = Rez.Fonts;
+    var CDrawables = Rez.Drawables;
+    var CJsonData = Rez.JsonData;
     // coords.json offsets
     enum {
         PosCommon,
@@ -49,8 +53,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // String resources
     var cWeekDays, cMonths, cIcons;
 
-    var mIsBackgroundMode;
-
     // internal state
     var mState;
 
@@ -61,11 +63,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     function initialize() {
         WatchFace.initialize();
-        mIsBackgroundMode = false;
-        fx = 240;
-        fy = 240;
-        gx = 0;
-        gy = 0;
+        ax = 240;
+        ay = 240;
+        bx = 0;
+        by = 0;
         mState = new State();
     }
 
@@ -83,90 +84,90 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     // Load your resources here
     function onLayout(dc) {
-        var data = WatchUi.loadResource(Rez.JsonData.hands_json);
+        var data = loadResource(CJsonData.hands_json);
         mSecondCoords = loadCoords(data, PosSecond, PosMinute);
         mHourHand = new Hand(
-            Rez.JsonData.hour_sides_json,
+            CJsonData.hour_sides_json,
             [
-                Rez.Fonts.hour_sides0,
-                Rez.Fonts.hour_sides1,
-                Rez.Fonts.hour_sides2,
-                Rez.Fonts.hour_sides3,
-                Rez.Fonts.hour_sides4,
-                Rez.Fonts.hour_sides5,
-                Rez.Fonts.hour_sides6,
-                Rez.Fonts.hour_sides7,
-                Rez.Fonts.hour_sides8,
-                Rez.Fonts.hour_sides9,
-                Rez.Fonts.hour_sides10,
-                Rez.Fonts.hour_sides11,
-                Rez.Fonts.hour_sides12,
-                Rez.Fonts.hour_sides13,
-                Rez.Fonts.hour_sides14,
-                Rez.Fonts.hour_sides15,
-                Rez.Fonts.hour_sides16,
-                Rez.Fonts.hour_sides17
+                CFonts.hour_sides0,
+                CFonts.hour_sides1,
+                CFonts.hour_sides2,
+                CFonts.hour_sides3,
+                CFonts.hour_sides4,
+                CFonts.hour_sides5,
+                CFonts.hour_sides6,
+                CFonts.hour_sides7,
+                CFonts.hour_sides8,
+                CFonts.hour_sides9,
+                CFonts.hour_sides10,
+                CFonts.hour_sides11,
+                CFonts.hour_sides12,
+                CFonts.hour_sides13,
+                CFonts.hour_sides14,
+                CFonts.hour_sides15,
+                CFonts.hour_sides16,
+                CFonts.hour_sides17
             ],
             loadCoords(data, PosHour, PosEOF2)
         );
 
         mMinuteHand = new Hand(
-            Rez.JsonData.minute_sides_json,
+            CJsonData.minute_sides_json,
             [
-                Rez.Fonts.minute_sides0,
-                Rez.Fonts.minute_sides1,
-                Rez.Fonts.minute_sides2,
-                Rez.Fonts.minute_sides3,
-                Rez.Fonts.minute_sides4,
-                Rez.Fonts.minute_sides5,
-                Rez.Fonts.minute_sides6,
-                Rez.Fonts.minute_sides7
+                CFonts.minute_sides0,
+                CFonts.minute_sides1,
+                CFonts.minute_sides2,
+                CFonts.minute_sides3,
+                CFonts.minute_sides4,
+                CFonts.minute_sides5,
+                CFonts.minute_sides6,
+                CFonts.minute_sides7
             ],
             loadCoords(data, PosMinute, PosHour)
         );
 
         mGaugeHand = new Hand(
-            Rez.JsonData.gauge_sides_json,
+            CJsonData.gauge_sides_json,
             [
-                Rez.Fonts.gauge_sides0
+                CFonts.gauge_sides0
             ],
             null
         );
 
         cBackgrounds = [
-            WatchUi.loadResource(Rez.Drawables.BGTop),
-            WatchUi.loadResource(Rez.Drawables.BGLeft),
-            WatchUi.loadResource(Rez.Drawables.BGRight),
-            WatchUi.loadResource(Rez.Drawables.BGLeftBottom),
-            WatchUi.loadResource(Rez.Drawables.BGRightBottom),
-            WatchUi.loadResource(Rez.Drawables.BGBottom),
+            loadResource(CDrawables.BGTop),
+            loadResource(CDrawables.BGLeft),
+            loadResource(CDrawables.BGRight),
+            loadResource(CDrawables.BGLeftBottom),
+            loadResource(CDrawables.BGRightBottom),
+            loadResource(CDrawables.BGBottom),
 
-            WatchUi.loadResource(Rez.Drawables.G3Top),
-            WatchUi.loadResource(Rez.Drawables.G3Left),
-            WatchUi.loadResource(Rez.Drawables.G3Right),
-            WatchUi.loadResource(Rez.Drawables.G3Bottom),
+            loadResource(CDrawables.G3Top),
+            loadResource(CDrawables.G3Left),
+            loadResource(CDrawables.G3Right),
+            loadResource(CDrawables.G3Bottom),
 
-            WatchUi.loadResource(Rez.Drawables.G6Top),
-            WatchUi.loadResource(Rez.Drawables.G6Left),
-            WatchUi.loadResource(Rez.Drawables.G6Right),
-            WatchUi.loadResource(Rez.Drawables.G6Bottom),
+            loadResource(CDrawables.G6Top),
+            loadResource(CDrawables.G6Left),
+            loadResource(CDrawables.G6Right),
+            loadResource(CDrawables.G6Bottom),
 
-            WatchUi.loadResource(Rez.Drawables.G9Top),
-            WatchUi.loadResource(Rez.Drawables.G9Left),
-            WatchUi.loadResource(Rez.Drawables.G9Right),
-            WatchUi.loadResource(Rez.Drawables.G9Bottom)
+            loadResource(CDrawables.G9Top),
+            loadResource(CDrawables.G9Left),
+            loadResource(CDrawables.G9Right),
+            loadResource(CDrawables.G9Bottom)
         ];
 
         mBuffer = new Graphics.BufferedBitmap({
             :width=>218,
             :height=>200
         });
-        mCap = WatchUi.loadResource(Rez.Drawables.Cap);
+        mCap = loadResource(CDrawables.Cap);
 
-        cCoords = WatchUi.loadResource(Rez.JsonData.coords_json);
-        cWeekDays = WatchUi.loadResource(Rez.Strings.WeekDays);
-        cMonths = WatchUi.loadResource(Rez.Strings.Months);
-        cIcons = WatchUi.loadResource(Rez.Strings.Icons);
+        cCoords = loadResource(CJsonData.coords_json);
+        cWeekDays = loadResource(Rez.Strings.WeekDays);
+        cMonths = loadResource(Rez.Strings.Months);
+        cIcons = loadResource(Rez.Strings.Icons);
     }
 
     function getXY(i, data) {
@@ -193,10 +194,19 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     }
 
-    // Called when this View is brought to the foreground. Restore
-    // the state of this View and prepare it to be shown. This includes
-    // loading resources into memory.
-    function onShow() {
+    function invalidateHourMinuteHands(dc, cx, cy) {
+        if (mHourHand.mPos != mState.mHourPos) {
+            // erasing hour hand at previous position
+            dc.setColor(0x000055, cTransparent);
+            mHourHand.drawVector(dc, mHourHand.mPos, cx - 120, cy + 1 - 120);
+        }
+
+        if (mMinuteHand.mPos != mState.mMinutePos) {
+            // erasing minute hand at previous position
+            dc.setColor(0x000055, cTransparent);
+            mMinuteHand.drawVector(dc, mMinuteHand.mPos, cx - 120, cy + 1 - 120);
+        }
+
     }
 
     /**
@@ -208,6 +218,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
      */
     function drawHourMinuteHands(dc, cx, cy, vector) {
         var hangle, mangle;
+
         hangle = Math.toRadians(mState.mHourPos * 6);
         mangle = Math.toRadians(mState.mMinutePos * 6);
 
@@ -339,12 +350,37 @@ class ElPrimeroView extends WatchUi.WatchFace {
     font - icons font
      */
     function drawIcons(dc, pos, font) {
+        if (pos == null) {
+            return;
+        }
         for (var i = 0; i < 5; i++) {
             var a = Math.toRadians(pos * 6 - 120 + i * 360 / 6);
             var x = 120 - 10 + 12 * Math.sin(-a);
             var y = 165 - 20 + 12 * Math.cos(-a);
             dc.setColor((mState.mIcons && (1 << i))? 0xFFFFFF: 0xAAAAAA, cTransparent);
             dc.drawText(x, y, font, cIcons.substring(i, i + 1), cAlign);
+        }
+
+    }
+
+    function drawBackgrounds(bc, flags) {
+        bc.setColor(0xFFFFFF, 0x000055);
+        if (mState.mFlags & State.BACKGROUNDS == State.BACKGROUNDS) {
+            // All six backgrounds invalidated - drawing from beginning
+            bc.clear();
+        }
+        for (var i=PosBackground; i< PosGauge3; i++) {
+            if (flags && (State.BG_TOP << (i - PosBackground))) {
+                var c = getXY(i, cCoords);
+                var drawable = cBackgrounds[i - PosBackground];
+                bc.drawBitmap(c[0], c[1], drawable);
+            }
+        }
+
+        for (var i=0; i< 3; i++) {
+            if (flags & (State.G3 << i)) {
+                drawGaugeBackground(bc, i);
+            }
         }
 
     }
@@ -357,95 +393,152 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // Update the view
     function onUpdate(dc) {
         // Prepare all data
-        mState.update();
-        var pos, angle;
+        var flags = mState.onUpdateStart();
+        var pos, angle, font = null;
 
         var bc = mBuffer.getDc();
-        // Drawing clock backgrounds
-        bc.setColor(0xFFFFFF, 0x000055);
-        bc.clear();
 
-        for (var i=PosBackground; i< PosGauge3; i++) {
-            var c = getXY(i, cCoords);
-            bc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground]);
+        if (flags & State.MINUTE) {
+            invalidateHourMinuteHands(bc, 120 - 10, 120 - 20);
+        }
+        // System.println("drawBackgrounds");
+        drawBackgrounds(bc, flags);
+
+        if (flags & (State.G3 | State.G9)) {
+            font = loadResource(CFonts.Smally);
+            // Drawing texts
+            bc.setColor(0xFFFFFF, cTransparent);
+        }
+        if (flags & State.G3){
+            // System.println("G3 text");
+            // Battery
+            bc.drawText(155, 90, font, mState.mBatteryValue, cAlign);
         }
 
-        for (var i=0; i< 3; i++) {
-            drawGaugeBackground(bc, i);
+        if (flags & State.G9) {
+            // System.println("G9 text");
+            // Heartbeat
+            if (mState.mHeartRateValue != null) {
+                bc.drawText(66, 90, font, mState.mHeartRateValue, cAlign);
+            }
         }
 
-        var font = WatchUi.loadResource(Rez.Fonts.Smally);
-        // Drawing texts
-        bc.setColor(0xFFFFFF, cTransparent);
-        // Battery
-        bc.drawText(155, 90, font, mState.mBatteryValue, cAlign);
-        // Heartbeat
-        if (mState.mHeartRateValue != null) {
-            bc.drawText(66, 90, font, mState.mHeartRateValue, cAlign);
+        if (flags & State.G6) {
+            // System.println("G6 icons");
+            // Icons
+            font = loadResource(CFonts.Icons);
+            drawIcons(bc, mState.mUTCPos, font);
         }
-        // Icons
-        font = WatchUi.loadResource(Rez.Fonts.Icons);
-        drawIcons(bc, mState.mUTCPos, font);
 
-        // Day of month
-        bc.setColor(0x000000, cTransparent);
-        font = WatchUi.loadResource(Rez.Fonts.Day);
-        bc.drawText(172 - 10, 178 - 20, font, mState.mDay / 10, cAlign);
-        bc.drawText(177 - 10, 173 - 20, font, mState.mDay % 10, cAlign);
-        font = WatchUi.loadResource(Rez.Fonts.Date);
-        // Day of week
-        bc.drawText(61, 62, font, cWeekDays.substring(mState.mWeekDay * 3 - 3, mState.mWeekDay * 3), cAlign);
-        // Month
-        bc.drawText(160, 62, font, cMonths.substring(mState.mMonth * 3 - 3, mState.mMonth * 3), cAlign);
+        if (flags & (State.DATE | State.BG_RIGHT_BOTTOM)) {
+            // System.println("Day of month");
+            // Day of month
+            bc.setColor(0x000000, cTransparent);
+            font = loadResource(CFonts.Day);
+            bc.drawText(172 - 10, 178 - 20, font, mState.mDay / 10, cAlign);
+            bc.drawText(177 - 10, 173 - 20, font, mState.mDay % 10, cAlign);
+        }
 
+        if (flags & (State.DATE | State.BG_TOP)) {
+            // System.println("Top dates");
+            bc.setColor(0x000000, cTransparent);
+            font = loadResource(CFonts.Date);
+            // Day of week
+            bc.drawText(61, 62, font, cWeekDays.substring(mState.mWeekDay * 3 - 3, mState.mWeekDay * 3), cAlign);
+            // Month
+            bc.drawText(160, 62, font, cMonths.substring(mState.mMonth * 3 - 3, mState.mMonth * 3), cAlign);
+        }
         // Drawing scales
 
-        // Steps
-        font = WatchUi.loadResource(Rez.Fonts.steps_scale);
-        for (var i = PosSteps; i < PosActivity; i++) {
-            var c = getXY(i, cCoords);
-            bc.setColor((i < mState.mStepsFraction + PosSteps)? 0xFFFFFF: 0x5555AA, cTransparent);
-            bc.drawText(c[0], c[1], font, i - PosSteps, Graphics.TEXT_JUSTIFY_LEFT);
-        }
-        // Activity
-        font = WatchUi.loadResource(Rez.Fonts.activity_scale);
-        for (var i = PosActivity; i < PosMovement; i++) {
-            var c = getXY(i, cCoords);
-            bc.setColor((i < mState.mActivityFraction + PosActivity)? 0xFFFFFF: 0x5555AA, cTransparent);
-            bc.drawText(c[0], c[1], font, i - PosActivity, Graphics.TEXT_JUSTIFY_LEFT);
-        }
-        // Movement
-        bc.setColor(0xFF0000, cTransparent);
-        font = WatchUi.loadResource(Rez.Fonts.movement_scale);
-        for (var i = PosMovement; i < PosEOF; i++) {
-            var c = getXY(i, cCoords);
-            bc.setColor((i < mState.mMovementFraction + PosMovement)? 0xFF0000: 0xAAAAAA, cTransparent);
-            bc.drawText(c[0], c[1], font, i - PosMovement, Graphics.TEXT_JUSTIFY_LEFT);
+        if (flags & State.STEPS) {
+            // System.println("steps");
+            // Steps
+            font = loadResource(CFonts.steps_scale);
+            for (var i = PosSteps; i < PosActivity; i++) {
+                var c = getXY(i, cCoords);
+                bc.setColor((i < mState.mStepsFraction + PosSteps)? 0xFFFFFF: 0x5555AA, cTransparent);
+                bc.drawText(c[0], c[1], font, i - PosSteps, Graphics.TEXT_JUSTIFY_LEFT);
+            }
         }
 
-        // Drawing gauge hands
-        font = WatchUi.loadResource(Rez.Fonts.gauge_center);
-        // Battery;
-        drawGaugeHand(bc, mState.mBatteryPos, 44, 0, font);
-        // UTC;
-        drawGaugeHand(bc, mState.mUTCPos, 0, 44, font);
-        // Heartbeat
-        if (mState.mHeartRatePos != null) {
-            drawGaugeHand(bc, mState.mHeartRatePos, -45, 0, font);
+        if (flags & State.ACTIVITY) {
+            // System.println("activity");
+
+            // Activity
+            font = loadResource(CFonts.activity_scale);
+            for (var i = PosActivity; i < PosMovement; i++) {
+                var c = getXY(i, cCoords);
+                bc.setColor((i < mState.mActivityFraction + PosActivity)? 0xFFFFFF: 0x5555AA, cTransparent);
+                bc.drawText(c[0], c[1], font, i - PosActivity, Graphics.TEXT_JUSTIFY_LEFT);
+            }
+        }
+        if (flags & State.MOVEMENT) {
+            // System.println("movement");
+            // Movement
+            bc.setColor(0xFF0000, cTransparent);
+            font = loadResource(CFonts.movement_scale);
+            for (var i = PosMovement; i < PosEOF; i++) {
+                var c = getXY(i, cCoords);
+                bc.setColor((i < mState.mMovementFraction + PosMovement)? 0xFF0000: 0xAAAAAA, cTransparent);
+                bc.drawText(c[0], c[1], font, i - PosMovement, Graphics.TEXT_JUSTIFY_LEFT);
+            }
         }
 
-        // Drawing clock hands
-        drawHourMinuteHands(bc, 120 - 10, 120 - 20, mIsBackgroundMode);
+        if (flags & (State.G3 | State.G6 | State.G9)) {
+            // Drawing gauge hands
+            font = loadResource(CFonts.gauge_center);
+        }
+
+        if (flags & State.G3) {
+            // Battery;
+            // System.println("G3 hand");
+
+            drawGaugeHand(bc, mState.mBatteryPos, 44, 0, font);
+        }
+        if (flags & State.G6) {
+            // System.println("G6 hand");
+            // UTC;
+            drawGaugeHand(bc, mState.mUTCPos, 0, 44, font);
+        }
+        if (flags & State.G9) {
+            // System.println("G9 hand");
+            // Heartbeat
+            if (mState.mHeartRatePos != null) {
+                drawGaugeHand(bc, mState.mHeartRatePos, -45, 0, font);
+            }
+        }
+
+        if (flags & State.MINUTE) {
+            // System.println("HM hands");
+            // Drawing clock hands
+            drawHourMinuteHands(bc, 120 - 10, 120 - 20, mState.mIsBackgroundMode);
+        }
+
 
         // Drawing image to device context
-        dc.setColor(0xAAAAAA, 0x000055);
-        dc.clear();
+        if (flags & State.BACKGROUNDS == State.BACKGROUNDS) {
+            // System.println("Clear DC");
+            dc.setColor(0xAAAAAA, 0x000055);
+            dc.clear();
+        }
+
+        // System.println("draw buffer");
         dc.clearClip();
         dc.drawBitmap(10, 20, mBuffer);
 
-        // Drawind second hand to device context;
-        drawSecondHand(dc, false);
+        if (flags & State.SECOND) {
+            // System.println("second hand");
+            // Drawind second hand to device context;
+            drawSecondHand(dc, false);
+        }
+        mState.onUpdateFinished();
+    }
 
+    // Called when this View is brought to the foreground. Restore
+    // the state of this View and prepare it to be shown. This includes
+    // loading resources into memory.
+    function onShow() {
+        mState.onShow();
     }
 
     // Called when this View is removed from the screen. Save the
@@ -456,12 +549,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
-        mIsBackgroundMode = false;
+        mState.onExitSleep();
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
-        mIsBackgroundMode = true;
+        mState.onEnterSleep();
     }
 
 }

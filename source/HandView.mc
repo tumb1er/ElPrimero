@@ -12,6 +12,7 @@ class Hand {
     var mFont;           // cached font resource
     var mCurrentFontIdx; // current cached font number
     var mVectorList;     // list of poligons for vector-based drawing
+    var mPos;            // last drawn position
 
     /**
     jsonId - Rez.jsonData identifier for tile data
@@ -61,6 +62,12 @@ class Hand {
             var y = (tile >> 24) & 0xFF + dy;
             dc.drawText(x, y, getFont(f), char.toChar().toString(), Graphics.TEXT_JUSTIFY_LEFT);
         }
+        mPos = pos;
+
+//        // FIXME: OOM prevention
+//        if (mFontList.size() > 1) {
+//            mFont = null;
+//        }
     }
 
     /**
@@ -71,9 +78,13 @@ class Hand {
     dx, dy - offset from screen center
      */
     function drawVector(dc, pos, dx, dy) {
+        if (pos == null) {
+            return;
+        }
         var angle = Math.toRadians(pos * 6);
         var points = fillRadialPolygon(dc, angle, mVectorList, 120 + dx, 120 + dy);
         dc.fillPolygon(points);
+        mPos = pos;
     }
 
     /**
@@ -85,12 +96,12 @@ class Hand {
         if (mCurrentFontIdx != f || mFont == null) {
             // free memory used by prev cached font
             mFont = null;
-            System.println(Lang.format("Loading font $1$", [f]));
-            var used = System.getSystemStats().usedMemory;
+            // System.println(Lang.format("Loading font $1$", [f]));
+//            var used = System.getSystemStats().usedMemory;
             mFont = WatchUi.loadResource(mFontList[f]);
-            var stats = System.getSystemStats();
-            var fontSize = stats.usedMemory - used;
-            System.println(Lang.format("Loaded $1$ bytes, free $2$", [fontSize, stats.freeMemory]));
+//            var stats = System.getSystemStats();
+//            var fontSize = stats.usedMemory - used;
+            // System.println(Lang.format("Loaded $1$ bytes, free $2$", [fontSize, stats.freeMemory]));
             mCurrentFontIdx = f;
         }
         return mFont;
