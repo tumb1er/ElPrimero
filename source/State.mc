@@ -207,30 +207,51 @@ class State {
         }
     }
 
+    function getHeartRateFromHistory() {
+        var heartBeatIter = SensorHistory.getHeartRateHistory({:period => 1});
+        var heartBeatSample = heartBeatIter.next();
+        var heartBeat = null;
+        if (heartBeatSample != null) {
+            return heartBeatSample.data;
+        }
+        return null;
+    }
+
+
+    function getCurrentHeartRate() {
+        var info = Activity.getActivityInfo();
+        return info.currentHeartRate;
+    }
+
     /**
     Handles heart rate status changes.
 
     :param profile Profile: user profile
      */
     function updateHeartRate(profile) {
+        var heartBeat = null;
+        if (mIsBackgroundMode) {
+            if (mFlags && MINUTE) {
+                // in background mode update HR only once per minute
+                heartBeat = getHeartRateFromHistory();
+            }
+        } else {
+            heartBeat = getCurrentHeartRate();
+        }
+
+        if (heartBeat == null) {
+            mHeartRatePos = null;
+            mHeartRateValue = null;
+            return;
+        }
+
         var zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
         var maxHR = zones[zones.size() - 1];
         var minHR = profile.restingHeartRate;
         if (minHR == 0) {
             minHR = 50;
         }
-        zones = null;
-        var heartBeatIter = SensorHistory.getHeartRateHistory({:period => 1});
-        var heartBeatSample = heartBeatIter.next();
-        var heartBeat = null;
-        if (heartBeatSample != null) {
-            heartBeat = heartBeatSample.data;
-        }
-        if (heartBeat != null) {
-            mHeartRatePos = (45 + (heartBeat - minHR) * 40 / (maxHR - minHR)).toNumber() % 60;
-        } else {
-            mHeartRatePos = null;
-        }
+        mHeartRatePos = (45 + (heartBeat - minHR) * 40 / (maxHR - minHR)).toNumber() % 60;
         if (mHeartRateValue != heartBeat) {
             mFlags |= HEARTBEAT;
             mHeartRateValue = heartBeat;
