@@ -19,10 +19,13 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var CJsonData = Rez.JsonData;
     // coords.json offsets
     enum {
-        PosSteps = 15,
-        PosActivity = 20,
-        PosMovement= 24,
-        PosEOF=29
+        PosLogo = 15,
+        PosGlyphs = 21,
+        PosGauges = 27,
+        PosSteps = 30,
+        PosActivity = 35,
+        PosMovement = 39,
+        PosEOF = 44
     }
     // hands.json offsets
     enum {
@@ -39,8 +42,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var cCoords; // int32-packed coords (even at high word, odd at low word)
 
     var mSecondCoords;
-
-    var cBackgrounds;
 
     var mBuffer;
     var mCap;
@@ -131,23 +132,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
             ],
             null
         );
-
-        cBackgrounds = [
-            loadResource(CDrawables.G3Top),
-            loadResource(CDrawables.G3Left),
-            loadResource(CDrawables.G3Right),
-            loadResource(CDrawables.G3Bottom),
-
-            loadResource(CDrawables.G6Top),
-            loadResource(CDrawables.G6Left),
-            loadResource(CDrawables.G6Right),
-            loadResource(CDrawables.G6Bottom),
-
-            loadResource(CDrawables.G9Top),
-            loadResource(CDrawables.G9Left),
-            loadResource(CDrawables.G9Right),
-            loadResource(CDrawables.G9Bottom)
-        ];
 
         mBuffer = new Graphics.BufferedBitmap({
             :width=>218,
@@ -307,14 +291,22 @@ class ElPrimeroView extends WatchUi.WatchFace {
     number - index of gauge (used for compute common and gauge backgrounds position indices)
      */
     function drawGaugeBackground(dc, number) {
-        var c = getXY(number, cCoords);
+        var c = getXY(number + PosGauges, cCoords);
         dc.setColor(0x000000, 0x000000);
-        dc.fillRectangle(c[0], c[1], 41, 37);
-        for (var i=PosGauge3 + number * 4; i < PosGauge3 + number * 4 + 4; i++) {
-            c = getXY(i, cCoords);
-            System.println(i - PosBackground - 3);
-            dc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground - 3]);
+        dc.fillCircle(c[0] + 10, c[1], 28);
+        dc.setColor(0xFFFFFF, cTransparent);
+        var startPos = (number == 2)? 3: number;
+        for (var i = startPos; i < startPos + number + 1; i++) {
+            c = getXY(PosGlyphs + i, cCoords);
+            var char = 53 + i;
+            System.println([char, number, i]);
+            dc.drawText(10 + c[0], -1 + c[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
         }
+//        for (var i=PosGauge3 + number * 4; i < PosGauge3 + number * 4 + 4; i++) {
+//            c = getXY(i, cCoords);
+//            System.println(i - PosBackground - 3);
+//            dc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground - 3]);
+//        }
     }
 
     /**
@@ -361,29 +353,43 @@ class ElPrimeroView extends WatchUi.WatchFace {
     }
 
     function drawBackgrounds(bc, flags) {
-        var char, coords;
+        var char, coords, pos;
         if (flags & State.BACKGROUNDS == State.BACKGROUNDS) {
             bc.setColor(0xFFFFFF, 0x000055);
             bc.clear();
-            bc.setColor(0xFFFFFF, cTransparent);
-            for (var pos=0; pos < 15; pos++) {
+            bc.setColor(0xFFFFFF, 0x000055);
+            for (pos=0; pos < PosGlyphs; pos++) {
                 coords = getXY(pos, cCoords);
                 char = pos + 32;
                 bc.drawText(10 + coords[0], -1 + coords[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
             }
-        } else {
-            bc.setColor(0xFFFFFF, cTransparent);
+        }
+        if ((flags & State.MINUTE) && mMinuteHand.mPos != null) {
+            bc.setColor(0xFFFFFF, 0x000055);
             char = 32 + mMinuteHand.mPos / 4;
             coords = getXY(mMinuteHand.mPos/4, cCoords);
             bc.drawText(10 + coords[0], -1 + coords[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
-        }
-//
-//        for (var i=0; i< 3; i++) {
-//            if (flags & (State.G3 << i)) {
-//                drawGaugeBackground(bc, i);
-//            }
-//        }
 
+            pos = (mMinuteHand.mPos + 12) % 60 / 4;
+            if (pos + PosLogo < PosGlyphs) {
+                char = 47 + pos;
+                coords = getXY(pos + PosLogo, cCoords);
+                bc.drawText(10 + coords[0], -1 + coords[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
+            }
+
+            pos = (mHourHand.mPos + 12) % 60 / 4;
+            if (pos + PosLogo < PosGlyphs) {
+                char = 47 + pos;
+                coords = getXY(pos + PosLogo, cCoords);
+                bc.drawText(10 + coords[0], -1 + coords[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
+            }
+
+        }
+        for (var i=0; i< 3; i++) {
+            if (flags & (State.G3 << i)) {
+                drawGaugeBackground(bc, i);
+            }
+        }
     }
 
     function onPartialUpdate(dc) {
@@ -527,11 +533,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.clearClip();
         dc.drawBitmap(10, 20, mBuffer);
 
-        if (flags & State.SECOND) {
-            // System.println("second hand");
-            // Drawind second hand to device context;
-            drawSecondHand(dc, false);
-        }
+        // System.println("second hand");
+        // Drawind second hand to device context;
+        drawSecondHand(dc, false);
         mState.onUpdateFinished();
     }
 

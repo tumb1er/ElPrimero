@@ -1,20 +1,34 @@
 info face="Background" size=10 bold=0 italic=0 charset=ascii unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=0,0 outline=0
-common lineHeight=50 base=0 scaleW=200 scaleH=200 pages=1 packed=0 alphaChnl=0 redChnl=0 greenChnl=0 blueChnl=0
+common lineHeight=46 base=0 scaleW=200 scaleH=200 pages=1 packed=0 alphaChnl=0 redChnl=0 greenChnl=0 blueChnl=0
 page id=0 file="background.png"
 chars count=16
-char id=32 x=95  y=0   width=42 height=24 xoffset=0 yoffset=0 xadvance=42 page=0 chnl=15
-char id=33 x=133 y=8   width=37 height=29 xoffset=0 yoffset=0 xadvance=37 page=0 chnl=15
-char id=34 x=163 y=30  width=35 height=39 xoffset=0 yoffset=0 xadvance=35 page=0 chnl=15
-char id=35 x=175 y=65  width=25 height=40 xoffset=0 yoffset=0 xadvance=25 page=0 chnl=15
-char id=36 x=172 y=102 width=28 height=41 xoffset=0 yoffset=0 xadvance=28 page=0 chnl=15
+char id=32 x=95  y=0   width=42 height=46 xoffset=0 yoffset=0 xadvance=42 page=0 chnl=15
+char id=33 x=133 y=8   width=37 height=46 xoffset=0 yoffset=0 xadvance=37 page=0 chnl=15
+char id=34 x=163 y=30  width=35 height=46 xoffset=0 yoffset=0 xadvance=35 page=0 chnl=15
+char id=35 x=175 y=65  width=25 height=46 xoffset=0 yoffset=0 xadvance=25 page=0 chnl=15
+char id=36 x=172 y=102 width=28 height=46 xoffset=0 yoffset=0 xadvance=28 page=0 chnl=15
 char id=37 x=146 y=133 width=43 height=46 xoffset=0 yoffset=0 xadvance=43 page=0 chnl=15
-char id=38 x=125 y=154 width=35 height=43 xoffset=0 yoffset=0 xadvance=35 page=0 chnl=15
-char id=39 x=85  y=181 width=40 height=19 xoffset=0 yoffset=0 xadvance=40 page=0 chnl=15
-char id=40 x=46  y=163 width=39 height=35 xoffset=0 yoffset=0 xadvance=39 page=0 chnl=15
-char id=41 x=17  y=152 width=31 height=31 xoffset=0 yoffset=0 xadvance=31 page=0 chnl=15
-char id=42 x=2   y=113 width=35 height=41 xoffset=0 yoffset=0 xadvance=35 page=0 chnl=15
-char id=43 x=0   y=74  width=25 height=41 xoffset=0 yoffset=0 xadvance=25 page=0 chnl=15
-char id=44 x=4   y=38  width=33 height=39 xoffset=0 yoffset=0 xadvance=33 page=0 chnl=15
-char id=45 x=22  y=11  width=44 height=32 xoffset=0 yoffset=0 xadvance=44 page=0 chnl=15
-char id=46 x=55  y=0   width=45 height=26 xoffset=0 yoffset=0 xadvance=45 page=0 chnl=15
+char id=38 x=125 y=154 width=35 height=46 xoffset=0 yoffset=0 xadvance=35 page=0 chnl=15
+char id=39 x=85  y=181 width=40 height=46 xoffset=0 yoffset=0 xadvance=40 page=0 chnl=15
+char id=40 x=46  y=163 width=39 height=46 xoffset=0 yoffset=0 xadvance=39 page=0 chnl=15
+char id=41 x=17  y=153 width=44 height=46 xoffset=0 yoffset=0 xadvance=44 page=0 chnl=15
+char id=42 x=2   y=112 width=35 height=46 xoffset=0 yoffset=0 xadvance=35 page=0 chnl=15
+char id=43 x=0   y=74  width=25 height=46 xoffset=0 yoffset=0 xadvance=25 page=0 chnl=15
+char id=44 x=4   y=38  width=33 height=46 xoffset=0 yoffset=0 xadvance=33 page=0 chnl=15
+char id=45 x=22  y=11  width=44 height=46 xoffset=0 yoffset=0 xadvance=44 page=0 chnl=15
+char id=46 x=55  y=0   width=45 height=46 xoffset=0 yoffset=0 xadvance=45 page=0 chnl=15
+
+char id=47 x=42  y=26  width=17 height=46 xoffset=0 yoffset=0 xadvance=17 page=0 chnl=15
+char id=48 x=45  y=26  width=45 height=46 xoffset=0 yoffset=0 xadvance=45 page=0 chnl=15
+char id=49 x=70  y=26  width=32 height=46 xoffset=0 yoffset=0 xadvance=32 page=0 chnl=15
+char id=50 x=95  y=26  width=27 height=46 xoffset=0 yoffset=0 xadvance=27 page=0 chnl=15
+char id=51 x=112 y=26  width=32 height=46 xoffset=0 yoffset=0 xadvance=32 page=0 chnl=15
+char id=52 x=127 y=26  width=31 height=46 xoffset=0 yoffset=0 xadvance=31 page=0 chnl=15
+
+char id=53 x=117 y=69  width=55 height=46 xoffset=0 yoffset=0 xadvance=55 page=0 chnl=15
+char id=54 x=37  y=125 width=50 height=28 xoffset=0 yoffset=0 xadvance=50 page=0 chnl=15
+char id=55 x=87  y=128 width=58 height=30 xoffset=0 yoffset=0 xadvance=58 page=0 chnl=15
+char id=56 x=27  y=68  width=57 height=46 xoffset=0 yoffset=0 xadvance=57 page=0 chnl=15
+char id=57 x=35  y=115 width=11 height=10 xoffset=0 yoffset=0 xadvance=11 page=0 chnl=15
+char id=58 x=65  y=114 width=14 height=11 xoffset=0 yoffset=0 xadvance=14 page=0 chnl=15
 

@@ -112,7 +112,7 @@ class State {
         if (m > 36 && m < 43) {
             mFlags |= 4096 | 64;
         }
-        if (m > 19 && m < 27) {
+        if (m > 19 && m < 32) {
             mFlags |= 8192 | 256;
         }
         if (m > 24 && m < 37) {
@@ -128,7 +128,7 @@ class State {
         if (t >= 10 && t <= 22) {
             mFlags |= 8;
         }
-        if (t >= 25 && t <= 38) {
+        if (t >= 25 && t <= 40) {
             mFlags |= 16;
         }
         if (t >= 40 && t <= 53) {
