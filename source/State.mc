@@ -103,7 +103,7 @@ class State {
     Invalidates backgrounds depending on hour and minute hands positions
      */
     function updateBackgrounds(h, m) {
-        System.println(["updateBackgrounds", mFlags.format("%x"), h, m]);
+        // System.println(["updateBackgrounds", mFlags.format("%x"), h, m]);
         if (6 <= m && m <= 15 || 6 <= h && h <= 15) {
             // month shaded by hour and minute hands and backgrounds
             // activity scale shaded by backgrounds
@@ -204,7 +204,6 @@ class State {
         value += (settings.notificationCount > 0)? NOTIFICATIONS: 0;
         if (mIcons != value) {
             // icons state invalidated
-            System.println("Icons changed");
             mFlags |= ICONS;
             mIcons = value;
         }

@@ -439,7 +439,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         }
 
         if (flags & State.ICONS) {
-            System.println("G6 icons");
+            // System.println("G6 icons");
             // Icons
             drawIcons(bc, mState.mUTCPos, mIconsFont);
         }
