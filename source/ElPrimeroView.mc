@@ -20,14 +20,14 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // coords.json offsets
     enum {
         PosCommon,
-        PosBackground = 3,
-        PosGauge3 = 9,
-        PosGauge6 = 13,
-        PosGauge9 = 17,
-        PosSteps = 21,
-        PosActivity = 26,
-        PosMovement= 30,
-        PosEOF=35
+        PosBackground = 0,
+        PosGauge3 = 3,
+        PosGauge6 = 7,
+        PosGauge9 = 11,
+        PosSteps = 15,
+        PosActivity = 20,
+        PosMovement= 24,
+        PosEOF=29
     }
     // hands.json offsets
     enum {
@@ -60,6 +60,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var fx, fy, gx, gy;
     // clip
     var ax, ay, bx, by;
+
+
+    var mBackgroundFont;
 
     function initialize() {
         WatchFace.initialize();
@@ -135,13 +138,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
         );
 
         cBackgrounds = [
-            loadResource(CDrawables.BGTop),
-            loadResource(CDrawables.BGLeft),
-            loadResource(CDrawables.BGRight),
-            loadResource(CDrawables.BGLeftBottom),
-            loadResource(CDrawables.BGRightBottom),
-            loadResource(CDrawables.BGBottom),
-
             loadResource(CDrawables.G3Top),
             loadResource(CDrawables.G3Left),
             loadResource(CDrawables.G3Right),
@@ -168,6 +164,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         cWeekDays = loadResource(Rez.Strings.WeekDays);
         cMonths = loadResource(Rez.Strings.Months);
         cIcons = loadResource(Rez.Strings.Icons);
+
+        mBackgroundFont = loadResource(Rez.Fonts.Background);
     }
 
     function getXY(i, data) {
@@ -319,7 +317,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.fillRectangle(c[0], c[1], 41, 37);
         for (var i=PosGauge3 + number * 4; i < PosGauge3 + number * 4 + 4; i++) {
             c = getXY(i, cCoords);
-            dc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground]);
+            System.println(i - PosBackground - 3);
+            dc.drawBitmap(c[0], c[1], cBackgrounds[i - PosBackground - 3]);
         }
     }
 
@@ -367,18 +366,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
     }
 
     function drawBackgrounds(bc, flags) {
-        bc.setColor(0xFFFFFF, 0x000055);
         if (mState.mFlags & State.BACKGROUNDS == State.BACKGROUNDS) {
-            // All six backgrounds invalidated - drawing from beginning
+            bc.setColor(0xFFFFFF, 0x000055);
             bc.clear();
         }
-        for (var i=PosBackground; i< PosGauge3; i++) {
-            if (flags && (State.BG_TOP << (i - PosBackground))) {
-                var c = getXY(i, cCoords);
-                var drawable = cBackgrounds[i - PosBackground];
-                bc.drawBitmap(c[0], c[1], drawable);
-            }
-        }
+        bc.setColor(0xFFFFFF, cTransparent);
+        bc.drawText(10, -1, mBackgroundFont, "0", Graphics.TEXT_JUSTIFY_LEFT);
 
         for (var i=0; i< 3; i++) {
             if (flags & (State.G3 << i)) {
