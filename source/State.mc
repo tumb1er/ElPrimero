@@ -207,17 +207,21 @@ class State {
         }
     }
 
+    /**
+    Get avg heartbeat for previous minute from history
+     */
     function getHeartRateFromHistory() {
         var heartBeatIter = SensorHistory.getHeartRateHistory({:period => 1});
         var heartBeatSample = heartBeatIter.next();
-        var heartBeat = null;
         if (heartBeatSample != null) {
             return heartBeatSample.data;
         }
         return null;
     }
 
-
+    /**
+    Get realtime heartbeat value
+     */
     function getCurrentHeartRate() {
         var info = Activity.getActivityInfo();
         return info.currentHeartRate;
@@ -248,10 +252,10 @@ class State {
         if (minHR == 0) {
             minHR = 50;
         }
-        mHeartRatePos = (45 + (heartBeat - minHR) * 40 / (maxHR - minHR)).toNumber() % 60;
         if (mHeartRateValue != heartBeat) {
             mFlags |= HEARTBEAT;
             mHeartRateValue = heartBeat;
+            mHeartRatePos = (45 + (heartBeat - minHR) * 40 / (maxHR - minHR)).toNumber() % 60;
         }
     }
 
