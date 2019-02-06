@@ -19,33 +19,36 @@ class State {
 
     var mIsBackgroundMode = false;
 
-    /**
-    1 - sleeping
-    2 - alarm
-    4 - phone connected
-    8 - do not disturb
-    16 - notifications
-     */
+    enum {
+        // icons states
+        SLEEP = 1,
+        ALARM = 2,
+        PHONE = 4,
+        DND = 8,
+        NOTIFICATIONS = 16
+    }
+
     var mIcons;
 
     enum {
+        // invalidation flags
         SECOND = 1,
         MINUTE = 2,
-        DATE = 4,
-        G3 = 8,
-        G6 = 16,
-        G9 = 32,
-        STEPS = 64,
-        ACTIVITY = 128,
-        MOVEMENT = 256,
-        BG_TOP = 512,
-        BG_LEFT = 1024,
-        BG_RIGHT = 2048,
-        BG_LEFT_BOTTOM = 4096,
-        BG_RIGHT_BOTTOM = 8192,
-        BG_BOTTOM = 16384,
-        // Sum of all backgrounds
-        BACKGROUNDS = 32256
+        HOUR = 4,
+        DAY_OF_WEEK = 8,
+        DAY_OF_MONTH = 16,
+        MONTH = 32,
+        BATTERY = 64,
+        ICONS = 128,
+        HEARTBEAT = 256,
+        STEPS = 512,
+        ACTIVITY = 1024,
+        MOVEMENT = 2048,
+
+        // joined flags
+        TIME = 454, // BATTERY | ICONS | HEARTBEAT | HOUR | MINUTE
+        DATE = 56, // DAY_OF_WEEK | DAY_OF_MONTH | MONTH
+        ALL = 4095 // sum of all flags - background invalidated
     }
 
     /**
@@ -79,8 +82,8 @@ class State {
     }
 
     function onUpdateFinished() {
-        mFlags = 0;
         // System.println(["onUpdateFinished", mFlags.format("%x")]);
+        mFlags = 0;
     }
 
     function update() {
@@ -100,25 +103,28 @@ class State {
     Invalidates backgrounds depending on hour and minute hands positions
      */
     function updateBackgrounds(h, m) {
-        if (m < 12 || m > 47 || h < 12 || h > 47) {
-            mFlags |= 512 | 64 | 128;
+        System.println(["updateBackgrounds", mFlags.format("%x"), h, m]);
+        if (6 <= m && m <= 15 || 6 <= h && h <= 15) {
+            // month shaded by hour and minute hands and backgrounds
+            // activity scale shaded by backgrounds
+            mFlags |= MONTH | ACTIVITY;
         }
-        if (m > 41 && m < 49) {
-            mFlags |= 1024 | 64;
+        if (48 <= m && m <= 53 || 48 <= h && h <= 53 ) {
+            // day of week shaded by hour and minute hands and backgrounds
+            mFlags |= DAY_OF_WEEK;
         }
-        if (m > 11 && m < 20) {
-            mFlags |= 2048 | 128 | 256;
+        if (21 <= m && m <= 29) {
+            // day of month invalidated by minute hand and backgrounds
+            mFlags |= DAY_OF_MONTH;
         }
-        if (m > 36 && m < 43) {
-            mFlags |= 4096 | 64;
+        if (39 <= m && m <= 53) {
+            // steps scale shaded by backgrounds
+            mFlags |= STEPS;
         }
-        if (m > 19 && m < 32) {
-            mFlags |= 8192 | 256;
+        if (15 <= m && m <= 23) {
+            // movement scale shaded by backgrounds
+            mFlags |= MOVEMENT;
         }
-        if (m > 24 && m < 37) {
-            mFlags |= 16384;
-        }
-        // System.println(["updateBackgrounds", mFlags.format("%x"), h, m]);
     }
 
     /**
@@ -126,13 +132,13 @@ class State {
      */
     function updateGaugeBackgrounds(t) {
         if (t >= 10 && t <= 22) {
-            mFlags |= 8;
+            mFlags |= BATTERY;
         }
         if (t >= 25 && t <= 40) {
-            mFlags |= 16;
+            mFlags |= ICONS;
         }
         if (t >= 40 && t <= 53) {
-            mFlags |= 32;
+            mFlags |= HEARTBEAT;
         }
     }
 
@@ -148,27 +154,30 @@ class State {
 
         pos = time.sec;
         if (mSecondPos != pos) {
-            mFlags |= 1; // SECOND
+            mFlags |= SECOND;
             mSecondPos = pos;
         }
         pos = time.min;
         if (mMinutePos != pos) {
-            mFlags |= 2;
+            mFlags |= MINUTE;
             updateBackgrounds(mHourPos, mMinutePos);
-            updateGaugeBackgrounds(mHourPos);
             updateGaugeBackgrounds(mMinutePos);
             mMinutePos = pos;
-            mHourPos = (time.hour % 12) * 5 + time.min / 12;
-            var utc = Gregorian.utcInfo(now, Time.FORMAT_SHORT);
-            utc = (utc.hour % 12) * 5 + utc.min / 12;
-            if (mUTCPos != utc) {
-                mFlags |= 16;
-                mUTCPos = utc;
-            }
         }
+        pos =  (time.hour % 12) * 5 + time.min / 12;
+        if (mHourPos != pos) {
+            // hour position change invalidates hour hand and utc gauge
+            mFlags |= HOUR | ICONS;
+            updateGaugeBackgrounds(mHourPos);
+            var utc = Gregorian.utcInfo(now, Time.FORMAT_SHORT);
+            mUTCPos = (utc.hour % 12) * 5 + utc.min / 12;
+            mHourPos = pos;
+        }
+
         pos = time.day;
         if (mDay != pos) {
-            mFlags |= 4 | BACKGROUNDS;
+            // day changed - redraw everything
+            mFlags = ALL;
             mDay = pos;
             mWeekDay = time.day_of_week;
             mMonth = time.month;
@@ -188,13 +197,15 @@ class State {
         var alreadySleeping = value > profile.sleepTime.value();
         var stillSleeping = value < profile.wakeTime.value();
         value = 0;
-        value += (alreadySleeping || stillSleeping)? 1: 0;
-        value += (settings.alarmCount > 0)? 2: 0;
-        value += (settings.phoneConnected)? 4: 0;
-        value += (settings.doNotDisturb)? 8: 0;
-        value += (settings.notificationCount > 0)? 16: 0;
+        value += (alreadySleeping || stillSleeping)? SLEEP: 0;
+        value += (settings.alarmCount > 0)? ALARM: 0;
+        value += (settings.phoneConnected)? PHONE: 0;
+        value += (settings.doNotDisturb)? DND: 0;
+        value += (settings.notificationCount > 0)? NOTIFICATIONS: 0;
         if (mIcons != value) {
-            mFlags |= 16;
+            // icons state invalidated
+            System.println("Icons changed");
+            mFlags |= ICONS;
             mIcons = value;
         }
     }
@@ -224,7 +235,7 @@ class State {
             mHeartRatePos = null;
         }
         if (mHeartRateValue != heartBeat) {
-            mFlags |= 32;
+            mFlags |= HEARTBEAT;
             mHeartRateValue = heartBeat;
         }
     }
@@ -251,7 +262,7 @@ class State {
 
         f = getFraction(info.steps, info.stepGoal, 5);
         if (mStepsFraction != f) {
-            mFlags |= 64;
+            mFlags |= STEPS;
             mStepsFraction = f;
         }
 
@@ -260,14 +271,14 @@ class State {
 
         f = getFraction(info.activeMinutesWeek.total, info.activeMinutesWeekGoal, 5);
         if (mActivityFraction != f) {
-            mFlags |= 128;
+            mFlags |= ACTIVITY;
             mActivityFraction = f;
         }
 
         f = getFraction(info.moveBarLevel - ActivityMonitor.MOVE_BAR_LEVEL_MIN,
                         ActivityMonitor.MOVE_BAR_LEVEL_MAX - ActivityMonitor.MOVE_BAR_LEVEL_MIN, 4);
         if (mMovementFraction != f) {
-            mFlags |= 256;
+            mFlags |= MOVEMENT;
             mMovementFraction = f;
         }
     }
@@ -281,7 +292,7 @@ class State {
     function updateBattery(stats) {
         var value = stats.battery.toNumber();
         if (mBatteryValue != value) {
-            mFlags |= 8;
+            mFlags |= BATTERY;
             mBatteryValue = value;
             mBatteryPos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
         }
@@ -289,7 +300,7 @@ class State {
 
     function reset(isInBackground) {
         mIsBackgroundMode = isInBackground;
-        mFlags = 32767;
-        // System.println(["onExitSleep", mFlags.format("%x")]);
+        mFlags = ALL;
+        // System.println(["reset", isInBackground, mFlags.format("%x")]);
     }
 }
