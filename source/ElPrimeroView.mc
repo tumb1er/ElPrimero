@@ -57,6 +57,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // clip
     var ax, ay, bx, by;
 
+    var mTimer;
+    var mSecondTimestamp = null;
+    var mSecondValue = null;
 
     var mBackgroundFont;
     var mSmallyFont, mIconsFont, mDayFont, mDateFont, mGaugeFont;
@@ -85,6 +88,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     // Load your resources here
     function onLayout(dc) {
+        mTimer = new Timer.Timer();
         var data = loadResource(CJsonData.hands_json);
         mSecondCoords = loadCoords(data, PosSecond, PosMinute);
         mHourHand = new Hand(
@@ -262,7 +266,18 @@ class ElPrimeroView extends WatchUi.WatchFace {
         ay = 240;
         bx = 0;
         by = 0;
-        var angle = Math.toRadians(mState.mSecondPos * 6);
+        var pos;
+        var timer = System.getTimer();
+        if (mSecondValue == mState.mSecondPos && mSecondTimestamp != null && mSecondTimestamp + 500 < timer) {
+            // second draw of same second
+            pos = mState.mSecondPos * 6 + 3;
+        } else {
+            // first draw of current second
+            pos = mState.mSecondPos * 6;
+            mSecondValue = mState.mSecondPos;
+        }
+        mSecondTimestamp = timer;
+        var angle = Math.toRadians(pos);
         var sa = Math.sin(angle);
         var ca = Math.cos(angle);
         var x1 = 120 + 80 * sa;
@@ -293,6 +308,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.drawLine(x1, y1, x2, y2);
         // Draw second hand cap;
         dc.drawBitmap(116, 116, mCap);
+        System.println("draw second hand");
     }
 
     /**
@@ -536,6 +552,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Drawind second hand to device context;
         drawSecondHand(dc, false);
         mState.onUpdateFinished();
+        if (!mState.mIsBackgroundMode) {
+            mTimer.start(method(:timerCallback), 500, false);
+        }
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -559,6 +578,11 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
         mState.reset(true);
+    }
+
+    function timerCallback() {
+        System.println("RequestUpdate");
+        WatchUi.requestUpdate();
     }
 
 }
