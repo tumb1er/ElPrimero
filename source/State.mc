@@ -77,16 +77,16 @@ class State {
     Updates values for all watch elements
     */
     function update() {
-        var settings = System.getDeviceSettings();
         var profile = UserProfile.getProfile();
-        var activityInfo = ActivityMonitor.getInfo();
-        var stats = System.getSystemStats();
 
         var time = updateDateTime();
-        updateIconStatus(time, settings, profile);
-        updateHeartRate(profile);
-        updateActivity(activityInfo);
-        updateBattery(stats);
+        if (!mIsBackgroundMode || mFlags & MINUTE) {
+            // update data in active mode or once per minute
+            updateIconStatus(time, profile);
+            updateHeartRate(profile);
+            updateActivity();
+            updateBattery();
+        }
     }
 
     /**
@@ -187,10 +187,10 @@ class State {
     Handles icons status changes.
 
     :param time Info: unpacked date time info
-    :param settings DeviceSetting: device settings
     :param profile Profile: user profile
      */
-    function updateIconStatus(time, settings, profile) {
+    function updateIconStatus(time, profile) {
+        var settings = System.getDeviceSettings();
         var value = time.hour * 3600 + time.min * 60 + time.sec;
         var alreadySleeping = value > profile.sleepTime.value();
         var stillSleeping = value < profile.wakeTime.value();
@@ -231,10 +231,7 @@ class State {
     function updateHeartRate(profile) {
         var heartBeat = null;
         if (mIsBackgroundMode) {
-            if (mFlags && MINUTE) {
-                // in background mode update HR only once per minute
-                heartBeat = getHeartRateFromHistory();
-            }
+            heartBeat = getHeartRateFromHistory();
         } else {
             heartBeat = getCurrentHeartRate();
         }
@@ -274,10 +271,9 @@ class State {
 
     /**
     Handles activity state changes.
-
-    :param info ActivityInfo: activity info
     */
-    function updateActivity(info) {
+    function updateActivity() {
+        var info = ActivityMonitor.getInfo();
         var f;
         if (info.stepGoal == 0) {
             info.stepGoal = 5000;
@@ -312,10 +308,9 @@ class State {
 
     /**
     Handles battery updates
-
-    :param stats Stats: system statistics
      */
-    function updateBattery(stats) {
+    function updateBattery() {
+        var stats = System.getSystemStats();
         var value = stats.battery.toNumber();
         if (mBatteryValue != value) {
             mFlags |= BATTERY;
