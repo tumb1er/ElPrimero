@@ -19,11 +19,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     var CJsonData = Rez.JsonData;
     // coords.json offsets
     enum {
-        PosCommon,
-        PosBackground = 0,
-        PosGauge3 = 3,
-        PosGauge6 = 7,
-        PosGauge9 = 11,
         PosSteps = 15,
         PosActivity = 20,
         PosMovement= 24,
@@ -366,18 +361,28 @@ class ElPrimeroView extends WatchUi.WatchFace {
     }
 
     function drawBackgrounds(bc, flags) {
-        if (mState.mFlags & State.BACKGROUNDS == State.BACKGROUNDS) {
+        var char, coords;
+        if (flags & State.BACKGROUNDS == State.BACKGROUNDS) {
             bc.setColor(0xFFFFFF, 0x000055);
             bc.clear();
-        }
-        bc.setColor(0xFFFFFF, cTransparent);
-        bc.drawText(10, -1, mBackgroundFont, "0", Graphics.TEXT_JUSTIFY_LEFT);
-
-        for (var i=0; i< 3; i++) {
-            if (flags & (State.G3 << i)) {
-                drawGaugeBackground(bc, i);
+            bc.setColor(0xFFFFFF, cTransparent);
+            for (var pos=0; pos < 15; pos++) {
+                coords = getXY(pos, cCoords);
+                char = pos + 32;
+                bc.drawText(10 + coords[0], -1 + coords[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
             }
+        } else {
+            bc.setColor(0xFFFFFF, cTransparent);
+            char = 32 + mMinuteHand.mPos / 4;
+            coords = getXY(mMinuteHand.mPos/4, cCoords);
+            bc.drawText(10 + coords[0], -1 + coords[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
         }
+//
+//        for (var i=0; i< 3; i++) {
+//            if (flags & (State.G3 << i)) {
+//                drawGaugeBackground(bc, i);
+//            }
+//        }
 
     }
 
