@@ -168,7 +168,7 @@ class State {
         }
         pos = time.day;
         if (mDay != pos) {
-            mFlags |= 4;
+            mFlags |= 4 | BACKGROUNDS;
             mDay = pos;
             mWeekDay = time.day_of_week;
             mMonth = time.month;
