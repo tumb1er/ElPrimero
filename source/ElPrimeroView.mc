@@ -308,7 +308,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.drawLine(x1, y1, x2, y2);
         // Draw second hand cap;
         dc.drawBitmap(116, 116, mCap);
-        System.println("draw second hand");
     }
 
     /**
@@ -420,8 +419,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
     }
 
     function onPartialUpdate(dc) {
-        mState.updateDateTime();
-        drawSecondHand(dc, true);
+        if (!mState.mIsPowersafeMode) {
+            mState.updateDateTime();
+            drawSecondHand(dc, true);
+        }
     }
 
     // Update the view
@@ -432,7 +433,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         var bc = mBuffer.getDc();
 
-        if (flags & State.TIME) {
+        if ((flags & State.TIME) && !mState.mIsPowersafeMode) {
+            // in active/background mode eraze previous hands positions
             invalidateHourMinuteHands(bc, 120 - 10, 120 - 20);
         }
         // System.println("drawBackgrounds");
@@ -530,10 +532,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
             }
         }
 
-        if (flags & State.TIME) {
+        if ((flags & State.TIME) && !mState.mIsPowersafeMode) {
             // System.println("HM hands");
-            // Drawing clock hands
-            drawHourMinuteHands(bc, 120 - 10, 120 - 20, mState.mIsBackgroundMode);
+            // Drawing clock hands to buffer in active/background modes
+            drawHourMinuteHands(bc, 120 - 10, 120 - 20, false);
         }
 
 
@@ -548,11 +550,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.clearClip();
         dc.drawBitmap(10, 20, mBuffer);
 
-        // System.println("second hand");
-        // Drawind second hand to device context;
-        drawSecondHand(dc, false);
+        if (!mState.mIsPowersafeMode) {
+            // System.println("second hand");
+            // Drawind second hand to device context;
+            // (only in active/background modes
+            drawSecondHand(dc, false);
+        } else {
+            // Draw minute hands in powersafe mode
+            drawHourMinuteHands(dc, 120, 120, true);
+        }
         mState.onUpdateFinished();
-        if (!mState.mIsBackgroundMode) {
+        if (!(mState.mIsBackgroundMode)) {
             mTimer.start(method(:timerCallback), 500, false);
         }
     }

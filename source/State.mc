@@ -18,6 +18,7 @@ class State {
     var mBatteryPos = 0, mBatteryValue = 0;
 
     var mIsBackgroundMode = false;
+    var mIsPowersafeMode = false;
 
     enum {
         // icons states
@@ -86,6 +87,7 @@ class State {
             updateHeartRate(profile);
             updateActivity();
             updateBattery();
+            updatePowerSafeMode();
         }
     }
 
@@ -320,6 +322,28 @@ class State {
             mFlags |= BATTERY;
             mBatteryValue = value;
             mBatteryPos = (30 + 50 * stats.battery / 100.0f).toNumber() % 60;
+        }
+    }
+
+    function updatePowerSafeMode() {
+        if (!mIsBackgroundMode){
+            if (mIsPowersafeMode) {
+                System.println("Interrupt powersafe mode");
+            }
+            mIsPowersafeMode = false;
+            return;
+        }
+
+        // simple case - powersafe mode is enabled via do not disturb;
+        var flag = (mIcons && DND) > 0;
+
+        if (mIsPowersafeMode != flag) {
+            if (mIsPowersafeMode) {
+                System.println("Exited powersafe mode");
+            } else {
+                System.println("Entered powersafe mode");
+            }
+            mIsPowersafeMode = flag;
         }
     }
 
