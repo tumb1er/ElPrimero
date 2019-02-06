@@ -9,7 +9,7 @@ State computes differences to be drawn on watch face and current values.
  */
 class State {
 
-    var mSecondPos = 0, mMinutePos = 0, mHourPos = 0, mUTCPos;
+    var mSecondPos = 0, mMinutePos = 0, mHourPos = 0, mUTCPos = 0;
     var mDay = 0, mWeekDay = 0, mMonth = 0;
 
     var mHeartRatePos = null, mHeartRateValue = null;
@@ -45,47 +45,37 @@ class State {
         ACTIVITY = 1024,
         MOVEMENT = 2048,
 
-        // joined flags
-        TIME = 454, // BATTERY | ICONS | HEARTBEAT | HOUR | MINUTE
-        DATE = 56, // DAY_OF_WEEK | DAY_OF_MONTH | MONTH
+        // flag unions
+        TIME = 454, // BATTERY | ICONS | HEARTBEAT | HOUR | MINUTE - draw hour and minute hands or not
         ALL = 4095 // sum of all flags - background invalidated
     }
 
-    /**
-    1 - second invalidated
-    2 - minute invalidated
-    * hour hand is invalidated every time when minute hand moves
-    4 - date invalidated
-    8 - G3 invalidated
-    16 - G6 invalidated
-    32 - G9 invalidated
-    64 - steps scale invalidated
-    128 - activity scale invalidated
-    256 - movement scale invalidated
-    512 - BG Top
-    1024 - BG Left
-    2048 - BG Right
-    4096 - BG Left Bottom
-    8192 - BG Right Bottom
-    16384 - BG Bottom
-     */
     var mFlags = 0;
 
     function initialize() {
         update();
     }
 
+    /**
+    Callback for start of View.update call
+    */
     function onUpdateStart() {
         // System.println(["onUpdateStart", mFlags.format("%x")]);
         update();
         return mFlags;
     }
 
+    /**
+    Callback for end of View.update call
+    */
     function onUpdateFinished() {
         // System.println(["onUpdateFinished", mFlags.format("%x")]);
         mFlags = 0;
     }
 
+    /**
+    Updates values for all watch elements
+    */
     function update() {
         var settings = System.getDeviceSettings();
         var profile = UserProfile.getProfile();
@@ -101,6 +91,9 @@ class State {
 
     /**
     Invalidates backgrounds depending on hour and minute hands positions
+
+    :param h: hour hand previous position, [0-59]
+    :param m: minute hand previous position, [0-59]
      */
     function updateBackgrounds(h, m) {
         // System.println(["updateBackgrounds", mFlags.format("%x"), h, m]);
@@ -129,15 +122,20 @@ class State {
 
     /**
     Invalidates gauges backgrouns depending on hand position
+
+    pos - hand position, [0-59]
      */
-    function updateGaugeBackgrounds(t) {
-        if (t >= 10 && t <= 22) {
+    function updateGaugeBackgrounds(pos) {
+        if (pos >= 10 && pos <= 22) {
+            // battery gauge shaded by hour or minute hand
             mFlags |= BATTERY;
         }
-        if (t >= 25 && t <= 40) {
+        if (pos >= 25 && pos <= 40) {
+            // utc/icons gauge shaded by hour or minute hand
             mFlags |= ICONS;
         }
-        if (t >= 40 && t <= 53) {
+        if (pos >= 40 && pos <= 53) {
+            // heartbeat gauge shaded by hour or minute hand
             mFlags |= HEARTBEAT;
         }
     }
@@ -145,7 +143,7 @@ class State {
     /**
     Handles current datetime changes.
 
-    return Time info
+    :returns Time.Gregorian.Info: time info
      */
     function updateDateTime() {
         var now = Time.now();
@@ -188,9 +186,9 @@ class State {
     /**
     Handles icons status changes.
 
-    time Info: unpacked date time info
-    settings DeviceSetting: device settings
-    profile Profile: user profile
+    :param time Info: unpacked date time info
+    :param settings DeviceSetting: device settings
+    :param profile Profile: user profile
      */
     function updateIconStatus(time, settings, profile) {
         var value = time.hour * 3600 + time.min * 60 + time.sec;
@@ -212,7 +210,7 @@ class State {
     /**
     Handles heart rate status changes.
 
-    profile Profile: user profile
+    :param profile Profile: user profile
      */
     function updateHeartRate(profile) {
         var zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
@@ -239,6 +237,15 @@ class State {
         }
     }
 
+    /**
+    Computes number of colored cells for scale.
+
+    :param value: current value
+    :param max: max value
+    :param count: count of cells
+
+    :returns: count of colored cells for scale.
+     */
     function getFraction(value, max, count) {
         var f = value * (count + 1) / max;
         return (f > count)? count : f;
@@ -247,7 +254,7 @@ class State {
     /**
     Handles activity state changes.
 
-    info ActivityInfo: activity info
+    :param info ActivityInfo: activity info
     */
     function updateActivity(info) {
         var f;
@@ -285,9 +292,8 @@ class State {
     /**
     Handles battery updates
 
-    stats Stats: system statistics
+    :param stats Stats: system statistics
      */
-
     function updateBattery(stats) {
         var value = stats.battery.toNumber();
         if (mBatteryValue != value) {
@@ -297,6 +303,11 @@ class State {
         }
     }
 
+    /**
+    Resets current state
+
+    :param isInBackground: View entered sleep mode
+     */
     function reset(isInBackground) {
         mIsBackgroundMode = isInBackground;
         mFlags = ALL;
