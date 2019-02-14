@@ -206,55 +206,64 @@ class ElPrimeroView extends WatchUi.WatchFace {
     }
 
     /**
+    Draws hour or minute hand
+    dc - device context
+    hand - mHourHand or mMinuteHand
+    pos - hand position
+    coords - packed width and points for details rectangles
+    toBuffer - draw to buffer or device directly
+    vector - vector mode drawing
+     */
+    function drawClockHand(dc, hand, pos, coords, toBuffer, vector) {
+        var cx, cy, angle, width, negative, center, end;
+        if (toBuffer) {
+            cx = 120 - 10;
+            cy = 120 - 20;
+        } else {
+            cx = 120;
+            cy = 120;
+        }
+        width = coords && 0xFF;
+        negative = -((coords >> 8) && 0xFF);
+        center = (coords >> 16) && 0xFF;
+        end = (coords >> 24) && 0xFF;
+        angle = Math.toRadians(pos * 6);
+
+        if (width == 3) {
+            System.println(["drawClockHand (hour)", vector]);
+        } else {
+            System.println(["drawClockHand (min)", vector]);
+        }
+
+        // vector hand
+        if (vector) {
+            dc.setColor(0xAAAAAA, cTransparent);
+            hand.drawVector(dc, pos, cx - 120, cy + 1 - 120);
+        }
+
+        // details
+        dc.setColor(0x000000, cTransparent);
+        drawRadialRect(dc, angle, width, negative, center, cx, cy + 1);
+        dc.setColor(0xFFFFFF, cTransparent);
+        drawRadialRect(dc, angle, width, center, end, cx, cy + 1);
+
+        // glyph
+        if (!vector) {
+            dc.setColor(0xAAAAAA, cTransparent);
+            hand.draw(dc, pos, cx - 120, cy - 120);
+        }
+    }
+
+    /**
     Draws hour and minute hands to device or buffer
 
     dc - device or buffer context
-    cx, cy - rotation center
     vector - bool flag to draw vector-based or font-based hands
      */
-    function drawHourMinuteHands(dc, cx, cy, vector) {
-        System.println(["drawHourMinuteHands", vector]);
-
-        var hangle, mangle;
-
-        hangle = Math.toRadians(mState.mHourPos * 6);
-        mangle = Math.toRadians(mState.mMinutePos * 6);
-
-        if (vector) {
-            System.println("Hour hand vector");
-            dc.setColor(0xAAAAAA, cTransparent);
-            mHourHand.drawVector(dc, mState.mHourPos, cx - 120, cy +1 - 120);
-        }
-
-        // Hour details
-        dc.setColor(0x000000, cTransparent);
-        drawRadialRect(dc, hangle, 3, -10, 30, cx, cy + 1);
-        dc.setColor(0xFFFFFF, cTransparent);
-        drawRadialRect(dc, hangle, 3, 30, 69, cx, cy + 1);
-
-        if (!vector) {
-            System.println("Hour hand font");
-            dc.setColor(0xAAAAAA, cTransparent);
-            mHourHand.draw(dc, mState.mHourPos, cx - 120, cy - 120);
-        }
-
-        if (vector) {
-            System.println("Minute hand vector");
-            dc.setColor(0xAAAAAA, cTransparent);
-            mMinuteHand.drawVector(dc, mState.mMinutePos, cx - 120, cy + 1 - 120);
-        }
-        // Minute  details
-        dc.setColor(0x000000, cTransparent);
-        drawRadialRect(dc, mangle, 2, -10, 45, cx, cy + 1);
-        dc.setColor(0xFFFFFF, cTransparent);
-        drawRadialRect(dc, mangle, 2, 45, 93, cx, cy + 1);
-
-        // Hands
-        if (!vector) {
-            System.println("Minute hand font");
-            dc.setColor(0xAAAAAA, cTransparent);
-            mMinuteHand.draw(dc, mState.mMinutePos, cx - 120, cy - 120);
-        }
+    function drawHourMinuteHands(dc, toBuffer, vector) {
+        System.println(["drawHourMinuteHands", toBuffer, vector]);
+        drawClockHand(dc, mHourHand, mState.mHourPos, 1159596547, toBuffer, vector); // 69, 30, -10, 3
+        drawClockHand(dc, mMinuteHand, mState.mMinutePos, 1563232770, toBuffer, vector); // 93, 45, -10, 2
     }
 
     /**
@@ -557,7 +566,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         if ((flags & State.TIME) && !mState.mIsPowersafeMode) {
             // Drawing clock hands to buffer in active/background modes
-            drawHourMinuteHands(bc, 120 - 10, 120 - 20, false);
+            drawHourMinuteHands(bc, true, false);
         }
 
 
@@ -579,7 +588,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             drawSecondHand(dc, false);
         } else {
             // Draw minute hands in powersafe mode
-            drawHourMinuteHands(dc, 120, 120, true);
+            drawHourMinuteHands(dc, false, true);
         }
         mState.onUpdateFinished();
         if (!(mState.mIsBackgroundMode)) {
