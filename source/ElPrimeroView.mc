@@ -455,10 +455,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         if ((flags & State.HOUR) || !mState.mIsPowersafeMode) {
             // redraw buffer if not in powersafe or hour hand moved
 
-            if ((flags & State.TIME) && !mState.mIsPowersafeMode) {
-                // in active/background mode eraze previous hands positions
-                invalidateHourMinuteHands(bc, 120 - 10, 120 - 20);
-            }
+            // in active/background mode eraze previous hands positions
+            invalidateHourMinuteHands(bc, 120 - 10, 120 - 20);
             // System.println("drawBackgrounds");
             drawBackgrounds(bc, flags);
 

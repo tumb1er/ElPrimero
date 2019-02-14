@@ -81,8 +81,11 @@ class State {
         var profile = UserProfile.getProfile();
 
         var time = updateDateTime();
-        if (!mIsBackgroundMode || mFlags & MINUTE) {
-            // update data in active mode or once per minute
+        if (!mIsBackgroundMode || !mIsPowersafeMode && mFlags & MINUTE || mFlags & HOUR) {
+            // update data:
+            // - in active mode
+            // - once per minute in background mode
+            // - once per hour hand move (12min) in powersafe mode
             updateIconStatus(time, profile);
             updateHeartRate(profile);
             updateActivity();
