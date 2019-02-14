@@ -85,12 +85,16 @@ class State {
             // update data:
             // - in active mode
             // - once per minute in background mode
-            // - once per hour hand move (12min) in powersafe mode
+            // - with hour hand movement (12min) in powersafe mode
             updateIconStatus(time, profile);
             updateHeartRate(profile);
             updateActivity();
-            updateBattery();
             updatePowerSafeMode();
+        }
+        if (mFlags & HOUR) {
+            // update battery with hour hand movement
+            updateBattery();
+
         }
     }
 
