@@ -305,7 +305,7 @@ class State {
         }
 
         f = getFraction(info.moveBarLevel - ActivityMonitor.MOVE_BAR_LEVEL_MIN,
-                        ActivityMonitor.MOVE_BAR_LEVEL_MAX - ActivityMonitor.MOVE_BAR_LEVEL_MIN, 4);
+                        ActivityMonitor.MOVE_BAR_LEVEL_MAX - ActivityMonitor.MOVE_BAR_LEVEL_MIN, 5);
         if (mMovementFraction != f) {
             mFlags |= MOVEMENT;
             mMovementFraction = f;
