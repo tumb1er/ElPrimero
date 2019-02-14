@@ -555,8 +555,11 @@ class ElPrimeroView extends WatchUi.WatchFace {
                 }
             }
 
-            // draw hour hand to buffer
-            drawClockHand(bc, mHourHand, mState.mHourPos, 1159596547, true, mState.mIsPowersafeMode); // 69, 30, -10, 3
+            if (flags & State.TIME) {
+                // draw hour hand to buffer
+                drawClockHand(bc, mHourHand, mState.mHourPos, 1159596547, true,
+                              mState.mIsPowersafeMode); // 69, 30, -10, 3
+            }
         }
 
         if ((flags & State.TIME) && !mState.mIsPowersafeMode) {
