@@ -279,7 +279,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         by = 0;
         var pos;
         var timer = System.getTimer();
-        if (mSecondValue == mState.mSecondPos && mSecondTimestamp != null && mSecondTimestamp + 500 < timer) {
+        if (mSecondValue == mState.mSecondPos && mSecondTimestamp != null && mSecondTimestamp + 250 < timer) {
             // second draw of same second
             pos = mState.mSecondPos * 6 + 3;
         } else {
