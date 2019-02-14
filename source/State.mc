@@ -344,6 +344,7 @@ class State {
                 System.println("Entered powersafe mode");
             }
             mIsPowersafeMode = flag;
+            mFlags |= ALL;
         }
     }
 

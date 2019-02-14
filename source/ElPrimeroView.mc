@@ -255,18 +255,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
     }
 
     /**
-    Draws hour and minute hands to device or buffer
-
-    dc - device or buffer context
-    vector - bool flag to draw vector-based or font-based hands
-     */
-    function drawHourMinuteHands(dc, toBuffer, vector) {
-        System.println(["drawHourMinuteHands", toBuffer, vector]);
-        drawClockHand(dc, mHourHand, mState.mHourPos, 1159596547, toBuffer, vector); // 69, 30, -10, 3
-        drawClockHand(dc, mMinuteHand, mState.mMinutePos, 1563232770, toBuffer, vector); // 93, 45, -10, 2
-    }
-
-    /**
     Draws second hand poligon and accent
 
     * second hand is always drawed directly to device
@@ -464,109 +452,117 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         var bc = mBuffer.getDc();
 
-        if ((flags & State.TIME) && !mState.mIsPowersafeMode) {
-            // in active/background mode eraze previous hands positions
-            invalidateHourMinuteHands(bc, 120 - 10, 120 - 20);
-        }
-        // System.println("drawBackgrounds");
-        drawBackgrounds(bc, flags);
+        if ((flags & State.HOUR) || !mState.mIsPowersafeMode) {
+            // redraw buffer if not in powersafe or hour hand moved
 
-        if (flags & State.BATTERY){
-            System.println("G3 text");
-            // Battery
-            bc.setColor(0xFFFFFF, cTransparent);
-            bc.drawText(155, 90, mSmallyFont, mState.mBatteryValue, cAlign);
-        }
+            if ((flags & State.TIME) && !mState.mIsPowersafeMode) {
+                // in active/background mode eraze previous hands positions
+                invalidateHourMinuteHands(bc, 120 - 10, 120 - 20);
+            }
+            // System.println("drawBackgrounds");
+            drawBackgrounds(bc, flags);
 
-        if (flags & State.HEARTBEAT) {
-            System.println("G9 text");
-            // Heartbeat
-            if (mState.mHeartRateValue != null) {
+            if (flags & State.BATTERY){
+                System.println("G3 text");
+                // Battery
                 bc.setColor(0xFFFFFF, cTransparent);
-                bc.drawText(66, 90, mSmallyFont, mState.mHeartRateValue, cAlign);
+                bc.drawText(155, 90, mSmallyFont, mState.mBatteryValue, cAlign);
             }
-        }
 
-        if (flags & State.ICONS) {
-            System.println("G6 icons");
-            // Icons
-            drawIcons(bc, mState.mUTCPos, mIconsFont);
-        }
-
-        if (flags & State.DAY_OF_MONTH) {
-             System.println("Day of month");
-            // Day of month
-            bc.setColor(0x000000, cTransparent);
-            bc.drawText(173 - 10, 178 - 20, mDayFont, mState.mDay / 10, cAlign);
-            bc.drawText(178 - 10, 173 - 20, mDayFont, mState.mDay % 10, cAlign);
-        }
-
-        if (flags & State.DAY_OF_WEEK) {
-            System.println("Day of week");
-            bc.setColor(0x000000, cTransparent);
-            // Day of week
-            bc.drawText(61, 62, mDateFont, cWeekDays.substring(mState.mWeekDay * 3 - 3, mState.mWeekDay * 3), cAlign);
-        }
-        if (flags & State.MONTH) {
-            System.println("Month");
-            // Month
-            bc.setColor(0x000000, cTransparent);
-            bc.drawText(160, 62, mDateFont, cMonths.substring(mState.mMonth * 3 - 3, mState.mMonth * 3), cAlign);
-        }
-        // Drawing scales
-
-        if (flags & State.STEPS) {
-             System.println("steps");
-            // Steps
-            for (var i = PosSteps; i < PosActivity; i++) {
-                var c = getXY(i, cCoords);
-                bc.setColor((i < mState.mStepsFraction + PosSteps)? 0xFFFFFF: 0x5555AA, cTransparent);
-                bc.drawText(c[0], c[1], mStepsFont, i - PosSteps, Graphics.TEXT_JUSTIFY_LEFT);
+            if (flags & State.HEARTBEAT) {
+                System.println("G9 text");
+                // Heartbeat
+                if (mState.mHeartRateValue != null) {
+                    bc.setColor(0xFFFFFF, cTransparent);
+                    bc.drawText(66, 90, mSmallyFont, mState.mHeartRateValue, cAlign);
+                }
             }
-        }
 
-        if (flags & State.ACTIVITY) {
-             System.println("activity");
+            if (flags & State.ICONS) {
+                System.println("G6 icons");
+                // Icons
+                drawIcons(bc, mState.mUTCPos, mIconsFont);
+            }
 
-            // Activity
-            for (var i = PosActivity; i < PosMovement; i++) {
-                var c = getXY(i, cCoords);
-                bc.setColor((i < mState.mActivityFraction + PosActivity)? 0xFFFFFF: 0x5555AA, cTransparent);
-                bc.drawText(c[0], c[1], mActivityFont, i - PosActivity, Graphics.TEXT_JUSTIFY_LEFT);
+            if (flags & State.DAY_OF_MONTH) {
+                 System.println("Day of month");
+                // Day of month
+                bc.setColor(0x000000, cTransparent);
+                bc.drawText(173 - 10, 178 - 20, mDayFont, mState.mDay / 10, cAlign);
+                bc.drawText(178 - 10, 173 - 20, mDayFont, mState.mDay % 10, cAlign);
             }
-        }
-        if (flags & State.MOVEMENT) {
-             System.println("movement");
-            // Movement
-            bc.setColor(0xFF0000, cTransparent);
-            for (var i = PosMovement; i < PosEOF; i++) {
-                var c = getXY(i, cCoords);
-                bc.setColor((i < mState.mMovementFraction + PosMovement)? 0xFF0000: 0xAAAAAA, cTransparent);
-                bc.drawText(c[0], c[1], mMovementFont, i - PosMovement, Graphics.TEXT_JUSTIFY_LEFT);
-            }
-        }
-        if (flags & State.BATTERY) {
-            // Battery;
-             System.println("G3 hand");
 
-            drawGaugeHand(bc, mState.mBatteryPos, 44, 0, mGaugeFont);
-        }
-        if (flags & State.ICONS) {
-             System.println("G6 hand");
-            // UTC;
-            drawGaugeHand(bc, mState.mUTCPos, 0, 44, mGaugeFont);
-        }
-        if (flags & State.HEARTBEAT) {
-             System.println("G9 hand");
-            // Heartbeat
-            if (mState.mHeartRatePos != null) {
-                drawGaugeHand(bc, mState.mHeartRatePos, -45, 0, mGaugeFont);
+            if (flags & State.DAY_OF_WEEK) {
+                System.println("Day of week");
+                bc.setColor(0x000000, cTransparent);
+                // Day of week
+                bc.drawText(61, 62, mDateFont, cWeekDays.substring(mState.mWeekDay * 3 - 3, mState.mWeekDay * 3), cAlign);
             }
+            if (flags & State.MONTH) {
+                System.println("Month");
+                // Month
+                bc.setColor(0x000000, cTransparent);
+                bc.drawText(160, 62, mDateFont, cMonths.substring(mState.mMonth * 3 - 3, mState.mMonth * 3), cAlign);
+            }
+            // Drawing scales
+
+            if (flags & State.STEPS) {
+                 System.println("steps");
+                // Steps
+                for (var i = PosSteps; i < PosActivity; i++) {
+                    var c = getXY(i, cCoords);
+                    bc.setColor((i < mState.mStepsFraction + PosSteps)? 0xFFFFFF: 0x5555AA, cTransparent);
+                    bc.drawText(c[0], c[1], mStepsFont, i - PosSteps, Graphics.TEXT_JUSTIFY_LEFT);
+                }
+            }
+
+            if (flags & State.ACTIVITY) {
+                 System.println("activity");
+
+                // Activity
+                for (var i = PosActivity; i < PosMovement; i++) {
+                    var c = getXY(i, cCoords);
+                    bc.setColor((i < mState.mActivityFraction + PosActivity)? 0xFFFFFF: 0x5555AA, cTransparent);
+                    bc.drawText(c[0], c[1], mActivityFont, i - PosActivity, Graphics.TEXT_JUSTIFY_LEFT);
+                }
+            }
+            if (flags & State.MOVEMENT) {
+                 System.println("movement");
+                // Movement
+                bc.setColor(0xFF0000, cTransparent);
+                for (var i = PosMovement; i < PosEOF; i++) {
+                    var c = getXY(i, cCoords);
+                    bc.setColor((i < mState.mMovementFraction + PosMovement)? 0xFF0000: 0xAAAAAA, cTransparent);
+                    bc.drawText(c[0], c[1], mMovementFont, i - PosMovement, Graphics.TEXT_JUSTIFY_LEFT);
+                }
+            }
+            if (flags & State.BATTERY) {
+                // Battery;
+                 System.println("G3 hand");
+
+                drawGaugeHand(bc, mState.mBatteryPos, 44, 0, mGaugeFont);
+            }
+            if (flags & State.ICONS) {
+                 System.println("G6 hand");
+                // UTC;
+                drawGaugeHand(bc, mState.mUTCPos, 0, 44, mGaugeFont);
+            }
+            if (flags & State.HEARTBEAT) {
+                 System.println("G9 hand");
+                // Heartbeat
+                if (mState.mHeartRatePos != null) {
+                    drawGaugeHand(bc, mState.mHeartRatePos, -45, 0, mGaugeFont);
+                }
+            }
+
+            // draw hour hand to buffer
+            drawClockHand(bc, mHourHand, mState.mHourPos, 1159596547, true, mState.mIsPowersafeMode); // 69, 30, -10, 3
         }
 
         if ((flags & State.TIME) && !mState.mIsPowersafeMode) {
             // Drawing clock hands to buffer in active/background modes
-            drawHourMinuteHands(bc, true, false);
+            drawClockHand(bc, mMinuteHand, mState.mMinutePos, 1563232770, true, false); // 93, 45, -10, 2
+
         }
 
 
@@ -588,7 +584,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
             drawSecondHand(dc, false);
         } else {
             // Draw minute hands in powersafe mode
-            drawHourMinuteHands(dc, false, true);
+            drawClockHand(dc, mMinuteHand, mState.mMinutePos, 1563232770, false, true); // 93, 45, -10, 2
+
         }
         mState.onUpdateFinished();
         if (!(mState.mIsBackgroundMode)) {
