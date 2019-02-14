@@ -436,7 +436,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     function onPartialUpdate(dc) {
         if (!mState.mIsPowersafeMode) {
-            var time = mState.updateDateTime();
+            var time = mState.updateDateTime(Time.now());
             System.println(Lang.format("$1$:$2$:$3$ onPartialUpdate", [time.hour, time.min, time.sec]));
             drawSecondHand(dc, true);
         }

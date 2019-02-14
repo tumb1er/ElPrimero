@@ -20,6 +20,8 @@ class State {
     var mIsBackgroundMode = false;
     var mIsPowersafeMode = false;
 
+    var mBackgroundTime = null;
+
     enum {
         // icons states
         SLEEP = 1,
@@ -79,8 +81,8 @@ class State {
     */
     function update() {
         var profile = UserProfile.getProfile();
-
-        var time = updateDateTime();
+        var now = Time.now();
+        var time = updateDateTime(now);
         if (!mIsBackgroundMode || !mIsPowersafeMode && mFlags & MINUTE || mFlags & HOUR) {
             // update data:
             // - in active mode
@@ -89,7 +91,7 @@ class State {
             updateIconStatus(time, profile);
             updateHeartRate(profile);
             updateActivity();
-            updatePowerSafeMode();
+            updatePowerSafeMode(now);
         }
         if (mFlags & HOUR) {
             // update battery with hour hand movement
@@ -154,8 +156,7 @@ class State {
 
     :returns Time.Gregorian.Info: time info
      */
-    function updateDateTime() {
-        var now = Time.now();
+    function updateDateTime(now) {
         var time = Gregorian.info(now, Time.FORMAT_SHORT);
         var pos;
 
@@ -332,7 +333,12 @@ class State {
         }
     }
 
-    function updatePowerSafeMode() {
+    /**
+    Detects entering and leaving powersafe mode
+
+    :param time Moment: current time
+     */
+    function updatePowerSafeMode(time) {
         if (!mIsBackgroundMode){
             if (mIsPowersafeMode) {
                 System.println("Interrupt powersafe mode");
@@ -341,8 +347,15 @@ class State {
             return;
         }
 
-        // simple case - powersafe mode is enabled via do not disturb;
+        // via do not disturb;
         var flag = (mIcons && DND) > 0;
+        // via full movement scale;
+        flag = flag || mMovementFraction == 5;
+
+        // enter powersafe mode only from background mode
+        flag = flag && mIsBackgroundMode;
+        // enter powersafe mode 60 seconds later than background mode activated
+        flag = flag && mBackgroundTime != null && time.subtract(mBackgroundTime).value() >= 60;
 
         if (mIsPowersafeMode != flag) {
             if (mIsPowersafeMode) {
@@ -362,6 +375,7 @@ class State {
      */
     function reset(isInBackground) {
         mIsBackgroundMode = isInBackground;
+        mBackgroundTime = Time.now();
         mFlags = ALL;
         // System.println(["reset", isInBackground, mFlags.format("%x")]);
     }
