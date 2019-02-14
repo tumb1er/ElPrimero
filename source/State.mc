@@ -12,7 +12,7 @@ class State {
     var mSecondPos = 0, mMinutePos = 0, mHourPos = 0, mUTCPos = 0;
     var mDay = 0, mWeekDay = 0, mMonth = 0;
 
-    var mHeartRatePos = null, mHeartRateValue = null;
+    var mHeartRatePos = null, mHeartRateValue = null, mSleepHRThreshold = null, mSleepHRMultiplier=1.2;
 
     var mStepsFraction = 0, mActivityFraction = 0, mMovementFraction = 0;
     var mBatteryPos = 0, mBatteryValue = 0;
@@ -262,6 +262,7 @@ class State {
         if (minHR == 0) {
             minHR = 50;
         }
+        mSleepHRThreshold = minHR * mSleepHRMultiplier;
         if (mHeartRateValue != heartBeat) {
             mFlags |= HEARTBEAT;
             mHeartRateValue = heartBeat;
@@ -351,6 +352,10 @@ class State {
         var flag = (mIcons && DND) > 0;
         // via full movement scale;
         flag = flag || mMovementFraction == 5;
+        // via missing heartbeat
+        flag = flag || mHeartRateValue == null;
+        // via low heartrate
+        flag = flag || mHeartRateValue != null && mSleepHRThreshold != null && mHeartRateValue < mSleepHRThreshold;
 
         // enter powersafe mode only from background mode
         flag = flag && mIsBackgroundMode;
