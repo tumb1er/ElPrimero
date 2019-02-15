@@ -2,6 +2,8 @@ using Toybox.Application;
 
 class ElPrimeroApp extends Application.AppBase {
 
+    var mView = null;
+
     function initialize() {
         AppBase.initialize();
     }
@@ -16,7 +18,16 @@ class ElPrimeroApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
-        return [ new ElPrimeroView() ];
+        mView = new ElPrimeroView();
+        return [ mView ];
+    }
+
+    function onSettingsChanged() {
+        if (mView == null || mView.mState == null) {
+            return;
+        }
+        mView.mState.readSettings();
+        WatchUi.requestUpdate();
     }
 
 }

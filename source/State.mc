@@ -3,6 +3,7 @@ using Toybox.System;
 using Toybox.UserProfile;
 using Toybox.ActivityMonitor;
 using Toybox.SensorHistory;
+using Toybox.Application.Properties;
 
 /**
 State computes differences to be drawn on watch face and current values.
@@ -21,6 +22,16 @@ class State {
     var mIsPowersafeMode = false;
 
     var mBackgroundTime = null;
+    var mPowersafeModeDelay = 60;
+
+    var mBackgroundColor = 0x000000;
+
+    /**
+    1 - enter power safe mode via dnd
+    2 - enter power safe mode via movement
+    4 - enter power safe mode via heart rate
+     */
+    var mPowersafeFlags = 7;
 
     enum {
         // icons states
@@ -56,6 +67,7 @@ class State {
     var mFlags = 0;
 
     function initialize() {
+        readSettings();
         update();
     }
 
@@ -348,19 +360,26 @@ class State {
             return;
         }
 
-        // via do not disturb;
-        var flag = (mIcons && DND) > 0;
-        // via full movement scale;
-        flag = flag || mMovementFraction == 5;
-        // via missing heartbeat
-        flag = flag || mHeartRateValue == null;
-        // via low heartrate
-        flag = flag || mHeartRateValue != null && mSleepHRThreshold != null && mHeartRateValue < mSleepHRThreshold;
+        var flag = 0;
+        if (mPowersafeFlags & 1) {
+            // via do not disturb;
+            flag = flag || (mIcons && DND) > 0;
+        }
+        if (mPowersafeFlags & 2) {
+            // via full movement scale;
+            flag = flag ||  mMovementFraction == 5;
+        }
+        if (mPowersafeFlags & 4) {
+            // via missing heartbeat
+            flag = flag ||  mHeartRateValue == null;
+            // via low heartrate
+            flag = flag ||  mHeartRateValue != null && mSleepHRThreshold != null && mHeartRateValue < mSleepHRThreshold;
+        }
 
         // enter powersafe mode only from background mode
         flag = flag && mIsBackgroundMode;
         // enter powersafe mode 60 seconds later than background mode activated
-        flag = flag && mBackgroundTime != null && time.subtract(mBackgroundTime).value() >= 60;
+        flag = flag && mBackgroundTime != null && time.subtract(mBackgroundTime).value() >= mPowersafeModeDelay;
 
         if (mIsPowersafeMode != flag) {
             if (mIsPowersafeMode) {
@@ -383,5 +402,19 @@ class State {
         mBackgroundTime = Time.now();
         mFlags = ALL;
         // System.println(["reset", isInBackground, mFlags.format("%x")]);
+    }
+
+    /**
+    Reads settings values and resets view
+     */
+    function readSettings() {
+        mBackgroundColor = Properties.getValue("backgroundColor");
+        mPowersafeFlags = 0;
+        mPowersafeFlags |= (Properties.getValue("powersafeViaDND"))? 1: 0;
+        mPowersafeFlags |= (Properties.getValue("powersafeViaMove"))? 2: 0;
+        mPowersafeFlags |= (Properties.getValue("powersafeViaHR"))? 4: 0;
+        mSleepHRMultiplier = Properties.getValue("heartRateMultiplier");
+        mPowersafeModeDelay = Properties.getValue("powersafeModeDelay");
+        mFlags = ALL;
     }
 }

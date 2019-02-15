@@ -191,7 +191,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             System.println("invalidateHands: hour");
 
             // erasing hour hand at previous position
-            dc.setColor(0x000055, cTransparent);
+            dc.setColor(mState.mBackgroundColor, cTransparent);
             mHourHand.drawVector(dc, mHourHand.mPos, cx - 120, cy + 1 - 120);
         }
 
@@ -199,7 +199,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             System.println("invalidateHands: min");
 
             // erasing minute hand at previous position
-            dc.setColor(0x000055, cTransparent);
+            dc.setColor(mState.mBackgroundColor, cTransparent);
             mMinuteHand.drawVector(dc, mMinuteHand.mPos, cx - 120, cy + 1 - 120);
         }
 
@@ -393,9 +393,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         if (flags == State.ALL) {
             System.println("drawBackgrounds: all");
 
-            bc.setColor(0xFFFFFF, 0x000055);
+            bc.setColor(0xFFFFFF, mState.mBackgroundColor);
             bc.clear();
-            bc.setColor(0xFFFFFF, 0x000055);
             for (pos=0; pos < PosGlyphs; pos++) {
                 coords = getXY(pos, cCoords);
                 char = pos + 32;
@@ -404,7 +403,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         } else if ((flags & State.MINUTE) && mMinuteHand.mPos != null) {
             System.println("drawBackgrounds: minute/ticks");
 
-            bc.setColor(0xFFFFFF, 0x000055);
+            bc.setColor(0xFFFFFF, mState.mBackgroundColor);
             char = 32 + mMinuteHand.mPos / 3;
             coords = getXY(mMinuteHand.mPos / 3, cCoords);
             bc.drawText(10 + coords[0], -1 + coords[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
@@ -570,7 +569,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Drawing image to device context
         if (flags == State.ALL) {
             System.println("Clear DC");
-            dc.setColor(0xAAAAAA, 0x000055);
+            dc.setColor(0xAAAAAA, mState.mBackgroundColor);
+            dc.clearClip();
             dc.clear();
         }
 

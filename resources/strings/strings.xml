@@ -4,4 +4,17 @@
     <string id="Months">JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC</string>
     <string id="Icons">ZABSN</string>
 
+    <string id="AppVersionTitle">Application Version</string>
+    <string id="BackgroundColorTitle">Background color</string>
+    <string id="BackgroundColorPrompt">Select background color</string>
+    <string id="Black">black</string>
+    <string id="Blue">dark blue</string>
+    <string id="Green">dark green</string>
+    <string id="Red">dark red</string>
+    <string id="TwoHertzMode">2Hz second hand</string>
+    <string id="PowersafeViaDND">Enter power safe mode in dnd</string>
+    <string id="PowersafeViaMove">Enter power safe mode if move bar is full</string>
+    <string id="PowersafeViaHR">Enter power safe mode in resting HR</string>
+    <string id="HeartRateMultiplier">Resting heart rate multiplier for power safe mode detection</string>
+    <string id="PowersafeModeDelay">Delay before entering powersafe mode in seconds</string>
 </strings>
