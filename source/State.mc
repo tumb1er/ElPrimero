@@ -23,6 +23,7 @@ class State {
 
     var mBackgroundTime = null;
     var mPowersafeModeDelay = 60;
+    var mTwoHertzMode = true;
 
     var mBackgroundColor = 0x000000;
 
@@ -404,17 +405,47 @@ class State {
         // System.println(["reset", isInBackground, mFlags.format("%x")]);
     }
 
+    function readInt(prop, defaultValue) {
+        var value = Properties.getValue(prop);
+        System.println([prop, value]);
+        if (value == null) {
+            return defaultValue;
+        } else if (!(value instanceof Number)){
+            return value.toNumber();
+        }
+        return value;
+    }
+
+    function readFloat(prop, defaultValue) {
+        var value = Properties.getValue(prop);
+        System.println([prop, value]);
+        if (value == null) {
+            return defaultValue;
+        } else if (!(value instanceof Float)){
+            return value.toFloat();
+        }
+        return value;
+    }
+
+    function readBool(prop, trueValue, falseValue) {
+        var value = Properties.getValue(prop);
+        System.println([prop, value]);
+        return (value)? trueValue: falseValue;
+    }
+
     /**
     Reads settings values and resets view
      */
     function readSettings() {
-        mBackgroundColor = Properties.getValue("backgroundColor");
+        System.println("readSettings");
+        mBackgroundColor = readInt("backgroundColor", 0x000055);
         mPowersafeFlags = 0;
-        mPowersafeFlags |= (Properties.getValue("powersafeViaDND"))? 1: 0;
-        mPowersafeFlags |= (Properties.getValue("powersafeViaMove"))? 2: 0;
-        mPowersafeFlags |= (Properties.getValue("powersafeViaHR"))? 4: 0;
-        mSleepHRMultiplier = Properties.getValue("heartRateMultiplier");
-        mPowersafeModeDelay = Properties.getValue("powersafeModeDelay");
+        mPowersafeFlags |= readBool("powersafeViaDND", 1, 0);
+        mPowersafeFlags |= readBool("powersafeViaMove", 2, 0);
+        mPowersafeFlags |= readBool("powersafeViaHR", 4, 0);
+        mTwoHertzMode = readBool("twoHertzMode", true, false);
+        mSleepHRMultiplier = readFloat("heartRateMultiplier", 1.2f);
+        mPowersafeModeDelay = readInt("powersafeModeDelay", 60);
         mFlags = ALL;
     }
 }

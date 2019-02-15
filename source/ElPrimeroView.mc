@@ -188,7 +188,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
     function invalidateHourMinuteHands(dc, cx, cy) {
         if (mHourHand.mPos != mState.mHourPos) {
-            System.println("invalidateHands: hour");
+            // System.println("invalidateHands: hour");
 
             // erasing hour hand at previous position
             dc.setColor(mState.mBackgroundColor, cTransparent);
@@ -196,7 +196,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         }
 
         if (mMinuteHand.mPos != mState.mMinutePos) {
-            System.println("invalidateHands: min");
+            // System.println("invalidateHands: min");
 
             // erasing minute hand at previous position
             dc.setColor(mState.mBackgroundColor, cTransparent);
@@ -229,11 +229,11 @@ class ElPrimeroView extends WatchUi.WatchFace {
         end = (coords >> 24) && 0xFF;
         angle = Math.toRadians(pos * 6);
 
-        if (width == 3) {
-            System.println(["drawClockHand (hour)", vector]);
-        } else {
-            System.println(["drawClockHand (min)", vector]);
-        }
+//        if (width == 3) {
+//             System.println(["drawClockHand (hour)", vector]);
+//        } else {
+//             System.println(["drawClockHand (min)", vector]);
+//        }
 
         // vector hand
         if (vector) {
@@ -265,7 +265,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     time - local time
      */
     function drawSecondHand(dc, withBuffer) {
-        System.println(["drawSecondHand", withBuffer]);
+        // System.println(["drawSecondHand", withBuffer]);
         fx = ax;
         fy = ay;
         gx = bx;
@@ -325,7 +325,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     number - index of gauge (used for compute common and gauge backgrounds position indices)
      */
     function drawGaugeBackground(dc, number) {
-        System.println(Lang.format("drawGaugeBackground $1$", [number]));
+        // System.println(Lang.format("drawGaugeBackground $1$", [number]));
         var c = getXY(number + PosGauges, cCoords);
         dc.setColor(0x000000, 0x000000);
         dc.fillCircle(c[0] + 10, c[1], 28);
@@ -391,7 +391,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function drawBackgrounds(bc, flags) {
         var char, coords, pos;
         if (flags == State.ALL) {
-            System.println("drawBackgrounds: all");
+            // System.println("drawBackgrounds: all");
 
             bc.setColor(0xFFFFFF, mState.mBackgroundColor);
             bc.clear();
@@ -401,7 +401,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
                 bc.drawText(10 + coords[0], -1 + coords[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
             }
         } else if ((flags & State.MINUTE) && mMinuteHand.mPos != null) {
-            System.println("drawBackgrounds: minute/ticks");
+            // System.println("drawBackgrounds: minute/ticks");
 
             bc.setColor(0xFFFFFF, mState.mBackgroundColor);
             char = 32 + mMinuteHand.mPos / 3;
@@ -410,7 +410,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
             pos = (mMinuteHand.mPos + 12) % 60 / 3;
             if (pos + PosLogo < PosGlyphs) {
-                System.println("drawBackgrounds: minute/logo");
+                // System.println("drawBackgrounds: minute/logo");
                 char = 52 + pos;
                 coords = getXY(pos + PosLogo, cCoords);
                 bc.drawText(10 + coords[0], -1 + coords[1], mBackgroundFont, char.toChar(), Graphics.TEXT_JUSTIFY_LEFT);
@@ -418,7 +418,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
             pos = (mHourHand.mPos + 12) % 60 / 3;
             if (pos + PosLogo < PosGlyphs) {
-                System.println("drawBackgrounds: hour/logo");
+                // System.println("drawBackgrounds: hour/logo");
 
                 char = 52 + pos;
                 coords = getXY(pos + PosLogo, cCoords);
@@ -436,7 +436,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function onPartialUpdate(dc) {
         if (!mState.mIsPowersafeMode) {
             var time = mState.updateDateTime(Time.now());
-            System.println(Lang.format("$1$:$2$:$3$ onPartialUpdate", [time.hour, time.min, time.sec]));
+            // System.println(Lang.format("$1$:$2$:$3$ onPartialUpdate", [time.hour, time.min, time.sec]));
             drawSecondHand(dc, true);
         }
     }
@@ -446,7 +446,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // Prepare all data
         var flags = mState.onUpdateStart();
         var time = System.getClockTime();
-        System.println(Lang.format("$1$:$2$:$3$ onUpdate", [time.hour, time.min, time.sec]));
+        // System.println(Lang.format("$1$:$2$:$3$ onUpdate", [time.hour, time.min, time.sec]));
         var pos, angle;
 
         var bc = mBuffer.getDc();
@@ -460,14 +460,14 @@ class ElPrimeroView extends WatchUi.WatchFace {
             drawBackgrounds(bc, flags);
 
             if (flags & State.BATTERY){
-                System.println("G3 text");
+                // System.println("G3 text");
                 // Battery
                 bc.setColor(0xFFFFFF, cTransparent);
                 bc.drawText(155, 90, mSmallyFont, mState.mBatteryValue, cAlign);
             }
 
             if (flags & State.HEARTBEAT) {
-                System.println("G9 text");
+                // System.println("G9 text");
                 // Heartbeat
                 if (mState.mHeartRateValue != null) {
                     bc.setColor(0xFFFFFF, cTransparent);
@@ -476,13 +476,13 @@ class ElPrimeroView extends WatchUi.WatchFace {
             }
 
             if (flags & State.ICONS) {
-                System.println("G6 icons");
+                // System.println("G6 icons");
                 // Icons
                 drawIcons(bc, mState.mUTCPos, mIconsFont);
             }
 
             if (flags & State.DAY_OF_MONTH) {
-                 System.println("Day of month");
+                 // System.println("Day of month");
                 // Day of month
                 bc.setColor(0x000000, cTransparent);
                 bc.drawText(173 - 10, 178 - 20, mDayFont, mState.mDay / 10, cAlign);
@@ -490,13 +490,13 @@ class ElPrimeroView extends WatchUi.WatchFace {
             }
 
             if (flags & State.DAY_OF_WEEK) {
-                System.println("Day of week");
+                // System.println("Day of week");
                 bc.setColor(0x000000, cTransparent);
                 // Day of week
                 bc.drawText(61, 62, mDateFont, cWeekDays.substring(mState.mWeekDay * 3 - 3, mState.mWeekDay * 3), cAlign);
             }
             if (flags & State.MONTH) {
-                System.println("Month");
+                // System.println("Month");
                 // Month
                 bc.setColor(0x000000, cTransparent);
                 bc.drawText(160, 62, mDateFont, cMonths.substring(mState.mMonth * 3 - 3, mState.mMonth * 3), cAlign);
@@ -504,7 +504,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             // Drawing scales
 
             if (flags & State.STEPS) {
-                 System.println("steps");
+                 // System.println("steps");
                 // Steps
                 for (var i = PosSteps; i < PosActivity; i++) {
                     var c = getXY(i, cCoords);
@@ -514,7 +514,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             }
 
             if (flags & State.ACTIVITY) {
-                 System.println("activity");
+                 // System.println("activity");
 
                 // Activity
                 for (var i = PosActivity; i < PosMovement; i++) {
@@ -524,7 +524,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
                 }
             }
             if (flags & State.MOVEMENT) {
-                 System.println("movement");
+                 // System.println("movement");
                 // Movement
                 bc.setColor(0xFF0000, cTransparent);
                 for (var i = PosMovement; i < PosEOF; i++) {
@@ -535,17 +535,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
             }
             if (flags & State.BATTERY) {
                 // Battery;
-                 System.println("G3 hand");
+                 // System.println("G3 hand");
 
                 drawGaugeHand(bc, mState.mBatteryPos, 44, 0, mGaugeFont);
             }
             if (flags & State.ICONS) {
-                 System.println("G6 hand");
+                 // System.println("G6 hand");
                 // UTC;
                 drawGaugeHand(bc, mState.mUTCPos, 0, 44, mGaugeFont);
             }
             if (flags & State.HEARTBEAT) {
-                 System.println("G9 hand");
+                 // System.println("G9 hand");
                 // Heartbeat
                 if (mState.mHeartRatePos != null) {
                     drawGaugeHand(bc, mState.mHeartRatePos, -45, 0, mGaugeFont);
@@ -568,13 +568,13 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         // Drawing image to device context
         if (flags == State.ALL) {
-            System.println("Clear DC");
+            // System.println("Clear DC");
             dc.setColor(0xAAAAAA, mState.mBackgroundColor);
             dc.clearClip();
             dc.clear();
         }
 
-        System.println("draw buffer");
+        // System.println("draw buffer");
         dc.clearClip();
         dc.drawBitmap(10, 20, mBuffer);
 
@@ -589,7 +589,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
         }
         mState.onUpdateFinished();
-        if (!(mState.mIsBackgroundMode)) {
+        if (!(mState.mIsBackgroundMode) && mState.mTwoHertzMode) {
             mTimer.start(method(:timerCallback), 500, false);
         }
     }
@@ -618,7 +618,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     }
 
     function timerCallback() {
-        System.println("RequestUpdate");
+        // System.println("RequestUpdate");
         WatchUi.requestUpdate();
     }
 
