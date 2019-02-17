@@ -1,5 +1,7 @@
 # ElPrimero
-Classic Zenith analog watchface with anti-aliasing and second hand.
+Classic Zenith analog watchface with anti-aliasing, always-on second hand and powersafe mode.
+
+[Connect IQ Store link](https://apps.garmin.com/en-US/apps/225123f0-526b-456c-a885-e6a57f4c9d20)
 
 ![Screenshot](https://github.com/tumb1er/ElPrimero/blob/master/store/title.png)
 
