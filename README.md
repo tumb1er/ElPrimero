@@ -14,10 +14,7 @@ Classic Zenith analog watchface with anti-aliasing and second hand.
 
 Photo | Blue | Black | Powersafe 
 -- | -- | -- | --
-![Photo](https://github.com/tumb1er/ElPrimero/blob/master/store/photo.png) | ![
-Blue](https://github.com/tumb1er/ElPrimero/blob/master/store/blue.png) | ![
-Black](https://github.com/tumb1er/ElPrimero/blob/master/store/black.png) | ![
-Powersafe mode](https://github.com/tumb1er/ElPrimero/blob/master/store/powersafe.png)
+![Photo](https://github.com/tumb1er/ElPrimero/blob/master/store/photo.png) | ![Blue](https://github.com/tumb1er/ElPrimero/blob/master/store/blue.png) | ![Black](https://github.com/tumb1er/ElPrimero/blob/master/store/black.png) | ![Powersafe mode](https://github.com/tumb1er/ElPrimero/blob/master/store/powersafe.png)
 
 ### Technical details
 
