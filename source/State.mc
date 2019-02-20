@@ -270,10 +270,13 @@ class State {
         }
 
         var zones = UserProfile.getHeartRateZones(UserProfile.HR_ZONE_SPORT_GENERIC);
-        var maxHR = zones[zones.size() - 1];
-        var minHR = profile.restingHeartRate;
-        if (minHR == 0) {
-            minHR = 50;
+        var minHR = 50, maxHR = 200;
+        if (zones instanceof Array) {
+            maxHR = zones[zones.size() - 1];
+            minHR = profile.restingHeartRate;
+            if (minHR == 0) {
+                minHR = 50;
+            }
         }
         mSleepHRThreshold = minHR * mSleepHRMultiplier;
         if (mHeartRateValue != heartBeat) {
