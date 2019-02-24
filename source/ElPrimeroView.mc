@@ -170,12 +170,9 @@ class ElPrimeroView extends WatchUi.WatchFace {
     function syncVersion(){
         var settingsVersion = Properties.getValue("appVersion");
         var resourcesVersion = loadResource(Rez.Strings.InternalVersion);
-        System.println(["Version", settingsVersion, resourcesVersion]);
         if (!resourcesVersion.equals(settingsVersion)) {
             Properties.setValue("appVersion", resourcesVersion);
-            System.println(["updated:", Properties.getValue("appVersion")]);
         }
-
     }
 
     function getXY(i, data) {
