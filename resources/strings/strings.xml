@@ -13,6 +13,7 @@
     <string id="Green">Dark green</string>
     <string id="Red">Dark red</string>
     <string id="TwoHertzMode">2Hz second hand</string>
+    <string id="UTCOffset">UTC Offset in minutes</string>
     <string id="PowersafeViaDND">Enter power safe mode in dnd</string>
     <string id="PowersafeViaMove">Enter power safe mode if move bar is full</string>
     <string id="PowersafeViaHR">Enter power safe mode in resting HR</string>
