@@ -2,6 +2,7 @@
     <property id="appVersion" type="string">1.2.0</property>
     <property id="backgroundColor" type="number">85</property>
     <property id="twoHertzMode" type="boolean">true</property>
+    <property id="utcOffset" type="number">0</property>
     <property id="powersafeViaDND" type="boolean">true</property>
     <property id="powersafeViaMove" type="boolean">true</property>
     <property id="powersafeViaHR" type="boolean">true</property>

@@ -17,6 +17,9 @@
     <setting propertyKey="@Properties.twoHertzMode" title="@Strings.TwoHertzMode">
         <settingConfig type="boolean" />
     </setting>
+    <setting propertyKey="@Properties.utcOffset" title="@Strings.UTCOffset">
+        <settingConfig type="numeric" />
+    </setting>
 
     <setting propertyKey="@Properties.powersafeViaDND" title="@Strings.PowersafeViaDND">
         <settingConfig type="boolean" />

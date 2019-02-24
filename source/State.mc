@@ -25,6 +25,8 @@ class State {
     var mPowersafeModeDelay = 60;
     var mTwoHertzMode = true;
 
+    var mUTCOffset = 0;
+
     var mBackgroundColor = 0x000000;
 
     /**
@@ -186,11 +188,11 @@ class State {
             mMinutePos = pos;
         }
         pos =  (time.hour % 12) * 5 + time.min / 12;
-        if (mHourPos != pos) {
+        if (mHourPos != pos || mFlags == ALL) {
             // hour position change invalidates hour hand and utc gauge
             mFlags |= HOUR | ICONS;
             updateGaugeBackgrounds(mHourPos);
-            var utc = Gregorian.utcInfo(now, Time.FORMAT_SHORT);
+            var utc = Gregorian.utcInfo(now.add(mUTCOffset), Time.FORMAT_SHORT);
             mUTCPos = (utc.hour % 12) * 5 + utc.min / 12;
             mHourPos = pos;
         }
@@ -450,6 +452,7 @@ class State {
         mTwoHertzMode = readBool("twoHertzMode", true, false);
         mSleepHRMultiplier = readFloat("heartRateMultiplier", 1.2f);
         mPowersafeModeDelay = readInt("powersafeModeDelay", 60);
+        mUTCOffset = new Time.Duration(readInt("utcOffset", 0) * 60);
         mFlags = ALL;
     }
 }
