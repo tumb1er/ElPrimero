@@ -3,6 +3,7 @@ using Toybox.Graphics;
 using Toybox.System;
 using Toybox.Lang;
 using Toybox.Math;
+using Toybox.Application.Properties;
 
 // buffered background screen offset;
 
@@ -159,6 +160,21 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mStepsFont = loadResource(CFonts.steps_scale);
         mActivityFont = loadResource(CFonts.activity_scale);
         mMovementFont = loadResource(CFonts.movement_scale);
+
+        syncVersion();
+    }
+
+    /**
+    Synchronizes displayed version for settings screen.
+     */
+    function syncVersion(){
+        var settingsVersion = Properties.getValue("appVersion");
+        var resourcesVersion = loadResource(Rez.Strings.InternalVersion);
+        System.println(["Version", settingsVersion, resourcesVersion]);
+        if (!resourcesVersion.equals(settingsVersion)) {
+            Properties.setValue("appVersion", resourcesVersion);
+            System.println(["updated:", Properties.getValue("appVersion")]);
+        }
 
     }
 
