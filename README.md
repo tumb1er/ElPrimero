@@ -70,5 +70,5 @@ Powersafe mode is activated in a minute after entering background mode, if:
 #### Prepare production release
 
 ```sh 
-~/opt/ConnectIQ/bin/monkeyc -e -o ElPrimero-1.0.0.iq -p ~/opt/ConnectIQ/bin/projectInfo.xml -r -f monkey.jungle -y ~/.ssh/connect_iq.der 
+~/opt/ConnectIQ/bin/monkeyc -e -o out/ElPrimero-1.0.0.iq -p ~/opt/ConnectIQ/bin/projectInfo.xml -r -f monkey.jungle -y ~/.ssh/connect_iq.der 
 ```
