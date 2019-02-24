@@ -83,6 +83,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         var coords = new [(end - start) * 2];
         for (var i = start; i < end; i++) {
             var xy = getXY(i, data);
+            // 120 here is signed value alignment offset
             var x = xy[0] - 120;
             var y = xy[1] - 120;
             coords[2 * (i - start)] = getR(x, y);
@@ -94,6 +95,11 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // Load your resources here
     function onLayout(dc) {
         mTimer = new Timer.Timer();
+
+        bufx = loadResource(CStrings.bufferX).toNumber();
+        bufy = loadResource(CStrings.bufferY).toNumber();
+        center = loadResource(CStrings.center).toNumber();
+
         var data = loadResource(CJsonData.hands_json);
         mSecondCoords = loadCoords(data, PosSecond, PosMinute);
         mHourHand = new Hand(
@@ -165,10 +171,6 @@ class ElPrimeroView extends WatchUi.WatchFace {
         mActivityFont = loadResource(CFonts.activity_scale);
         mMovementFont = loadResource(CFonts.movement_scale);
 
-        bufx = loadResource(CStrings.bufferX).toNumber();
-        bufy = loadResource(CStrings.bufferY).toNumber();
-        center = loadResource(CStrings.center).toNumber();
-        System.println([bufx, bufy]);
         syncVersion();
     }
 
@@ -213,7 +215,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
             // erasing hour hand at previous position
             dc.setColor(mState.mBackgroundColor, cTransparent);
-            mHourHand.drawVector(dc, mHourHand.mPos, cx - 120, cy + 1 - 120);
+            mHourHand.drawVector(dc, mHourHand.mPos, cx - center, cy + 1 - center, center);
         }
 
         if (mMinuteHand.mPos != mState.mMinutePos) {
@@ -221,7 +223,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
 
             // erasing minute hand at previous position
             dc.setColor(mState.mBackgroundColor, cTransparent);
-            mMinuteHand.drawVector(dc, mMinuteHand.mPos, cx - 120, cy + 1 - 120);
+            mMinuteHand.drawVector(dc, mMinuteHand.mPos, cx - center, cy + 1 - center, center);
         }
 
     }
@@ -236,17 +238,17 @@ class ElPrimeroView extends WatchUi.WatchFace {
     vector - vector mode drawing
      */
     function drawClockHand(dc, hand, pos, coords, toBuffer, vector) {
-        var cx, cy, angle, width, negative, center, end;
+        var cx, cy, angle, width, negative, middle, end;
         if (toBuffer) {
-            cx = 120 - bufx;
-            cy = 120 - bufy;
+            cx = center - bufx;
+            cy = center - bufy;
         } else {
-            cx = 120;
-            cy = 120;
+            cx = center;
+            cy = center;
         }
         width = coords && 0xFF;
         negative = -((coords >> 8) && 0xFF);
-        center = (coords >> 16) && 0xFF;
+        middle = (coords >> 16) && 0xFF;
         end = (coords >> 24) && 0xFF;
         angle = Math.toRadians(pos * 6);
 
@@ -259,18 +261,19 @@ class ElPrimeroView extends WatchUi.WatchFace {
         // vector hand
         if (vector) {
             dc.setColor(0xAAAAAA, cTransparent);
-            hand.drawVector(dc, pos, cx - 120, cy + 1 - 120);
+            hand.drawVector(dc, pos, cx - center, cy + 1 - center, center);
         }
 
         // details
         dc.setColor(0x000000, cTransparent);
-        drawRadialRect(dc, angle, width, negative, center, cx, cy + 1);
+        drawRadialRect(dc, angle, width, negative, middle, cx, cy + 1);
         dc.setColor(0xFFFFFF, cTransparent);
-        drawRadialRect(dc, angle, width, center, end, cx, cy + 1);
+        drawRadialRect(dc, angle, width, middle, end, cx, cy + 1);
 
         // glyph
         if (!vector) {
             dc.setColor(0xAAAAAA, cTransparent);
+            // 120 here is json coords alignment
             hand.draw(dc, pos, cx - 120, cy - 120);
         }
     }
@@ -279,7 +282,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     Draws second hand poligon and accent
 
     * second hand is always drawed directly to device
-    * thus, center is always (120, 120)
+    * thus, center is always (center, center)
     * accent r radial coord is (80, 95)
 
     dc - device only context
@@ -309,11 +312,11 @@ class ElPrimeroView extends WatchUi.WatchFace {
         var angle = Math.toRadians(pos);
         var sa = Math.sin(angle);
         var ca = Math.cos(angle);
-        var x1 = 120 + 80 * sa;
-        var y1 = 120 - 80 * ca;
-        var x2 = 120 + 95 * sa;
-        var y2 = 120 - 95 * ca;
-        var points = fillRadialPolygon(dc, angle, mSecondCoords, 120, 120);
+        var x1 = center + 80 * sa;
+        var y1 = center - 80 * ca;
+        var x2 = center + 95 * sa;
+        var y2 = center - 95 * ca;
+        var points = fillRadialPolygon(dc, angle, mSecondCoords, center, center);
         // End of accent;
         updateClip(x2, y2);
         // Back part of hand corner coords
@@ -326,7 +329,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             var nx = (gx > bx)? gx: bx;
             var ny = (gy > by)? gy: by;
             dc.setClip(mx, my, Math.ceil(nx - mx + 1), Math.ceil(ny - my + 1));
-            dc.drawBitmap(10, 20, mBuffer);
+            dc.drawBitmap(bufx, bufy, mBuffer);
         }
 
         // Draw second hand main polygon
@@ -336,7 +339,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
         dc.setColor(0xFF0000, cTransparent);
         dc.drawLine(x1, y1, x2, y2);
         // Draw second hand cap;
-        dc.drawBitmap(116, 116, mCap);
+        dc.drawBitmap(center - 4, center - 4, mCap);
     }
 
     /**
@@ -380,12 +383,12 @@ class ElPrimeroView extends WatchUi.WatchFace {
         }
         var angle = Math.toRadians(pos * 6);
         dc.setColor(0xFF0000, cTransparent);
-        drawRadialRect(dc, angle, 1, 8, 24, 120 - bufx + dx, 120 - bufy + dy);
+        drawRadialRect(dc, angle, 1, 8, 24, center - bufx + dx, center - bufy + dy);
 
         dc.setColor(0xFFFFFF, cTransparent);
-        mGaugeHand.draw(dc, pos, 92 - bufx + dx, 91 - bufy + dy);
+        mGaugeHand.draw(dc, pos, 82 + dx, 71 + dy);
 
-        dc.drawText(120 - bufx + dx, 120 - 1 - bufy + dy, cap, "0", cAlign);
+        dc.drawText(center - bufx + dx, center - bufy - 1 + dy, cap, "0", cAlign);
     }
 
     /**
@@ -401,8 +404,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         }
         for (var i = 0; i < 5; i++) {
             var a = Math.toRadians(pos * 6 - 120 + i * 360 / 6);
-            var x = 120 - bufx + 12 * Math.sin(-a);
-            var y = 165 - bufy + 12 * Math.cos(-a);
+            var x = 120 - 10 + 12 * Math.sin(-a);
+            var y = 165 - 20 + 12 * Math.cos(-a);
             dc.setColor((mState.mIcons && (1 << i))? 0xFFFFFF: 0x5555AA, cTransparent);
             dc.drawText(x, y, font, cIcons.substring(i, i + 1), cAlign);
         }
@@ -476,7 +479,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
             // redraw buffer if not in powersafe or hour hand moved
 
             // in active/background mode eraze previous hands positions
-            invalidateHourMinuteHands(bc, 120 - bufx, 120 - bufy);
+            invalidateHourMinuteHands(bc, center - bufx, center - bufy);
             // System.println("drawBackgrounds");
             drawBackgrounds(bc, flags);
 
@@ -506,8 +509,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
                  // System.println("Day of month");
                 // Day of month
                 bc.setColor(0x000000, cTransparent);
-                bc.drawText(173 - bufx, 178 - bufy, mDayFont, mState.mDay / 10, cAlign);
-                bc.drawText(178 - bufx, 173 - bufy, mDayFont, mState.mDay % 10, cAlign);
+                bc.drawText(center + 53 - bufx, center + 58 - bufy, mDayFont, mState.mDay / 10, cAlign);
+                bc.drawText(center + 58 - bufx, center + 53 - bufy, mDayFont, mState.mDay % 10, cAlign);
             }
 
             if (flags & State.DAY_OF_WEEK) {

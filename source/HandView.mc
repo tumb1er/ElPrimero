@@ -98,13 +98,14 @@ class Hand {
     dc - device context
     pos - position number
     dx, dy - offset from screen center
+    center - center of screen position
      */
-    function drawVector(dc, pos, dx, dy) {
+    function drawVector(dc, pos, dx, dy, center) {
         if (pos == null) {
             return;
         }
         var angle = Math.toRadians(pos * 6);
-        var points = fillRadialPolygon(dc, angle, mVectorList, 120 + dx, 120 + dy);
+        var points = fillRadialPolygon(dc, angle, mVectorList, center + dx, center + dy);
         dc.fillPolygon(points);
         mPos = pos;
     }
