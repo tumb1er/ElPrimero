@@ -75,3 +75,16 @@ Powersafe mode is activated in a minute after entering background mode, if:
 ```sh 
 ~/opt/ConnectIQ/bin/monkeyc -e -o out/ElPrimero-1.4.1.iq -p ~/opt/ConnectIQ/bin/projectInfo.xml -r -f monkey.jungle -y ~/.ssh/connect_iq.der 
 ```
+
+### Unsupported devices
+
+* Approach S60 - no HRM
+* D2 family - JSON resources not supported
+* Edge family - bike devices
+* Fenix 3 family - JSON resources not supported
+* Fenix 6X Pro - 280x280 screen size is too large for resources initially used with 218x218 devices
+* Fenix Chronos - Not enough screen color depth - image is distorted
+* Forerunner 230/235/630/735/920 - not round displays
+* GPSMAP, Oregin, Rino families - navigator devices
+* Venu - AMOLED display which has limitations on pixel-on duration and second hand periodic updates
+* Vivoactive HR - Byte arrays not supported by device
