@@ -73,7 +73,7 @@ Powersafe mode is activated in a minute after entering background mode, if:
 2. update version below
 3. build release file 
 ```sh 
-~/opt/ConnectIQ/bin/monkeyc -e -o out/ElPrimero-1.4.1.iq -p ~/opt/ConnectIQ/bin/projectInfo.xml -r -f monkey.jungle -y ~/.ssh/connect_iq.der 
+~/opt/ConnectIQ/bin/monkeyc -e -o out/ElPrimero-1.6.0.iq -p ~/opt/ConnectIQ/bin/projectInfo.xml -r -f monkey.jungle -y ~/.ssh/connect_iq.der 
 ```
 
 ### Unsupported devices
