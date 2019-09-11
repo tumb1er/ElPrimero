@@ -178,7 +178,10 @@ class ElPrimeroView extends WatchUi.WatchFace {
     Synchronizes displayed version for settings screen.
      */
     function syncVersion(){
-        var settingsVersion = Properties.getValue("appVersion");
+    	var settingsVersion = null;
+    	try {
+        	settingsVersion = Properties.getValue("appVersion");
+		} catch (e instanceof InvalidKeyException) {}
         var resourcesVersion = loadResource(Rez.Strings.InternalVersion);
         if (!resourcesVersion.equals(settingsVersion)) {
             Properties.setValue("appVersion", resourcesVersion);

@@ -1,43 +1,52 @@
 <settings>
 
-    <setting propertyKey="@Properties.appVersion" title="@Strings.AppVersionTitle">
-        <settingConfig type="alphaNumeric" readonly="true" />
-    </setting>
+	<setting propertyKey="@Properties.appVersion"
+		title="@Strings.AppVersionTitle">
+		<settingConfig type="alphaNumeric" readonly="true" />
+	</setting>
 
-    <setting propertyKey="@Properties.backgroundColor" title="@Strings.BackgroundColorTitle"
-             prompt="@Strings.BackgroundColorPrompt">
-        <settingConfig type="list">
-            <listEntry value="0">@Strings.Black</listEntry>
-            <listEntry value="85">@Strings.Blue</listEntry>
-            <listEntry value="21760">@Strings.Green</listEntry>
-            <listEntry value="5570560">@Strings.Red</listEntry>
-        </settingConfig>
-    </setting>
+	<setting propertyKey="@Properties.backgroundColor"
+		title="@Strings.BackgroundColorTitle"
+		prompt="@Strings.BackgroundColorPrompt">
+		<settingConfig type="list">
+			<listEntry value="0">@Strings.Black</listEntry>
+			<listEntry value="85">@Strings.Blue</listEntry>
+			<listEntry value="21760">@Strings.Green</listEntry>
+			<listEntry value="5570560">@Strings.Red</listEntry>
+		</settingConfig>1
+	</setting>
 
-    <setting propertyKey="@Properties.twoHertzMode" title="@Strings.TwoHertzMode">
-        <settingConfig type="boolean" />
-    </setting>
-    <setting propertyKey="@Properties.utcOffset" title="@Strings.UTCOffset">
-        <settingConfig type="numeric" />
-    </setting>
+	<setting propertyKey="@Properties.twoHertzMode"
+		title="@Strings.TwoHertzMode">
+		<settingConfig type="boolean" />
+	</setting>
+	<setting propertyKey="@Properties.utcOffset"
+		title="@Strings.UTCOffset">
+		<settingConfig type="numeric" />
+	</setting>
 
-    <setting propertyKey="@Properties.powersafeViaDND" title="@Strings.PowersafeViaDND">
-        <settingConfig type="boolean" />
-    </setting>
+	<setting propertyKey="@Properties.powersafeViaDND"
+		title="@Strings.PowersafeViaDND">
+		<settingConfig type="boolean" />
+	</setting>
 
-    <setting propertyKey="@Properties.powersafeViaMove" title="@Strings.PowersafeViaMove">
-        <settingConfig type="boolean" />
-    </setting>
+	<setting propertyKey="@Properties.powersafeViaMove"
+		title="@Strings.PowersafeViaMove">
+		<settingConfig type="boolean" />
+	</setting>
 
-    <setting propertyKey="@Properties.powersafeViaHR" title="@Strings.PowersafeViaHR">
-        <settingConfig type="boolean" />
-    </setting>
-    <setting propertyKey="@Properties.heartRateMultiplier" title="@Strings.HeartRateMultiplier">
-        <settingConfig type="numeric" />
-    </setting>
-    <setting propertyKey="@Properties.powersafeModeDelay" title="@Strings.PowersafeModeDelay">
-        <settingConfig type="numeric" />
-    </setting>
+	<setting propertyKey="@Properties.powersafeViaHR"
+		title="@Strings.PowersafeViaHR">
+		<settingConfig type="boolean" />
+	</setting>
+	<setting propertyKey="@Properties.heartRateMultiplier"
+		title="@Strings.HeartRateMultiplier">
+		<settingConfig type="numeric" />
+	</setting>
+	<setting propertyKey="@Properties.powersafeModeDelay"
+		title="@Strings.PowersafeModeDelay">
+		<settingConfig type="numeric" />
+	</setting>
 
 
 </settings>
