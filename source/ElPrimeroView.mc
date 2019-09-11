@@ -3,6 +3,7 @@ using Toybox.Graphics;
 using Toybox.System;
 using Toybox.Lang;
 using Toybox.Math;
+using Toybox.Timer;
 using Toybox.Application.Properties;
 
 // buffered background screen offset;

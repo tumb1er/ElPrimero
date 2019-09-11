@@ -1,5 +1,5 @@
 <properties>
-    <property id="appVersion" type="string">1.6.0</property>
+    <property id="appVersion" type="string">1.6.1</property>
     <property id="backgroundColor" type="number">85</property>
     <property id="twoHertzMode" type="boolean">true</property>
     <property id="utcOffset" type="number">0</property>
