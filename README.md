@@ -74,6 +74,7 @@ Powersafe mode is activated in a minute after entering background mode, if:
 3. build release file 
 ```sh 
 ~/opt/ConnectIQ/bin/monkeyc -e -o out/ElPrimero-1.4.1.iq -p ~/opt/ConnectIQ/bin/projectInfo.xml -r -f monkey.jungle -y ~/.ssh/connect_iq.der 
+```
 
 ### Unsupported devices
 
@@ -88,4 +89,3 @@ Powersafe mode is activated in a minute after entering background mode, if:
 * GPSMAP, Oregin, Rino families - navigator devices
 * Venu - AMOLED display which has limitations on pixel-on duration and second hand periodic updates
 * Vivoactive HR - Byte arrays not supported by device
-```
