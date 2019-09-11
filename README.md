@@ -82,10 +82,9 @@ Powersafe mode is activated in a minute after entering background mode, if:
 * D2 family - JSON resources not supported
 * Edge family - bike devices
 * Fenix 3 family - JSON resources not supported
-* Fenix 6/6s family - not enough memory - bug in 3.1.3 simulator?
-* Fenix Chronos - OOM bug?
+* Fenix 6X Pro - 280x280 screen size is too large for resources initially used with 218x218 devices
+* Fenix Chronos - Not enough screen color depth - image is distorted
 * Forerunner 230/235/630/735/920 - not round displays
-* Forerunner 645/645M - OOM bug?
 * GPSMAP, Oregin, Rino families - navigator devices
 * Venu - AMOLED display which has limitations on pixel-on duration and second hand periodic updates
 * Vivoactive HR - Byte arrays not supported by device
