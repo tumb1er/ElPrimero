@@ -618,9 +618,8 @@ class ElPrimeroView extends WatchUi.WatchFace {
         }
         mState.onUpdateFinished();
         if (!(mState.mIsBackgroundMode) && mState.mTwoHertzMode) {
-        	try {
-            	mTimer.start(method(:timerCallback), 500, false);
-            } catch (ex instanceof TooManyTimers) {}
+			mTimer.stop();
+        	mTimer.start(method(:timerCallback), 500, false);
         }
     }
 
