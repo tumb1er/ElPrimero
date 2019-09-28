@@ -182,7 +182,7 @@ class ElPrimeroView extends WatchUi.WatchFace {
     	var settingsVersion = null;
     	try {
         	settingsVersion = Properties.getValue("appVersion");
-		} catch (e instanceof InvalidKeyException) {}
+		} catch (e instanceof Properties.InvalidKeyException) {}
         var resourcesVersion = loadResource(Rez.Strings.InternalVersion);
         if (!resourcesVersion.equals(settingsVersion)) {
             Properties.setValue("appVersion", resourcesVersion);
