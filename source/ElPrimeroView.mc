@@ -633,22 +633,27 @@ class ElPrimeroView extends WatchUi.WatchFace {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() {
-        mState.reset(false);
+        mState.reset(true);
+        System.println("onShow");
     }
 
     // Called when this View is removed from the screen. Save the
     // state of this View here. This includes freeing resources from
     // memory.
     function onHide() {
+        System.println("onHide");
     }
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
+        System.println("onExitSleep");
         mState.reset(false);
+        
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
+        System.println("onEnterSleep");
         mState.reset(true);
     }
 
