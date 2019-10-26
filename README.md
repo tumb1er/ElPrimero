@@ -80,6 +80,7 @@ Powersafe mode is activated in a minute after entering background mode, if:
 
 * Approach S60 - no HRM
 * D2 family - JSON resources not supported
+* Descent MK1 no byte arrays support
 * Edge family - bike devices
 * Fenix 3 family - JSON resources not supported
 * Fenix 6X Pro - 280x280 screen size is too large for resources initially used with 218x218 devices
