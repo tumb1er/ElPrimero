@@ -86,5 +86,7 @@ Powersafe mode is activated in a minute after entering background mode, if:
 * Fenix Chronos - Not enough screen color depth - image is distorted
 * Forerunner 230/235/630/735/920 - not round displays
 * GPSMAP, Oregin, Rino families - navigator devices
+* Swim 2 - JSON resources not supported
 * Venu - AMOLED display which has limitations on pixel-on duration and second hand periodic updates
+* Vivoactive - Rectanble screen
 * Vivoactive HR - Byte arrays not supported by device
