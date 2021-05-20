@@ -278,7 +278,7 @@ class State {
             // Workaround for Fenix5X - see #51
             maxHR = zones[zones.size() - 1];
             minHR = profile.restingHeartRate;
-            if (minHR == 0) {
+            if (minHR == null || minHR == 0) {
                 minHR = 50;
             }
         }
